@@ -8,7 +8,11 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["PassedPawn.API/PassedPawn.API.csproj", "PassedPawn.API/"]
+COPY ["PassedPawn.DataAccess/PassedPawn.DataAccess.csproj", "PassedPawn.DataAccess/"]
+COPY ["PassedPawn.Models/PassedPawn.Models.csproj", "PassedPawn.Models/"]
 RUN dotnet restore "PassedPawn.API/PassedPawn.API.csproj"
+RUN dotnet restore "PassedPawn.DataAccess/PassedPawn.DataAccess.csproj"
+RUN dotnet restore "PassedPawn.Models/PassedPawn.Models.csproj"
 COPY . .
 WORKDIR "/src/PassedPawn.API"
 RUN dotnet build "PassedPawn.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
