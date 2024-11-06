@@ -1,5 +1,5 @@
 using PassedPawn.API.Configuration;
-using PassedPawn.API.Middleware;
+using PassedPawn.API.Handlers;
 using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
