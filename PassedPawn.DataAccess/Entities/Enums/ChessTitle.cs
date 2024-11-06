@@ -2,5 +2,6 @@
 
 public enum ChessTitle
 {
-    NationalMaster, FideMaster, InternationalMaster, GrandMaster
+    NationalMaster, WomanNationalMaster, CandidateMaster, WomanCandidateMaster, FideMaster, WomanFideMaster,
+    WomanInternationalMaster, InternationalMaster, GrandMaster, WomanGrandMaster
 }
