@@ -24,6 +24,9 @@ public class User : IEntity
     public int Elo { get; set; }
     
     public ChessTitle? ChessTitle { get; set; }
+
+    public int NationalityId { get; set; }
+    public Nationality? Nationality { get; set; }
     
     // Helpers
     // Nie zapisze sie w bazie danych bo nie ma setera (mamy nadzieje) najwyzej zrobimy z tego funkcje
