@@ -1,0 +1,31 @@
+GET http://localhost:5096/api/nationality
+
+###
+
+GET http://localhost:5096/api/nationality/2
+
+###
+
+POST http://localhost:5096/api/nationality
+Content-Type: application/json
+
+{
+  "FullName": "Poland",
+  "ShortName": "PL",
+  "Flag": {}
+}
+
+###
+
+PUT http://localhost:5096/api/nationality/2
+Content-Type: application/json
+
+{
+  "FullName": "Poland",
+  "ShortName": "POL",
+  "Flag": {}
+}
+
+###
+
+DELETE http://localhost:5096/api/nationality/2

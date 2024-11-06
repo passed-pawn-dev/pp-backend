@@ -24,5 +24,6 @@ var app = builder.Build();
 app.UseHttpsRedirection();
 
 app.MapGet("test", () => "hello world");
+app.MapControllers();
 
 app.Run();

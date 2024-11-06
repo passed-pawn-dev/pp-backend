@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace PassedPawn.DataAccess.Migrations
 {
     /// <inheritdoc />
-    public partial class AddedNationalityTable : Migration
+    public partial class AddedNationalities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -26,7 +26,7 @@ namespace PassedPawn.DataAccess.Migrations
                 defaultValue: 0);
 
             migrationBuilder.CreateTable(
-                name: "Nationality",
+                name: "Nationalities",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -37,9 +37,9 @@ namespace PassedPawn.DataAccess.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Nationality", x => x.Id);
+                    table.PrimaryKey("PK_Nationalities", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Nationality_Photos_FlagId",
+                        name: "FK_Nationalities_Photos_FlagId",
                         column: x => x.FlagId,
                         principalTable: "Photos",
                         principalColumn: "Id",
@@ -57,23 +57,23 @@ namespace PassedPawn.DataAccess.Migrations
                 column: "NationalityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Nationality_FlagId",
-                table: "Nationality",
+                name: "IX_Nationalities_FlagId",
+                table: "Nationalities",
                 column: "FlagId");
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Coaches_Nationality_NationalityId",
+                name: "FK_Coaches_Nationalities_NationalityId",
                 table: "Coaches",
                 column: "NationalityId",
-                principalTable: "Nationality",
+                principalTable: "Nationalities",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Students_Nationality_NationalityId",
+                name: "FK_Students_Nationalities_NationalityId",
                 table: "Students",
                 column: "NationalityId",
-                principalTable: "Nationality",
+                principalTable: "Nationalities",
                 principalColumn: "Id",
                 onDelete: ReferentialAction.Cascade);
         }
@@ -82,15 +82,15 @@ namespace PassedPawn.DataAccess.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Coaches_Nationality_NationalityId",
+                name: "FK_Coaches_Nationalities_NationalityId",
                 table: "Coaches");
 
             migrationBuilder.DropForeignKey(
-                name: "FK_Students_Nationality_NationalityId",
+                name: "FK_Students_Nationalities_NationalityId",
                 table: "Students");
 
             migrationBuilder.DropTable(
-                name: "Nationality");
+                name: "Nationalities");
 
             migrationBuilder.DropIndex(
                 name: "IX_Students_NationalityId",

@@ -9,5 +9,7 @@ public interface IUnitOfWork
     
     IRepositoryBase<Coach> Coaches { get; }
     
+    IRepositoryBase<Nationality> Nationalities { get; }
+    
     Task<bool> SaveChangesAsync();
 }

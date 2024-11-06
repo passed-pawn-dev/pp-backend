@@ -100,7 +100,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasIndex("FlagId");
 
-                    b.ToTable("Nationality");
+                    b.ToTable("Nationalities");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Photo", b =>
