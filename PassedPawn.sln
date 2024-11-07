@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.Models", "Passed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.Tests", "PassedPawn.Tests\PassedPawn.Tests.csproj", "{77E93713-393E-4ECB-8262-A214B6E44166}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.BusinessLogic", "PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj", "{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
