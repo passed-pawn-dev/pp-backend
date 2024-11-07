@@ -12,8 +12,8 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241106203016_AddedNationalityTable")]
-    partial class AddedNationalityTable
+    [Migration("20241106220946_AddedNationalities")]
+    partial class AddedNationalities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,7 +103,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasIndex("FlagId");
 
-                    b.ToTable("Nationality");
+                    b.ToTable("Nationalities");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Photo", b =>

@@ -9,6 +9,8 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public IRepositoryBase<Student> Students { get; } = new RepositoryBase<Student>(dbContext, mapper);
     
     public IRepositoryBase<Coach> Coaches { get; } = new RepositoryBase<Coach>(dbContext, mapper);
+    public IRepositoryBase<Nationality> Nationalities { get; } = new RepositoryBase<Nationality>(dbContext, mapper);
+
 
     public async Task<bool> SaveChangesAsync()
     {
