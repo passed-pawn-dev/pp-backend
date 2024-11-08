@@ -5,13 +5,13 @@ namespace PassedPawn.DataAccess;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
-    public required DbSet<Student> Students { get; init; }
+    public DbSet<Student> Students { get; init; } = default!;
     
-    public required DbSet<Coach> Coaches { get; init; }
+    public DbSet<Coach> Coaches { get; init; } = default!;
     
-    public required DbSet<Photo> Photos { get; init; }
+    public DbSet<Photo> Photos { get; init; } = default!;
     
-    public required DbSet<Nationality> Nationalities { get; init; }
+    public DbSet<Nationality> Nationalities { get; init; } = default!;
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
