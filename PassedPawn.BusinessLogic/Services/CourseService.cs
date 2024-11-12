@@ -46,13 +46,15 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
     public async Task<ServiceResult<LessonDto>> ValidateAndAddLesson(Course course, LessonUpsertDto lessonUpsertDto)
     {
         var lesson = mapper.Map<Lesson>(lessonUpsertDto);
+        var highestLessonNumber = GetHighestLessonNumber(course);
+
+        if (lesson.LessonNumber > highestLessonNumber + 1)
+            return ServiceResult<LessonDto>.Failure([
+                $"New lesson has wrong order. Maximum of {highestLessonNumber + 1} expected"
+            ]);
+        
+        MoveLessonNumbersOnAdd(course, lesson.LessonNumber);
         course.Lessons.Add(lesson);
-
-        var errors = ValidateLessonNumbers(course);
-
-        if (errors.Count != 0)
-            return ServiceResult<LessonDto>.Failure(errors);
-
         unitOfWork.Courses.Update(course);
         
         if (!await unitOfWork.SaveChangesAsync())
@@ -64,14 +66,16 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
     public async Task<ServiceResult<LessonDto>> ValidateAndUpdateLesson(Course course, int lessonId,
         LessonUpsertDto lessonUpsertDto)
     {
+        var highestLessonNumber = GetHighestLessonNumber(course);
+
+        if (lessonUpsertDto.LessonNumber > highestLessonNumber)
+            return ServiceResult<LessonDto>.Failure([
+                $"New lesson has wrong order. Maximum of {highestLessonNumber} expected"
+            ]);
+
         var lesson = course.Lessons.Single(lesson => lesson.Id == lessonId);
+        MoveLessonNumbersOnUpdate(course, lesson.LessonNumber, lessonUpsertDto.LessonNumber);
         mapper.Map(lessonUpsertDto, lesson);
-
-        var errors = ValidateLessonNumbers(course);
-
-        if (errors.Count != 0)
-            return ServiceResult<LessonDto>.Failure(errors);
-
         unitOfWork.Courses.Update(course);
         
         if (!await unitOfWork.SaveChangesAsync())
@@ -89,14 +93,50 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             .Aggregate(new List<string>(), (acc, curr) =>
                 curr.value != curr.index + 1 ? [..acc, $"{curr.value} lesson number is incorrect."] : acc);
     }
-    
-    private static List<string> ValidateLessonNumbers(Course course)
+
+    private static void MoveLessonNumbersOnAdd(Course course, int newLessonNumber)
+    {
+        foreach (var lesson in course.Lessons)
+        {
+            if (lesson.LessonNumber < newLessonNumber)
+                continue;
+
+            lesson.LessonNumber++;
+        }
+    }
+
+    private static void MoveLessonNumbersOnUpdate(Course course, int oldLessonNumber, int newLessonNumber)
+    {
+        if (oldLessonNumber == newLessonNumber)
+            return;
+
+        if (newLessonNumber > oldLessonNumber)
+        {
+            foreach (var lesson in course.Lessons)
+            {
+                if (lesson.LessonNumber <= oldLessonNumber || lesson.LessonNumber > newLessonNumber)
+                    continue;
+
+                lesson.LessonNumber--;
+            }
+            
+            return;
+        }
+        
+        
+        foreach (var lesson in course.Lessons)
+        {
+            if (lesson.LessonNumber < newLessonNumber || lesson.LessonNumber >= oldLessonNumber)
+                continue;
+
+            lesson.LessonNumber++;
+        }
+    }
+
+    private static int GetHighestLessonNumber(Course course)
     {
         return course.Lessons
             .Select(lesson => lesson.LessonNumber)
-            .Order()
-            .Select((value, index) => (value, index))
-            .Aggregate(new List<string>(), (acc, curr) =>
-                curr.value != curr.index + 1 ? [..acc, $"{curr.value} lesson number is incorrect."] : acc);
+            .Max();
     }
 }
