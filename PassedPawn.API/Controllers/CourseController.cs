@@ -1,14 +1,13 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
-using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
 
 namespace PassedPawn.API.Controllers;
 
-public class CourseController(IUnitOfWork unitOfWork, IMapper mapper) : ApiControllerBase
+public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService) : ApiControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllCourses() // TODO: Add filters
@@ -31,13 +30,12 @@ public class CourseController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
     [HttpPost]
     public async Task<IActionResult> CreateCourse(CourseUpsertDto courseUpsertDto)
     {
-        var course = mapper.Map<Course>(courseUpsertDto);
-        unitOfWork.Courses.Add(course);
-        
-        if (!await unitOfWork.SaveChangesAsync())
-            throw new Exception("Failed to save database");
+        var serviceResult = await courseService.ValidateAndAddCourse(courseUpsertDto);
 
-        var courseDto = mapper.Map<CourseDto>(course);
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+        
+        var courseDto = serviceResult.Data!;
         return CreatedAtAction(nameof(GetCourse), new { id = courseDto.Id }, courseDto);
     }
 
@@ -49,13 +47,12 @@ public class CourseController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
         if (course is null)
             return NotFound();
 
-        mapper.Map(courseUpsertDto, course);
-        unitOfWork.Courses.Update(course);
+        var serviceResult = await courseService.ValidateAndUpdateCourse(course, courseUpsertDto);
         
-        if (!await unitOfWork.SaveChangesAsync())
-            throw new Exception("Failed to save database");
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
 
-        var courseDto = mapper.Map<CourseDto>(course);
+        var courseDto = serviceResult.Data!;
         return Ok(courseDto);
     }
 
@@ -87,20 +84,18 @@ public class CourseController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
     [HttpPost("{id:int}/lesson")]
     public async Task<IActionResult> AddLesson(int id, LessonUpsertDto lessonUpsertDto)
     {
-        var course = await unitOfWork.Courses.GetByIdAsync(id);
+        var course = await unitOfWork.Courses.GetWithLessonsById(id);
 
         if (course is null)
             return NotFound();
 
-        var lesson = mapper.Map<Lesson>(lessonUpsertDto);
-        course.Lessons.Add(lesson);
-        unitOfWork.Courses.Update(course);
+        var serviceResult = await courseService.ValidateAndAddLesson(course, lessonUpsertDto);
 
-        if (!await unitOfWork.SaveChangesAsync())
-            throw new Exception("Failed to save database");
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
 
-        var lessonDto = mapper.Map<LessonDto>(lesson);
+        var lessonDto = serviceResult.Data!;
 
-        return CreatedAtAction("GetLesson", "Lesson", new { id = lesson.Id }, lessonDto);
+        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
     }
 }

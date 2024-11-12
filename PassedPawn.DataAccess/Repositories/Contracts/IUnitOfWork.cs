@@ -9,7 +9,7 @@ public interface IUnitOfWork
     IRepositoryBase<Student> Students { get; }
     IRepositoryBase<Coach> Coaches { get; }
     IRepositoryBase<Nationality> Nationalities { get; }
-    IRepositoryBase<Course> Courses { get; }
+    ICourseRepository Courses { get; }
     IRepositoryBase<Lesson> Lessons { get; }
     
     Task<bool> SaveChangesAsync();

@@ -1,12 +1,12 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Lesson;
 
 namespace PassedPawn.API.Controllers;
 
-public class LessonController(IUnitOfWork unitOfWork, IMapper mapper) : ApiControllerBase
+public class LessonController(IUnitOfWork unitOfWork, ICourseService courseService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetLesson(int id)
@@ -22,18 +22,17 @@ public class LessonController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateLesson(int id, LessonUpsertDto lessonUpsertDto)
     {
-        var lesson = await unitOfWork.Lessons.GetByIdAsync(id);
+        var course = await unitOfWork.Courses.GetByLessonId(id);
 
-        if (lesson is null)
+        if (course is null)
             return NotFound();
 
-        mapper.Map(lessonUpsertDto, lesson);
-        unitOfWork.Lessons.Update(lesson);
+        var serviceResult = await courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto);
 
-        if (!await unitOfWork.SaveChangesAsync())
-            throw new Exception("Failed to save database");
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
 
-        var lessonDto = mapper.Map<LessonDto>(lesson);
+        var lessonDto = serviceResult.Data!;
         return Ok(lessonDto);
     }
 

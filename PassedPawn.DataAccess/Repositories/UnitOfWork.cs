@@ -10,7 +10,7 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public IRepositoryBase<Student> Students { get; } = new RepositoryBase<Student>(dbContext, mapper);
     public IRepositoryBase<Coach> Coaches { get; } = new RepositoryBase<Coach>(dbContext, mapper);
     public IRepositoryBase<Nationality> Nationalities { get; } = new RepositoryBase<Nationality>(dbContext, mapper);
-    public IRepositoryBase<Course> Courses { get; } = new RepositoryBase<Course>(dbContext, mapper);
+    public ICourseRepository Courses { get; } = new CourseRepository(dbContext, mapper);
     public IRepositoryBase<Lesson> Lessons { get; } = new RepositoryBase<Lesson>(dbContext, mapper);
 
 

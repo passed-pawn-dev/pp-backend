@@ -23,6 +23,13 @@ Content-Type: application/json
       }
     },
     {
+      "lessonNumber": 3,
+      "video": {
+        "title": "Video2",
+        "description": "Video2"
+      }
+    },
+    {
       "lessonNumber": 2,
       "video": {
         "title": "Video2",
@@ -34,15 +41,15 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:5096/api/Course/1/lessons
+GET http://localhost:5096/api/Course/7/lessons
 
 ###
 
-POST http://localhost:5096/api/Course/1/lesson
+POST http://localhost:5096/api/Course/7/lesson
 Content-Type: application/json
 
 {
-  "lessonNumber": 3,
+  "lessonNumber": 4,
   "video": {
     "title": "Video3",
     "description": "Video3"
@@ -51,13 +58,19 @@ Content-Type: application/json
 
 ###
 
-PUT http://localhost:5096/api/lesson/3
+PUT http://localhost:5096/api/lesson/18
 Content-Type: application/json
 
 {
-  "lessonNumber": 3,
+  "lessonNumber": 6,
   "video": {
     "title": "Video3-",
     "description": "Video3-"
   }
 }
+
+###
+
+DELETE http://localhost:5096/api/lesson/18
+
+

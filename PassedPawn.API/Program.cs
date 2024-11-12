@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.API.Configuration;
 using PassedPawn.API.Handlers;
+using PassedPawn.BusinessLogic.Services;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
@@ -13,6 +15,8 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
+
+builder.Services.AddScoped<ICourseService, CourseService>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
