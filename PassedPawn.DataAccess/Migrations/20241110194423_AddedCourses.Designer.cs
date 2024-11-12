@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241110194423_AddedCourses")]
+    partial class AddedCourses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -196,7 +199,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CourseId")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("integer");
 
                     b.Property<int>("LessonNumber")
@@ -633,19 +636,15 @@ namespace PassedPawn.DataAccess.Migrations
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", "Course")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", null)
                         .WithMany("Lessons")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseVideo", "Video")
                         .WithMany()
                         .HasForeignKey("VideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Course");
 
                     b.Navigation("Video");
                 });

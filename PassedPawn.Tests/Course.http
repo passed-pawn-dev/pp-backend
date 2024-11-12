@@ -1,0 +1,63 @@
+GET http://localhost:5096/api/Course
+
+###
+
+GET http://localhost:5096/api/Course/1
+
+###
+
+POST http://localhost:5096/api/Course
+Content-Type: application/json
+
+{
+  "title": "Test1",
+  "description": "Test1",
+  "price": 12.44,
+  "thumbnail": { },
+  "lessons": [
+    {
+      "lessonNumber": 1,
+      "video": {
+        "title": "Video1",
+        "description": "Video1"
+      }
+    },
+    {
+      "lessonNumber": 2,
+      "video": {
+        "title": "Video2",
+        "description": "Video2"
+      }
+    }
+  ]
+}
+
+###
+
+GET http://localhost:5096/api/Course/1/lessons
+
+###
+
+POST http://localhost:5096/api/Course/1/lesson
+Content-Type: application/json
+
+{
+  "lessonNumber": 3,
+  "video": {
+    "title": "Video3",
+    "description": "Video3"
+  }
+}
+
+###
+
+PUT http://localhost:5096/api/lesson/3
+Content-Type: application/json
+
+{
+  "lessonNumber": 3,
+  "video": {
+    "title": "Video3-",
+    "description": "Video3-"
+  }
+}
