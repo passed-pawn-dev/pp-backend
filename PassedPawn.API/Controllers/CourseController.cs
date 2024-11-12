@@ -72,7 +72,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         return NoContent();
     }
 
-    [HttpGet("{id:int}/lessons")]
+    [HttpGet("{id:int}/lesson")]
     public async Task<IActionResult> GetLessons(int id)
     {
         var lessons = await unitOfWork.Lessons
