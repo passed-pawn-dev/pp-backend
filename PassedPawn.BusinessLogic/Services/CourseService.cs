@@ -110,24 +110,33 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
         if (newLessonNumber > oldLessonNumber)
         {
-            foreach (var lesson in course.Lessons)
-            {
-                if (lesson.LessonNumber <= oldLessonNumber || lesson.LessonNumber > newLessonNumber)
-                    continue;
-
-                lesson.LessonNumber--;
-            }
-            
-            return;
+            DecrementLessonNumbers(course, oldLessonNumber, newLessonNumber);
         }
-        
-        
+        else
+        {
+            IncrementLessonNumbers(course, newLessonNumber, oldLessonNumber);
+        }
+    }
+
+    private static void DecrementLessonNumbers(Course course, int start, int end)
+    {
         foreach (var lesson in course.Lessons)
         {
-            if (lesson.LessonNumber < newLessonNumber || lesson.LessonNumber >= oldLessonNumber)
-                continue;
+            if (lesson.LessonNumber > start && lesson.LessonNumber <= end)
+            {
+                lesson.LessonNumber--;
+            }
+        }
+    }
 
-            lesson.LessonNumber++;
+    private static void IncrementLessonNumbers(Course course, int start, int end)
+    {
+        foreach (var lesson in course.Lessons)
+        {
+            if (lesson.LessonNumber >= start && lesson.LessonNumber < end)
+            {
+                lesson.LessonNumber++;
+            }
         }
     }
 
