@@ -14,4 +14,5 @@ public class Course : IEntity
     public Photo? Thumbnail { get; set; }
 
     public ICollection<Lesson> Lessons { get; init; } = [];
+    public ICollection<CourseReview> Reviews { get; init; } = [];
 }

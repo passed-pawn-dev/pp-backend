@@ -5,6 +5,7 @@ using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.DTOs.Course.Video;
 using PassedPawn.Models.DTOs.Nationality;
 using PassedPawn.Models.DTOs.Photo;
@@ -35,5 +36,8 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<CourseExampleUpsertDto, CourseExample>();
         CreateMap<CourseExample, CourseExampleDto>();
+
+        CreateMap<CourseReviewUpsertDto, CourseReview>();
+        CreateMap<CourseReview, CourseReviewDto>();
     }
 }
