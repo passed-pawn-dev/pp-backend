@@ -32,7 +32,6 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
         if (errors.Count != 0)
             return ServiceResult<CourseDto>.Failure(errors);
-
         
         mapper.Map(courseUpsertDto, course);
         unitOfWork.Courses.Update(course);
@@ -48,7 +47,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
         var lesson = mapper.Map<Lesson>(lessonUpsertDto);
         var highestLessonNumber = GetHighestLessonNumber(course);
 
-        if (lesson.LessonNumber > highestLessonNumber + 1)
+        if (lesson.LessonNumber > highestLessonNumber + 1 || lesson.LessonNumber < 1)
             return ServiceResult<LessonDto>.Failure([
                 $"New lesson has wrong order. Maximum of {highestLessonNumber + 1} expected"
             ]);
@@ -68,7 +67,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
     {
         var highestLessonNumber = GetHighestLessonNumber(course);
 
-        if (lessonUpsertDto.LessonNumber > highestLessonNumber)
+        if (lessonUpsertDto.LessonNumber > highestLessonNumber || lessonUpsertDto.LessonNumber < 1)
             return ServiceResult<LessonDto>.Failure([
                 $"New lesson has wrong order. Maximum of {highestLessonNumber} expected"
             ]);
@@ -87,11 +86,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
     private static List<string> ValidateLessonNumbers(CourseUpsertDto courseUpsertDto)
     {
         return courseUpsertDto.Lessons
-            .Select(lesson => lesson.LessonNumber)
-            .Order()
-            .Select((value, index) => (value, index))
+            .OrderBy(lesson => lesson.LessonNumber)
+            .Select((lesson, index) => (lesson.LessonNumber, index))
             .Aggregate(new List<string>(), (acc, curr) =>
-                curr.value != curr.index + 1 ? [..acc, $"{curr.value} lesson number is incorrect."] : acc);
+                curr.LessonNumber != curr.index + 1 ? [..acc, $"{curr.LessonNumber} lesson number is incorrect."] : acc);
     }
 
     private static void MoveLessonNumbersOnAdd(Course course, int newLessonNumber)
