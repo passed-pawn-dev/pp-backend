@@ -73,4 +73,28 @@ Content-Type: application/json
 
 DELETE http://localhost:5096/api/lesson/18
 
+###
 
+GET http://localhost:5096/api/Course/11/review
+
+###
+
+POST http://localhost:5096/api/Course/11/review
+Content-Type: application/json
+
+{
+  "value": 3
+}
+
+###
+
+PUT http://localhost:5096/api/coursereview/1
+Content-Type: application/json
+
+{
+  "value": 2
+}
+
+###
+
+DELETE http://localhost:5096/api/coursereview/1
