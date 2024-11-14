@@ -292,7 +292,7 @@ public class CourseControllerTests
     }
     
     [Fact]
-    public async Task AddLesson_ShouldReturnBadRequest_WhenValidationPasses()
+    public async Task AddLesson_ShouldReturnBadRequest_WhenValidationFails()
     {
         // Arrange
         const int id = 1;
