@@ -1,4 +1,4 @@
-﻿using PassedPawn.DataAccess.Entities.Enums;
+﻿using PassedPawn.Models.Enums;
 
 namespace PassedPawn.DataAccess.Entities;
 
@@ -26,6 +26,7 @@ public class User : IEntity
     public ChessTitle? ChessTitle { get; set; }
 
     public int NationalityId { get; set; }
+    
     public Nationality? Nationality { get; set; }
     
     // Helpers

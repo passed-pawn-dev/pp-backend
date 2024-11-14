@@ -1,9 +1,13 @@
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.API.Configuration;
 using PassedPawn.API.Handlers;
+using PassedPawn.BusinessLogic.Services;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.Configuration;
+using PassedPawn.Models.DTOs.Keycloak;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,6 +18,8 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+builder.Services.AddScoped<IUserService, UserService>();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -22,6 +28,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         x => x.MigrationsAssembly("PassedPawn.DataAccess")
         );
 });
+
+builder.Services.Configure<KeycloakConfig>(builder.Configuration.GetSection("Keycloak"));
 
 var app = builder.Build();
 

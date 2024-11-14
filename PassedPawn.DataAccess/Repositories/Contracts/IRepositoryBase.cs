@@ -67,4 +67,6 @@ public interface IRepositoryBase<T> where T : IEntity
     /// </summary>
     /// <param name="entity">Entity to delete.</param>
     public void Delete(T entity);
+    
+    public bool Exists(int id);
 }

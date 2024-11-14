@@ -69,4 +69,9 @@ public class RepositoryBase<T>(
     {
         _dbSet.Remove(entity);
     }
+
+    public bool Exists(int id)
+    {
+        return _dbSet.Any(e => e.Id == id);
+    }
 }

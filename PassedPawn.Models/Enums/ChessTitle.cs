@@ -1,4 +1,4 @@
-﻿namespace PassedPawn.DataAccess.Entities.Enums;
+﻿namespace PassedPawn.Models.Enums;
 
 public enum ChessTitle
 {
