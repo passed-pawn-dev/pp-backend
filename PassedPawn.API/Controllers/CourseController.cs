@@ -36,7 +36,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
         
-        var courseDto = serviceResult.Data!;
+        var courseDto = serviceResult.Data;
         return CreatedAtAction(nameof(GetCourse), new { id = courseDto.Id }, courseDto);
     }
 
@@ -97,7 +97,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data!;
+        var lessonDto = serviceResult.Data;
 
         return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
     }

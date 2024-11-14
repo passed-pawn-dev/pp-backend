@@ -32,7 +32,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data!;
+        var lessonDto = serviceResult.Data;
         return Ok(lessonDto);
     }
 
