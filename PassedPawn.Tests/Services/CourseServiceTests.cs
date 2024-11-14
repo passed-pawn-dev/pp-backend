@@ -21,7 +21,7 @@ public class CourseServiceTests
             .ReturnsAsync(true);
 
         var config = new MapperConfiguration(cfg => cfg.AddProfile(new AutoMapperProfiles()));
-        IMapper mapper = new Mapper(config);
+        var mapper = new Mapper(config);
         _courseService = new CourseService(_unitOfWorkMock.Object, mapper);
     }
 
