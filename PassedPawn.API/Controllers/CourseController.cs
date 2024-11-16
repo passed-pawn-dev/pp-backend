@@ -4,6 +4,7 @@ using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Review;
 
 namespace PassedPawn.API.Controllers;
 
@@ -35,7 +36,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
         
-        var courseDto = serviceResult.Data!;
+        var courseDto = serviceResult.Data;
         return CreatedAtAction(nameof(GetCourse), new { id = courseDto.Id }, courseDto);
     }
 
@@ -72,6 +73,8 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         return NoContent();
     }
 
+    #region Lessons
+
     [HttpGet("{id:int}/lesson")]
     public async Task<IActionResult> GetLessons(int id)
     {
@@ -94,8 +97,36 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data!;
+        var lessonDto = serviceResult.Data;
 
         return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
     }
+
+    #endregion
+
+    #region Reviews
+
+    [HttpGet("{id:int}/review")]
+    public async Task<IActionResult> GetReviews(int id)
+    {
+        var reviews = await unitOfWork.CourseReviews
+            .GetAllWhereAsync<CourseReviewDto>(review => review.CourseId == id);
+
+        return Ok(reviews);
+    }
+
+    [HttpPost("{id:int}/review")]
+    public async Task<IActionResult> AddReview(int id, CourseReviewUpsertDto reviewUpsertDto)
+    {
+        var course = await unitOfWork.Courses.GetByIdAsync(id);
+
+        if (course is null)
+            return NotFound();
+
+        var courseReviewDto = await courseService.AddReview(course, reviewUpsertDto);
+        return CreatedAtAction("GetReview", "CourseReview", new { id = courseReviewDto.Id },
+            courseReviewDto);
+    }
+    
+    #endregion
 }

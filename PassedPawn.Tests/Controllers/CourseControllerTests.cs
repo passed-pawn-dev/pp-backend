@@ -7,6 +7,7 @@ using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Review;
 
 namespace PassedPawn.Tests.Controllers;
 
@@ -310,5 +311,65 @@ public class CourseControllerTests
         // Assert
         var createAtActionResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(errors, createAtActionResult.Value);
+    }
+
+    [Fact]
+    public async Task GetReviews_ShouldReturnOk()
+    {
+        // Arrange
+        const int id = 1;
+        var courseReviewDtoList = new List<CourseReviewDto>
+        {
+            new()
+        };
+
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews
+            .GetAllWhereAsync<CourseReviewDto>(review => review.CourseId == id))
+            .ReturnsAsync(courseReviewDtoList);
+        
+        // Act
+        var result = await _courseController.GetReviews(id);
+        
+        // Assert
+        var okObject = Assert.IsType<OkObjectResult>(result);
+        Assert.Equal(courseReviewDtoList, okObject.Value);
+    }
+
+    [Fact]
+    public async Task AddReview_ShouldReturnCreatedAtAction_WhenCourseExists()
+    {
+        // Arrange
+        const int id = 1;
+        var course = new Course { Title = "Test", Description = "Test" };
+        var courseReviewDto = new CourseReviewDto();
+        var reviewUpsertDto = new CourseReviewUpsertDto();
+        
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
+            .ReturnsAsync(course);
+        _courseServiceMock.Setup(courseService => courseService.AddReview(course, reviewUpsertDto))
+            .ReturnsAsync(courseReviewDto);
+        
+        // Act
+        var result = await _courseController.AddReview(id, reviewUpsertDto);
+        
+        // Assert
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal(courseReviewDto, createdAtActionResult.Value);
+    }
+
+    [Fact]
+    public async Task AddReview_ShouldReturnNotFound_WhenCourseDoesNotExist()
+    {
+        // Arrange
+        const int id = 1;
+        var reviewUpsertDto = new CourseReviewUpsertDto();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
+            .ReturnsAsync((Course?)null);
+        
+        // Act
+        var result = await _courseController.AddReview(id, reviewUpsertDto);
+
+        // Assert
+        Assert.IsType<NotFoundResult>(result);
     }
 }

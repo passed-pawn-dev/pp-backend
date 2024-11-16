@@ -1,10 +1,12 @@
 using AutoMapper;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Review;
 
 namespace PassedPawn.BusinessLogic.Services;
 
@@ -81,6 +83,17 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             throw new Exception("Failed to save database");
         
         return ServiceResult<LessonDto>.Success(mapper.Map<LessonDto>(lesson));
+    }
+
+    public async Task<CourseReviewDto> AddReview(Course course, CourseReviewUpsertDto reviewUpsertDto)
+    {
+        var courseReview = mapper.Map<CourseReview>(reviewUpsertDto);
+        course.Reviews.Add(courseReview);
+
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
+
+        return mapper.Map<CourseReviewDto>(courseReview);
     }
 
     private static List<string> ValidateLessonNumbers(CourseUpsertDto courseUpsertDto)
