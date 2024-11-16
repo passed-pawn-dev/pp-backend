@@ -54,10 +54,13 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration 
         
         var userRegistrationDto = mapper.Map<UserRegistrationDto>(studentUpsertDto);
         
-        // TODO Check Nationality ID
-        if (!unitOfWork.Nationalities.Exists(studentUpsertDto.NationalityId))
+        if (!await unitOfWork.Nationalities.ExistsAsync(studentUpsertDto.NationalityId))
         {
-            throw new InvalidNationalityIdException();
+            return new ServiceResult<HttpResponseMessage>()
+            {
+                Data = null,
+                Errors = ["Invalid Nationality Id"]
+            };
         }
 
         var baseUrl = keycloakConfig.Value.BaseUrl;

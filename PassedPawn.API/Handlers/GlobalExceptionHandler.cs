@@ -21,11 +21,6 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Keycloak response is empty"
             },
-            InvalidNationalityIdException ex => new ProblemDetails
-            {
-              Status  = StatusCodes.Status400BadRequest,
-              Title = "Invalid nationality Id"
-            },
             // Wildcard. Catch specific exceptions above.
             _ => new ProblemDetails
             {
