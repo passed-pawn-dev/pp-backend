@@ -4,5 +4,5 @@ public class ServiceResult<T>
 {
     public T? Data { get; init; }
     public IEnumerable<string> Errors { get; init; } = [];
-    public bool isSuccess => !Errors.Any();
+    public bool IsSuccess => !Errors.Any();
 }

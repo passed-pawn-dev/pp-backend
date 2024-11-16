@@ -14,7 +14,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
         // User service 
        var serviceResponse  = await userService.AddUser(studentUpsertDto);
         
-        if (!serviceResponse.Success)
+        if (!serviceResponse.IsSuccess)
             return BadRequest(serviceResponse.Errors);
 
         return Created(serviceResponse.Data!.Headers.Location, await serviceResponse.Data.Content.ReadAsStringAsync());
