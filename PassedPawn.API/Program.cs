@@ -29,7 +29,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         );
 });
 
-builder.Services.Configure<KeycloakConfig>(builder.Configuration.GetSection("Keycloak"));
+builder.Services.AddOptions<KeycloakConfig>()
+    .BindConfiguration("Keycloak")
+    .ValidateDataAnnotations().ValidateOnStart();
 
 var app = builder.Build();
 
