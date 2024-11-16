@@ -1,17 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities;
+using PassedPawn.DataAccess.Entities.Courses;
 
 namespace PassedPawn.DataAccess;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options)
 {
     public required DbSet<Student> Students { get; init; }
-    
     public required DbSet<Coach> Coaches { get; init; }
-    
     public required DbSet<Photo> Photos { get; init; }
-    
     public required DbSet<Nationality> Nationalities { get; init; }
+    public required DbSet<Course> Courses { get; init; }
+    public required DbSet<CourseVideo> CourseVideos { get; init; }
+    public required DbSet<Lesson> Lessons { get; init; }
+    public required DbSet<CourseExercise> CourseExercises { get; init; }
+    public required DbSet<CourseExample> CourseExamples { get; init; }
+    public required DbSet<CourseReview> CourseReviews { get; init; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

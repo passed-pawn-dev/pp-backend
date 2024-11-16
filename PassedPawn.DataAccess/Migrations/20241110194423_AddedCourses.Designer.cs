@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241110194423_AddedCourses")]
+    partial class AddedCourses
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,30 +76,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.HasIndex("PhotoId");
 
                     b.ToTable("Coaches");
-                });
-
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.CourseReview", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .HasColumnType("text");
-
-                    b.Property<int>("CourseId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Value")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("CourseReviews");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Course", b =>
@@ -220,7 +199,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CourseId")
+                    b.Property<int?>("CourseId")
                         .HasColumnType("integer");
 
                     b.Property<int>("LessonNumber")
@@ -622,17 +601,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Photo");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.CourseReview", b =>
-                {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", "Course")
-                        .WithMany("Reviews")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Course", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Photo", "Thumbnail")
@@ -668,19 +636,15 @@ namespace PassedPawn.DataAccess.Migrations
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", "Course")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", null)
                         .WithMany("Lessons")
-                        .HasForeignKey("CourseId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CourseId");
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseVideo", "Video")
                         .WithMany()
                         .HasForeignKey("VideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Course");
 
                     b.Navigation("Video");
                 });
@@ -716,8 +680,6 @@ namespace PassedPawn.DataAccess.Migrations
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Course", b =>
                 {
                     b.Navigation("Lessons");
-
-                    b.Navigation("Reviews");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
