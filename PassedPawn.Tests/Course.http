@@ -1,0 +1,100 @@
+GET http://localhost:5096/api/Course
+
+###
+
+GET http://localhost:5096/api/Course/1
+
+###
+
+POST http://localhost:5096/api/Course
+Content-Type: application/json
+
+{
+  "title": "Test1",
+  "description": "Test1",
+  "price": 12.44,
+  "thumbnail": { },
+  "lessons": [
+    {
+      "lessonNumber": 1,
+      "video": {
+        "title": "Video1",
+        "description": "Video1"
+      }
+    },
+    {
+      "lessonNumber": 2,
+      "video": {
+        "title": "Video2",
+        "description": "Video2"
+      }
+    },
+    {
+      "lessonNumber": 3,
+      "video": {
+        "title": "Video2",
+        "description": "Video2"
+      }
+    }
+  ]
+}
+
+###
+
+GET http://localhost:5096/api/Course/15/lesson
+
+###
+
+POST http://localhost:5096/api/Course/11/lesson
+Content-Type: application/json
+
+{
+  "lessonNumber": 2,
+  "video": {
+    "title": "Video5",
+    "description": "Video5"
+  }
+}
+
+###
+
+PUT http://localhost:5096/api/lesson/46
+Content-Type: application/json
+
+{
+  "lessonNumber": 2,
+  "video": {
+    "title": "Video6",
+    "description": "Video6"
+  }
+}
+
+###
+
+DELETE http://localhost:5096/api/lesson/18
+
+###
+
+GET http://localhost:5096/api/Course/11/review
+
+###
+
+POST http://localhost:5096/api/Course/11/review
+Content-Type: application/json
+
+{
+  "value": 3
+}
+
+###
+
+PUT http://localhost:5096/api/coursereview/1
+Content-Type: application/json
+
+{
+  "value": 2
+}
+
+###
+
+DELETE http://localhost:5096/api/coursereview/1

@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.API", "PassedPawn.API\PassedPawn.API.csproj", "{2AFB8B78-1AB2-4B52-9E5B-FC2145E94621}"
 EndProject
@@ -8,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.Models", "Passed
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.Tests", "PassedPawn.Tests\PassedPawn.Tests.csproj", "{77E93713-393E-4ECB-8262-A214B6E44166}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.BusinessLogic", "PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj", "{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.BusinessLogic", "PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj", "{649DF420-C5D5-4451-BCCA-254DE59794B6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +31,9 @@ Global
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77E93713-393E-4ECB-8262-A214B6E44166}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A6B49CEA-C090-445B-AAFC-165E9FF8ACFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
