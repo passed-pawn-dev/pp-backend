@@ -70,8 +70,8 @@ public class RepositoryBase<T>(
         _dbSet.Remove(entity);
     }
 
-    public bool Exists(int id)
+    public async Task<bool> ExistsAsync(int id)
     {
-        return _dbSet.Any(e => e.Id == id);
+        return await _dbSet.AnyAsync(e => e.Id == id);
     }
 }
