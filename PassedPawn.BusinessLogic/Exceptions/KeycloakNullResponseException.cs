@@ -1,3 +1,3 @@
 ﻿namespace PassedPawn.BusinessLogic.Exceptions;
 
-public class KeycloakNullResponseException() : Exception();
+public class KeycloakNullResponseException : Exception;

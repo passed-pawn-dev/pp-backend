@@ -2,10 +2,10 @@
 
 namespace PassedPawn.Models.DTOs.Keycloak;
 
-public class KeyclockRegistrationResponse
+public class KeycloakRegistrationResponse
 {
     [JsonPropertyName("access_token")]
-    public string? Token { get; init; }
+    public required string Token { get; init; }
     
     [JsonPropertyName("expires_in")]
     public int ExpiresIn { get; init; }
@@ -14,11 +14,11 @@ public class KeyclockRegistrationResponse
     public int RefreshExpiresIn { get; init; }
     
     [JsonPropertyName("token_type")]
-    public string? TokenType { get; init; }
+    public required string TokenType { get; init; }
     
     [JsonPropertyName("not-before-policy")]
     public int NotBeforePolicy { get; init; }
     
     [JsonPropertyName("scope")]
-    public string? Scope { get; init; }
+    public required string Scope { get; init; }
 }

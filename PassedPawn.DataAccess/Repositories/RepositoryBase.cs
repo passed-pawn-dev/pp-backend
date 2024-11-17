@@ -72,6 +72,6 @@ public class RepositoryBase<T>(
 
     public async Task<bool> ExistsAsync(int id)
     {
-        return await _dbSet.AnyAsync(e => e.Id == id);
+        return await DbSet.AnyAsync(e => e.Id == id);
     }
 }

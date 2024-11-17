@@ -22,7 +22,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
 
     // TODO: Protect this route
     [HttpGet("{id:int}")]
-    public async Task<IActionResult> Get([FromRoute] int id)
+    public async Task<IActionResult> Get(int id)
     {
         var studentDto = await unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id);
         

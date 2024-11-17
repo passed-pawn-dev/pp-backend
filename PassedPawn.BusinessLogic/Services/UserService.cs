@@ -13,40 +13,8 @@ using PassedPawn.Models.DTOs.User.Student;
 
 namespace PassedPawn.BusinessLogic.Services;
 
-public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration configuration, IOptions<KeycloakConfig> keycloakConfig) : IUserService
+public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<KeycloakConfig> keycloakConfig, IKeycloakService keycloakService) : IUserService
 {
-    public async Task<KeyclockRegistrationResponse> GetAccessTokenAsync()
-    {
-        var baseUrl = keycloakConfig.Value.BaseUrl;
-        var realm = keycloakConfig.Value.Realm;
-        var clientId = keycloakConfig.Value.ClientId;
-        var clientSecret = keycloakConfig.Value.ClientSecret; 
-        var grandType = keycloakConfig.Value.GrandType;
-
-        if (baseUrl is null || realm is null || clientId is null || clientSecret is null || grandType is null)
-            throw new NullReferenceException("Invalid Keycloak configuration");
-        
-        var formData = new Dictionary<string, string>
-        {
-            { "client_id", clientId },
-            { "client_secret", clientSecret },
-            { "grant_type", grandType }
-        };
-        
-        var content = new FormUrlEncodedContent(formData);
-        
-        var client = new HttpClient();
-        
-        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/realms/{realm}/protocol/openid-connect/token", content);
-
-        var mappedResponse = await response.Content.ReadFromJsonAsync<KeyclockRegistrationResponse>();
-
-        if (mappedResponse is null)
-            throw new KeycloakNullResponseException();
-
-        return mappedResponse;
-    }
-
     public async Task<ServiceResult<HttpResponseMessage>> AddUser(StudentUpsertDto studentUpsertDto)
     {
         
@@ -77,7 +45,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IConfiguration 
             };
         }
 
-        var accessTokenResponse = await GetAccessTokenAsync();
+        var accessTokenResponse = await keycloakService.GetAccessTokenAsync();
         
         var client = new HttpClient();
         
