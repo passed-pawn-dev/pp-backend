@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using PassedPawn.BusinessLogic.Exceptions;
+
 
 namespace PassedPawn.API.Handlers;
 
@@ -14,6 +16,11 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
 
         var problemDetails = exception switch
         {
+            KeycloakNullResponseException ex => new ProblemDetails
+            {
+                Status = StatusCodes.Status500InternalServerError,
+                Title = "Keycloak response is empty"
+            },
             // Wildcard. Catch specific exceptions above.
             _ => new ProblemDetails
             {

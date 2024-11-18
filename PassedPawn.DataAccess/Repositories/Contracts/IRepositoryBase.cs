@@ -67,4 +67,12 @@ public interface IRepositoryBase<T> where T : IEntity
     /// </summary>
     /// <param name="entity">Entity to delete.</param>
     public void Delete(T entity);
+    
+    
+    /// <summary>
+    /// Checks if entity with given id exists
+    /// </summary>
+    /// <param name="id">Id of entity</param>
+    /// <returns>Boolean</returns>
+    public Task<bool> ExistsAsync(int id);
 }

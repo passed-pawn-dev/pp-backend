@@ -17,6 +17,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<CourseExample> CourseExamples { get; init; }
     public required DbSet<CourseReview> CourseReviews { get; init; }
     
+    //  dotnet ef database update --project ../PassedPawn.DataAccess/
+    
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
