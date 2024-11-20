@@ -24,11 +24,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<Keyclo
         
         if (!await unitOfWork.Nationalities.ExistsAsync(studentUpsertDto.NationalityId))
         {
-            return new ServiceResult<HttpResponseMessage>()
-            {
-                Data = null,
-                Errors = ["Invalid Nationality Id"]
-            };
+            return ServiceResult<HttpResponseMessage>.Failure(["Invalid Nationality Id"]);
         }
 
         var baseUrl = keycloakConfig.Value.BaseUrl;
@@ -38,11 +34,7 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<Keyclo
         
         if (!await unitOfWork.SaveChangesAsync())
         {
-            return new ServiceResult<HttpResponseMessage>()
-            {
-                Data = null,
-                Errors = ["Fail to save to database from UserService"]
-            };
+            return ServiceResult<HttpResponseMessage>.Failure(["Fail to save to database from UserService"]);
         }
 
         var accessTokenResponse = await keycloakService.GetAccessTokenAsync();
@@ -58,18 +50,10 @@ public class UserService(IUnitOfWork unitOfWork, IMapper mapper, IOptions<Keyclo
             unitOfWork.Students.Delete(student);
 
             await unitOfWork.SaveChangesAsync();
-            
-            return new ServiceResult<HttpResponseMessage>()
-            {
-                Data = null,
-                Errors = [await response.Content.ReadAsStringAsync()]
-            };
+
+            return ServiceResult<HttpResponseMessage>.Failure([await response.Content.ReadAsStringAsync()]);
         }
-        
-        return new ServiceResult<HttpResponseMessage>()
-        {
-            Data = response
-        };
-        
+
+        return ServiceResult<HttpResponseMessage>.Success(response);
     }
 }
