@@ -31,11 +31,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
         );
 });
 
+// Swagger
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 builder.Services.AddOptions<KeycloakConfig>()
     .BindConfiguration("Keycloak")
     .ValidateDataAnnotations().ValidateOnStart();
 
 var app = builder.Build();
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseExceptionHandler();
 

@@ -17,7 +17,7 @@ public class User : IEntity
     public int? PhotoId { get; set; }
     
     // relacja
-    public Photo? Photo { get; set; }
+    // public Photo? Photo { get; set; }
     
     public DateOnly DateOfBirth { get; set; }
     
