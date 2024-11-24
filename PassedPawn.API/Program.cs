@@ -33,7 +33,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen();   
 
 builder.Services.AddOptions<KeycloakConfig>()
     .BindConfiguration("Keycloak")
@@ -41,8 +41,11 @@ builder.Services.AddOptions<KeycloakConfig>()
 
 var app = builder.Build();
 
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();   
+}
 
 app.UseExceptionHandler();
 
