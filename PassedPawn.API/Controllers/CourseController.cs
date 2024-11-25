@@ -116,6 +116,9 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         return Ok(reviews);
     }
+    
+    // TODO Add User Id, who creates this review
+    // TODO Protect this endpoint
 
     [HttpPost("{id:int}/review")]
     public async Task<IActionResult> AddReview(int id, CourseReviewUpsertDto reviewUpsertDto)

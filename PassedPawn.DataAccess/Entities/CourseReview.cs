@@ -11,6 +11,7 @@ public class CourseReview : IEntity
     public int CourseId { get; init; }
     public Course? Course { get; init; }
     public int Id { get; set; }
-
-    // TODO: Add StudentId
+    
+    public int StudentId { get; set; }
+    public Student? Student { get; set; }
 }
