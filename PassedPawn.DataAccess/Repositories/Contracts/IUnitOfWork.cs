@@ -11,6 +11,6 @@ public interface IUnitOfWork
     ICourseRepository Courses { get; }
     IRepositoryBase<Lesson> Lessons { get; }
     IRepositoryBase<CourseReview> CourseReviews { get; }
-    
+
     Task<bool> SaveChangesAsync();
 }

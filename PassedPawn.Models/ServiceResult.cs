@@ -9,14 +9,18 @@ public class ServiceResult<T>
     public bool IsSuccess => !Errors.Any();
 
     public static ServiceResult<T> Success(T data)
-        => new()
+    {
+        return new ServiceResult<T>
         {
             Data = data
         };
-    
+    }
+
     public static ServiceResult<T> Failure(IEnumerable<string> errors)
-        => new()
+    {
+        return new ServiceResult<T>
         {
             Errors = errors
         };
+    }
 }

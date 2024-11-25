@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.BusinessLogic.Exceptions;
 
-
 namespace PassedPawn.API.Handlers;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IExceptionHandler
@@ -14,7 +13,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
-        var problemDetails = exception switch
+        ProblemDetails problemDetails = exception switch
         {
             KeycloakNullResponseException ex => new ProblemDetails
             {

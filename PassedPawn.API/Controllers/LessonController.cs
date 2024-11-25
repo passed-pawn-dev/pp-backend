@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course.Lesson;
 
 namespace PassedPawn.API.Controllers;
@@ -22,30 +24,31 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateLesson(int id, LessonUpsertDto lessonUpsertDto)
     {
-        var course = await unitOfWork.Courses.GetByLessonId(id);
+        Course? course = await unitOfWork.Courses.GetByLessonId(id);
 
         if (course is null)
             return NotFound();
 
-        var serviceResult = await courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto);
+        ServiceResult<LessonDto> serviceResult =
+            await courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto);
 
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data;
+        LessonDto? lessonDto = serviceResult.Data;
         return Ok(lessonDto);
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteLesson(int id)
     {
-        var lesson = await unitOfWork.Lessons.GetByIdAsync(id);
+        Lesson? lesson = await unitOfWork.Lessons.GetByIdAsync(id);
 
         if (lesson is null)
             return NotFound();
-        
+
         unitOfWork.Lessons.Delete(lesson);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
 

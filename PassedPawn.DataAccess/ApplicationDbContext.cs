@@ -16,13 +16,13 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<CourseExercise> CourseExercises { get; init; }
     public required DbSet<CourseExample> CourseExamples { get; init; }
     public required DbSet<CourseReview> CourseReviews { get; init; }
-    
+
     //  dotnet ef database update --project ../PassedPawn.DataAccess/
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<Nationality>().HasData(
             new Nationality { Id = 1, FullName = "United States", ShortName = "USA", FlagId = 1 },
             new Nationality { Id = 2, FullName = "Canada", ShortName = "CAN", FlagId = 2 },

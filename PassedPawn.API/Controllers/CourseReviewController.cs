@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
+using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Review;
 
@@ -18,11 +19,11 @@ public class CourseReviewController(IUnitOfWork unitOfWork) : ApiControllerBase
 
         return Ok(review);
     }
-    
+
     [HttpPut("{id:int}")]
     public async Task<IActionResult> UpdateReview(int id, CourseReviewUpsertDto reviewUpsertDto, IMapper mapper)
     {
-        var review = await unitOfWork.CourseReviews.GetByIdAsync(id);
+        CourseReview? review = await unitOfWork.CourseReviews.GetByIdAsync(id);
 
         if (review is null)
             return NotFound();
@@ -40,13 +41,13 @@ public class CourseReviewController(IUnitOfWork unitOfWork) : ApiControllerBase
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteReview(int id)
     {
-        var review = await unitOfWork.CourseReviews.GetByIdAsync(id);
+        CourseReview? review = await unitOfWork.CourseReviews.GetByIdAsync(id);
 
         if (review is null)
             return NotFound();
-        
+
         unitOfWork.CourseReviews.Delete(review);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
 

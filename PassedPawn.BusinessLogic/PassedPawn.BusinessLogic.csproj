@@ -7,8 +7,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj" />
-      <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj" />
+        <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj"/>
+        <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj"/>
     </ItemGroup>
 
 </Project>

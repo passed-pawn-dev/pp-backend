@@ -13,10 +13,10 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var nationalities = await unitOfWork.Nationalities.GetAllAsync<NationalityDto>();
+        IEnumerable<NationalityDto> nationalities = await unitOfWork.Nationalities.GetAllAsync<NationalityDto>();
         return Ok(nationalities);
     }
-    
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Get(int id)
     {
@@ -24,7 +24,7 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
 
         if (nationalityDto is null)
             return NotFound();
-        
+
         return Ok(nationalityDto);
     }
 
@@ -44,17 +44,17 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, NationalityUpsertDto nationalityUpsertDto)
     {
-        var nationality = await unitOfWork.Nationalities.GetByIdAsync(id);
+        Nationality? nationality = await unitOfWork.Nationalities.GetByIdAsync(id);
 
         if (nationality is null)
             return NotFound();
 
         mapper.Map(nationalityUpsertDto, nationality);
         unitOfWork.Nationalities.Update(nationality);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save");
-        
+
         var nationalityDto = mapper.Map<NationalityDto>(nationality);
         return Ok(nationalityDto);
     }
@@ -62,13 +62,13 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var nationality = await unitOfWork.Nationalities.GetByIdAsync(id);
+        Nationality? nationality = await unitOfWork.Nationalities.GetByIdAsync(id);
 
         if (nationality is null)
             return NotFound();
-        
+
         unitOfWork.Nationalities.Delete(nationality);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to delete");
 

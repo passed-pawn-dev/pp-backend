@@ -14,25 +14,27 @@ public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig) : IKeycloa
         var baseUrl = keycloakConfig.Value.BaseUrl;
         var realm = keycloakConfig.Value.Realm;
         var clientId = keycloakConfig.Value.ClientId;
-        var clientSecret = keycloakConfig.Value.ClientSecret; 
+        var clientSecret = keycloakConfig.Value.ClientSecret;
         var grandType = keycloakConfig.Value.GrandType;
-        
+
         var formData = new Dictionary<string, string>
         {
             { "client_id", clientId },
             { "client_secret", clientSecret },
             { "grant_type", grandType }
         };
-        
+
         var content = new FormUrlEncodedContent(formData);
-        
+
         var client = new HttpClient();
-        
-        HttpResponseMessage response = await client.PostAsync($"{baseUrl}/realms/{realm}/protocol/openid-connect/token", content);
-    
-        var mappedResponse = await response.Content.ReadFromJsonAsync<KeycloakRegistrationResponse>() ??
-                             throw new KeycloakNullResponseException();
-    
+
+        HttpResponseMessage response =
+            await client.PostAsync($"{baseUrl}/realms/{realm}/protocol/openid-connect/token", content);
+
+        KeycloakRegistrationResponse mappedResponse =
+            await response.Content.ReadFromJsonAsync<KeycloakRegistrationResponse>()
+            ?? throw new KeycloakNullResponseException();
+
         return mappedResponse;
     }
 }

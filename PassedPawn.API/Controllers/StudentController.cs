@@ -2,6 +2,7 @@
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.User.Student;
 
 namespace PassedPawn.API.Controllers;
@@ -12,12 +13,12 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     public async Task<IActionResult> Register(StudentUpsertDto studentUpsertDto)
     {
         // User service 
-       var serviceResponse  = await userService.AddUser(studentUpsertDto);
-        
+        ServiceResult<StudentDto> serviceResponse = await userService.AddUser(studentUpsertDto);
+
         if (!serviceResponse.IsSuccess)
             return BadRequest(serviceResponse.Errors);
 
-        return Created(serviceResponse.Data!.Headers.Location, await serviceResponse.Data.Content.ReadAsStringAsync());
+        return CreatedAtAction(nameof(Get), new { id = serviceResponse.Data.Id }, serviceResponse.Data);
     }
 
     // TODO: Protect this route
@@ -25,12 +26,12 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     public async Task<IActionResult> Get(int id)
     {
         var studentDto = await unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id);
-        
+
         if (studentDto is null)
             return NotFound();
-        
+
         return Ok(studentDto);
     }
-    
+
     // TODO: Rest of CRUD
 }
