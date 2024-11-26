@@ -2,7 +2,6 @@
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
-using PassedPawn.Models;
 using PassedPawn.Models.DTOs.User.Student;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -14,13 +13,12 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(StudentDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(
-        Summary = "Registers a new user",
-        Description = "This endpoint allows for the registration of a new user. It takes in the details of the student and creates a new record."
+        Summary = "Registers a new student"
     )]
     public async Task<IActionResult> Register(StudentUpsertDto studentUpsertDto)
     {
         // User service 
-        ServiceResult<StudentDto> serviceResponse = await userService.AddUser(studentUpsertDto);
+        var serviceResponse = await userService.AddUser(studentUpsertDto);
 
         if (!serviceResponse.IsSuccess)
             return BadRequest(serviceResponse.Errors);
@@ -30,6 +28,11 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
 
     // TODO: Protect this route
     [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Returns student details"
+    )]
     public async Task<IActionResult> Get(int id)
     {
         var studentDto = await unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id);

@@ -3,7 +3,7 @@ using PassedPawn.API.Extensions;
 using PassedPawn.API.Handlers;
 using PassedPawn.Models.Configuration;
 
-WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
@@ -25,7 +25,7 @@ builder.Services.AddOptions<KeycloakConfig>()
     .BindConfiguration("Keycloak")
     .ValidateDataAnnotations().ValidateOnStart();
 
-WebApplication app = builder.Build();
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
@@ -37,7 +37,6 @@ app.UseExceptionHandler();
 
 app.UseHttpsRedirection();
 
-app.MapGet("test", () => "hello world");
 app.MapControllers();
 
 app.Run();

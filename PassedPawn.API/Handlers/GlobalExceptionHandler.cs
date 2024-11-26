@@ -13,7 +13,7 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
     {
         logger.LogError(exception, "Exception occurred: {Message}", exception.Message);
 
-        ProblemDetails problemDetails = exception switch
+        var problemDetails = exception switch
         {
             KeycloakNullResponseException ex => new ProblemDetails
             {

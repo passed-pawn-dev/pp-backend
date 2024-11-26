@@ -34,13 +34,13 @@ public class UserService(
         if (!await unitOfWork.SaveChangesAsync())
             return ServiceResult<StudentDto>.Failure(["Fail to save to database from UserService"]);
 
-        KeycloakRegistrationResponse accessTokenResponse = await keycloakService.GetAccessTokenAsync();
+        var accessTokenResponse = await keycloakService.GetAccessTokenAsync();
 
         var client = new HttpClient();
 
         client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessTokenResponse.Token);
 
-        HttpResponseMessage response =
+        var response =
             await client.PostAsJsonAsync($"{baseUrl}/admin/realms/{realm}/users", userRegistrationDto);
 
         if (!response.IsSuccessStatusCode)

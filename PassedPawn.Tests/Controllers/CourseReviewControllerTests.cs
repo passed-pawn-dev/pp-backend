@@ -30,7 +30,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync(courseReviewDto);
 
         // Act
-        IActionResult result = await _courseReviewController.GetReview(id);
+        var result = await _courseReviewController.GetReview(id);
 
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
@@ -46,7 +46,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync((CourseReviewDto?)null);
 
         // Act
-        IActionResult result = await _courseReviewController.GetReview(id);
+        var result = await _courseReviewController.GetReview(id);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -68,7 +68,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync(true);
 
         // Act
-        IActionResult result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
+        var result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
@@ -87,7 +87,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync((CourseReview?)null);
 
         // Act
-        IActionResult result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
+        var result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -106,7 +106,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync(true);
 
         // Act
-        IActionResult result = await _courseReviewController.DeleteReview(id);
+        var result = await _courseReviewController.DeleteReview(id);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
@@ -121,7 +121,7 @@ public class CourseReviewControllerTests
             .ReturnsAsync((CourseReview?)null);
 
         // Act
-        IActionResult result = await _courseReviewController.DeleteReview(id);
+        var result = await _courseReviewController.DeleteReview(id);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);

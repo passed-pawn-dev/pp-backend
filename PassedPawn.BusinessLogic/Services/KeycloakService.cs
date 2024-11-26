@@ -28,10 +28,10 @@ public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig) : IKeycloa
 
         var client = new HttpClient();
 
-        HttpResponseMessage response =
+        var response =
             await client.PostAsync($"{baseUrl}/realms/{realm}/protocol/openid-connect/token", content);
 
-        KeycloakRegistrationResponse mappedResponse =
+        var mappedResponse =
             await response.Content.ReadFromJsonAsync<KeycloakRegistrationResponse>()
             ?? throw new KeycloakNullResponseException();
 

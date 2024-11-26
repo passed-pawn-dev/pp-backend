@@ -10,8 +10,8 @@ public class CourseReview : IEntity
 
     public int CourseId { get; init; }
     public Course? Course { get; init; }
-    public int Id { get; set; }
-    
+
     public int StudentId { get; set; }
     public Student? Student { get; set; }
+    public int Id { get; set; }
 }

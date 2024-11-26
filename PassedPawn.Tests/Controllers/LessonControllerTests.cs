@@ -60,12 +60,12 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        LessonDto lessonDto = SampleLessonDto();
+        var lessonDto = SampleLessonDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync<LessonDto>(id))
             .ReturnsAsync(lessonDto);
 
         // Act
-        IActionResult result = await _lessonController.GetLesson(id);
+        var result = await _lessonController.GetLesson(id);
 
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
@@ -81,7 +81,7 @@ public class LessonControllerTests
             .ReturnsAsync((LessonDto?)null);
 
         // Act
-        IActionResult result = await _lessonController.GetLesson(id);
+        var result = await _lessonController.GetLesson(id);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -92,16 +92,16 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        LessonDto lessonDto = SampleLessonDto();
-        LessonUpsertDto lessonUpsertDto = SampleLessonUpsertDto();
-        Course course = SampleCourse();
+        var lessonDto = SampleLessonDto();
+        var lessonUpsertDto = SampleLessonUpsertDto();
+        var course = SampleCourse();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByLessonId(id))
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Success(lessonDto));
 
         // Act
-        IActionResult result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
+        var result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
 
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
@@ -113,12 +113,12 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        LessonUpsertDto lessonUpsertDto = SampleLessonUpsertDto();
+        var lessonUpsertDto = SampleLessonUpsertDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByLessonId(id))
             .ReturnsAsync((Course?)null);
 
         // Act
-        IActionResult result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
+        var result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
@@ -130,15 +130,15 @@ public class LessonControllerTests
         // Arrange
         const int id = 1;
         var errors = new List<string> { "Test error" };
-        LessonUpsertDto lessonUpsertDto = SampleLessonUpsertDto();
-        Course course = SampleCourse();
+        var lessonUpsertDto = SampleLessonUpsertDto();
+        var course = SampleCourse();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByLessonId(id))
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Failure(errors));
 
         // Act
-        IActionResult result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
+        var result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
 
         // Assert
         var okObject = Assert.IsType<BadRequestObjectResult>(result);
@@ -150,14 +150,14 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        Lesson lesson = SampleLesson();
+        var lesson = SampleLesson();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync(id))
             .ReturnsAsync(lesson);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
 
         // Act
-        IActionResult result = await _lessonController.DeleteLesson(id);
+        var result = await _lessonController.DeleteLesson(id);
 
         // Assert
         Assert.IsType<NoContentResult>(result);
@@ -172,7 +172,7 @@ public class LessonControllerTests
             .ReturnsAsync((Lesson?)null);
 
         // Act
-        IActionResult result = await _lessonController.DeleteLesson(id);
+        var result = await _lessonController.DeleteLesson(id);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);

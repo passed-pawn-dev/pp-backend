@@ -4,7 +4,6 @@ using PassedPawn.API.Configuration;
 using PassedPawn.BusinessLogic.Services;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
-using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
 
@@ -86,11 +85,11 @@ public class CourseServiceTests
             SampleLessonDto(course1), SampleLessonDto(course2), SampleLessonDto(course3)
         };
 
-        CourseUpsertDto course = SampleCourseDto(lessons);
+        var course = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
 
         // Act
-        ServiceResult<CourseDto> result = await _courseService.ValidateAndAddCourse(course);
+        var result = await _courseService.ValidateAndAddCourse(course);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -111,11 +110,11 @@ public class CourseServiceTests
             SampleLessonDto(course1), SampleLessonDto(course2), SampleLessonDto(course3)
         };
 
-        CourseUpsertDto course = SampleCourseDto(lessons);
+        var course = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
 
         // Act
-        ServiceResult<CourseDto> result = await _courseService.ValidateAndAddCourse(course);
+        var result = await _courseService.ValidateAndAddCourse(course);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -136,12 +135,12 @@ public class CourseServiceTests
             SampleLessonDto(course1), SampleLessonDto(course2), SampleLessonDto(course3)
         };
 
-        Course course = SampleCourse();
-        CourseUpsertDto courseDto = SampleCourseDto(lessons);
+        var course = SampleCourse();
+        var courseDto = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Update(course));
 
         // Act
-        ServiceResult<CourseDto> result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
+        var result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -164,12 +163,12 @@ public class CourseServiceTests
             SampleLessonDto(course1), SampleLessonDto(course2), SampleLessonDto(course3)
         };
 
-        Course course = SampleCourse();
-        CourseUpsertDto courseDto = SampleCourseDto(lessons);
+        var course = SampleCourse();
+        var courseDto = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Update(course));
 
         // Act
-        ServiceResult<CourseDto> result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
+        var result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -183,12 +182,12 @@ public class CourseServiceTests
     public async Task ValidateAndAddLesson_ShouldPassValidation(int newLessonNumber)
     {
         // Arrange
-        Course course = SampleCourse();
-        LessonUpsertDto lesson = SampleLessonDto(newLessonNumber);
+        var course = SampleCourse();
+        var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
 
         // Act
-        ServiceResult<LessonDto> result = await _courseService.ValidateAndAddLesson(course, lesson);
+        var result = await _courseService.ValidateAndAddLesson(course, lesson);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -202,12 +201,12 @@ public class CourseServiceTests
     public async Task ValidateAndAddLesson_ShouldNotPassValidation(int newLessonNumber)
     {
         // Arrange
-        Course course = SampleCourse();
-        LessonUpsertDto lesson = SampleLessonDto(newLessonNumber);
+        var course = SampleCourse();
+        var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
 
         // Act
-        ServiceResult<LessonDto> result = await _courseService.ValidateAndAddLesson(course, lesson);
+        var result = await _courseService.ValidateAndAddLesson(course, lesson);
 
         // Assert
         Assert.False(result.IsSuccess);
@@ -226,12 +225,12 @@ public class CourseServiceTests
     public async Task ValidateAndUpdateLesson_ShouldPassValidation(int lessonId, int newLessonNumber)
     {
         // Arrange
-        Course course = SampleCourse();
-        LessonUpsertDto lesson = SampleLessonDto(newLessonNumber);
+        var course = SampleCourse();
+        var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
 
         // Act
-        ServiceResult<LessonDto> result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
+        var result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -249,12 +248,12 @@ public class CourseServiceTests
     public async Task ValidateAndUpdateLesson_ShouldNotPassValidation(int lessonId, int newLessonNumber)
     {
         // Arrange
-        Course course = SampleCourse();
-        LessonUpsertDto lesson = SampleLessonDto(newLessonNumber);
+        var course = SampleCourse();
+        var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
 
         // Act
-        ServiceResult<LessonDto> result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
+        var result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
 
         // Assert
         Assert.False(result.IsSuccess);

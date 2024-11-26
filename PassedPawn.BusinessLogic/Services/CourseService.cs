@@ -14,7 +14,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 {
     public async Task<ServiceResult<CourseDto>> ValidateAndAddCourse(CourseUpsertDto courseUpsertDto)
     {
-        List<string> errors = ValidateLessonNumbers(courseUpsertDto);
+        var errors = ValidateLessonNumbers(courseUpsertDto);
 
         if (errors.Count != 0)
             return ServiceResult<CourseDto>.Failure(errors);
@@ -30,7 +30,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
     public async Task<ServiceResult<CourseDto>> ValidateAndUpdateCourse(Course course, CourseUpsertDto courseUpsertDto)
     {
-        List<string> errors = ValidateLessonNumbers(courseUpsertDto);
+        var errors = ValidateLessonNumbers(courseUpsertDto);
 
         if (errors.Count != 0)
             return ServiceResult<CourseDto>.Failure(errors);
@@ -74,7 +74,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
                 $"New lesson has wrong order. Maximum of {highestLessonNumber} expected"
             ]);
 
-        Lesson lesson = course.Lessons.Single(lesson => lesson.Id == lessonId);
+        var lesson = course.Lessons.Single(lesson => lesson.Id == lessonId);
         MoveLessonNumbersOnUpdate(course, lesson.LessonNumber, lessonUpsertDto.LessonNumber);
         mapper.Map(lessonUpsertDto, lesson);
         unitOfWork.Courses.Update(course);
@@ -109,7 +109,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
     private static void MoveLessonNumbersOnAdd(Course course, int newLessonNumber)
     {
-        foreach (Lesson lesson in course.Lessons)
+        foreach (var lesson in course.Lessons)
         {
             if (lesson.LessonNumber < newLessonNumber)
                 continue;
@@ -131,14 +131,14 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
     private static void DecrementLessonNumbers(Course course, int start, int end)
     {
-        foreach (Lesson lesson in course.Lessons)
+        foreach (var lesson in course.Lessons)
             if (lesson.LessonNumber > start && lesson.LessonNumber <= end)
                 lesson.LessonNumber--;
     }
 
     private static void IncrementLessonNumbers(Course course, int start, int end)
     {
-        foreach (Lesson lesson in course.Lessons)
+        foreach (var lesson in course.Lessons)
             if (lesson.LessonNumber >= start && lesson.LessonNumber < end)
                 lesson.LessonNumber++;
     }
