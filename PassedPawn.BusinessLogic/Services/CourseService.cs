@@ -18,10 +18,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
         if (errors.Count != 0)
             return ServiceResult<CourseDto>.Failure(errors);
-        
+
         var course = mapper.Map<Course>(courseUpsertDto);
         unitOfWork.Courses.Add(course);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
 
@@ -34,10 +34,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
         if (errors.Count != 0)
             return ServiceResult<CourseDto>.Failure(errors);
-        
+
         mapper.Map(courseUpsertDto, course);
         unitOfWork.Courses.Update(course);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
 
@@ -53,14 +53,14 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             return ServiceResult<LessonDto>.Failure([
                 $"New lesson has wrong order. Maximum of {highestLessonNumber + 1} expected"
             ]);
-        
+
         MoveLessonNumbersOnAdd(course, lesson.LessonNumber);
         course.Lessons.Add(lesson);
         unitOfWork.Courses.Update(course);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
-        
+
         return ServiceResult<LessonDto>.Success(mapper.Map<LessonDto>(lesson));
     }
 
@@ -78,10 +78,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
         MoveLessonNumbersOnUpdate(course, lesson.LessonNumber, lessonUpsertDto.LessonNumber);
         mapper.Map(lessonUpsertDto, lesson);
         unitOfWork.Courses.Update(course);
-        
+
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
-        
+
         return ServiceResult<LessonDto>.Success(mapper.Map<LessonDto>(lesson));
     }
 
@@ -102,7 +102,9 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             .OrderBy(lesson => lesson.LessonNumber)
             .Select((lesson, index) => (lesson.LessonNumber, index))
             .Aggregate(new List<string>(), (acc, curr) =>
-                curr.LessonNumber != curr.index + 1 ? [..acc, $"{curr.LessonNumber} lesson number is incorrect."] : acc);
+                curr.LessonNumber != curr.index + 1
+                    ? [..acc, $"{curr.LessonNumber} lesson number is incorrect."]
+                    : acc);
     }
 
     private static void MoveLessonNumbersOnAdd(Course course, int newLessonNumber)
@@ -122,35 +124,23 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             return;
 
         if (newLessonNumber > oldLessonNumber)
-        {
             DecrementLessonNumbers(course, oldLessonNumber, newLessonNumber);
-        }
         else
-        {
             IncrementLessonNumbers(course, newLessonNumber, oldLessonNumber);
-        }
     }
 
     private static void DecrementLessonNumbers(Course course, int start, int end)
     {
         foreach (var lesson in course.Lessons)
-        {
             if (lesson.LessonNumber > start && lesson.LessonNumber <= end)
-            {
                 lesson.LessonNumber--;
-            }
-        }
     }
 
     private static void IncrementLessonNumbers(Course course, int start, int end)
     {
         foreach (var lesson in course.Lessons)
-        {
             if (lesson.LessonNumber >= start && lesson.LessonNumber < end)
-            {
                 lesson.LessonNumber++;
-            }
-        }
     }
 
     private static int GetHighestLessonNumber(Course course)

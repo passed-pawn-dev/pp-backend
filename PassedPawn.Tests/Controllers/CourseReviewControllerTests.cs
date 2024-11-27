@@ -11,8 +11,8 @@ namespace PassedPawn.Tests.Controllers;
 
 public class CourseReviewControllerTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly CourseReviewController _courseReviewController;
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
     public CourseReviewControllerTests()
     {
@@ -28,10 +28,10 @@ public class CourseReviewControllerTests
         var courseReviewDto = new CourseReviewDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews.GetByIdAsync<CourseReviewDto>(id))
             .ReturnsAsync(courseReviewDto);
-        
+
         // Act
         var result = await _courseReviewController.GetReview(id);
-        
+
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(courseReviewDto, okObject.Value);
@@ -44,12 +44,12 @@ public class CourseReviewControllerTests
         const int id = 1;
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews.GetByIdAsync<CourseReviewDto>(id))
             .ReturnsAsync((CourseReviewDto?)null);
-        
+
         // Act
         var result = await _courseReviewController.GetReview(id);
-        
+
         // Assert
-       Assert.IsType<NotFoundResult>(result);
+        Assert.IsType<NotFoundResult>(result);
     }
 
     [Fact]
@@ -66,10 +66,10 @@ public class CourseReviewControllerTests
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews.Update(review));
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
-        
+
         // Act
         var result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
-        
+
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         Assert.IsType<CourseReviewDto>(okResult.Value);
@@ -85,10 +85,10 @@ public class CourseReviewControllerTests
         var reviewUpsertDto = new CourseReviewUpsertDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews.GetByIdAsync(id))
             .ReturnsAsync((CourseReview?)null);
-        
+
         // Act
         var result = await _courseReviewController.UpdateReview(id, reviewUpsertDto, mapper);
-        
+
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
@@ -107,11 +107,11 @@ public class CourseReviewControllerTests
 
         // Act
         var result = await _courseReviewController.DeleteReview(id);
-        
+
         // Assert
         Assert.IsType<NoContentResult>(result);
     }
-    
+
     [Fact]
     public async Task DeleteReview_ShouldReturnNotFound_WhenCourseDoesNotExist()
     {
@@ -122,7 +122,7 @@ public class CourseReviewControllerTests
 
         // Act
         var result = await _courseReviewController.DeleteReview(id);
-        
+
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }

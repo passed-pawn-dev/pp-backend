@@ -13,9 +13,9 @@ namespace PassedPawn.Tests.Controllers;
 
 public class CourseControllerTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
-    private readonly Mock<ICourseService> _courseServiceMock;
     private readonly CourseController _courseController;
+    private readonly Mock<ICourseService> _courseServiceMock;
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
     public CourseControllerTests()
     {
@@ -24,39 +24,49 @@ public class CourseControllerTests
         _courseController = new CourseController(_unitOfWorkMock.Object, _courseServiceMock.Object);
     }
 
-    private static Course SampleCourse() =>
-        new()
+    private static Course SampleCourse()
+    {
+        return new Course
         {
             Title = "Test",
             Description = "Test"
         };
+    }
 
-    private static CourseDto SampleCourseDto() =>
-        new()
+    private static CourseDto SampleCourseDto()
+    {
+        return new CourseDto
         {
             Title = "Test",
             Description = "Test"
         };
-    
-    private static CourseUpsertDto SampleCourseUpsertDto() =>
-        new()
-        {
-            Title = "Test",
-            Description = "Test"
-        };
+    }
 
-    private static LessonDto SampleLessonDto() =>
-        new()
+    private static CourseUpsertDto SampleCourseUpsertDto()
+    {
+        return new CourseUpsertDto
+        {
+            Title = "Test",
+            Description = "Test"
+        };
+    }
+
+    private static LessonDto SampleLessonDto()
+    {
+        return new LessonDto
         {
             LessonNumber = 1
         };
+    }
 
-    private static LessonUpsertDto SampleLessonUpsertDto() =>
-        new()
+    private static LessonUpsertDto SampleLessonUpsertDto()
+    {
+        return new LessonUpsertDto
         {
             LessonNumber = 1
         };
-    
+    }
+
     [Fact]
     public async Task GetAllCourses_ShouldReturnOk()
     {
@@ -65,10 +75,10 @@ public class CourseControllerTests
         var courseList = new List<CourseDto> { courseDto };
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync<CourseDto>())
             .ReturnsAsync(courseList);
-        
+
         // Act
         var result = await _courseController.GetAllCourses();
-        
+
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
         var list = Assert.IsType<List<CourseDto>>(okObject.Value);
@@ -83,15 +93,15 @@ public class CourseControllerTests
         var courseDto = SampleCourseDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<CourseDto>(id))
             .ReturnsAsync(courseDto);
-        
+
         // Act
         var result = await _courseController.GetCourse(id);
-        
+
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(courseDto, okObject.Value);
     }
-    
+
     [Fact]
     public async Task GetCourse_ShouldReturnNotFound_WhenCourseDoesNotExist()
     {
@@ -99,10 +109,10 @@ public class CourseControllerTests
         const int id = 1;
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<CourseDto>(id))
             .ReturnsAsync((CourseDto?)null);
-        
+
         // Act
         var result = await _courseController.GetCourse(id);
-        
+
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
@@ -115,7 +125,7 @@ public class CourseControllerTests
         var courseDto = SampleCourseDto();
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Success(courseDto));
-        
+
         // Act
         var result = await _courseController.CreateCourse(courseUpsertDto);
 
@@ -132,10 +142,10 @@ public class CourseControllerTests
         var errors = new List<string> { "Test error" };
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Failure(errors));
-        
+
         // Act
         var result = await _courseController.CreateCourse(courseUpsertDto);
-        
+
         // Assert
         var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(errors, badRequestResult.Value);
@@ -153,7 +163,7 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateCourse(course, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Success(courseDto));
-        
+
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
 
@@ -161,7 +171,7 @@ public class CourseControllerTests
         var okObject = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(courseDto, okObject.Value);
     }
-    
+
     [Fact]
     public async Task UpdateCourse_ShouldReturnNotFound_WhenCourseDoesNotExist()
     {
@@ -170,14 +180,14 @@ public class CourseControllerTests
         var courseUpsertDto = SampleCourseUpsertDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync((Course?)null);
-        
+
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
 
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
-    
+
     [Fact]
     public async Task UpdateCourse_ShouldReturnBadRequest_WhenValidationFails()
     {
@@ -190,7 +200,7 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateCourse(course, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Failure(errors));
-        
+
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
 
@@ -207,13 +217,13 @@ public class CourseControllerTests
         var course = SampleCourse();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync(course);
-        
+
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
-        
+
         // Act
         var result = await _courseController.DeleteCourse(id);
-        
+
         // Assert
         Assert.IsType<NoContentResult>(result);
     }
@@ -226,7 +236,7 @@ public class CourseControllerTests
         var courseUpsertDto = SampleCourseUpsertDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync((Course?)null);
-        
+
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
 
@@ -246,10 +256,10 @@ public class CourseControllerTests
         _unitOfWorkMock.Setup(unitOfWork =>
                 unitOfWork.Lessons.GetAllWhereAsync<LessonDto>(lesson => lesson.CourseId == id))
             .ReturnsAsync(lessonDtoList);
-        
+
         // Act
         var result = await _courseController.GetLessons(id);
-        
+
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(lessonDtoList, okObject.Value);
@@ -270,12 +280,12 @@ public class CourseControllerTests
 
         // Act
         var result = await _courseController.AddLesson(id, lessonUpsertDto);
-        
+
         // Assert
         var createAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(lessonDto, createAtActionResult.Value);
     }
-    
+
     [Fact]
     public async Task AddLesson_ShouldReturnNotFound_WhenCourseDoesNotExist()
     {
@@ -287,11 +297,11 @@ public class CourseControllerTests
 
         // Act
         var result = await _courseController.AddLesson(id, lessonUpsertDto);
-        
+
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
-    
+
     [Fact]
     public async Task AddLesson_ShouldReturnBadRequest_WhenValidationFails()
     {
@@ -307,7 +317,7 @@ public class CourseControllerTests
 
         // Act
         var result = await _courseController.AddLesson(id, lessonUpsertDto);
-        
+
         // Assert
         var createAtActionResult = Assert.IsType<BadRequestObjectResult>(result);
         Assert.Equal(errors, createAtActionResult.Value);
@@ -324,12 +334,12 @@ public class CourseControllerTests
         };
 
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews
-            .GetAllWhereAsync<CourseReviewDto>(review => review.CourseId == id))
+                .GetAllWhereAsync<CourseReviewDto>(review => review.CourseId == id))
             .ReturnsAsync(courseReviewDtoList);
-        
+
         // Act
         var result = await _courseController.GetReviews(id);
-        
+
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
         Assert.Equal(courseReviewDtoList, okObject.Value);
@@ -343,15 +353,15 @@ public class CourseControllerTests
         var course = new Course { Title = "Test", Description = "Test" };
         var courseReviewDto = new CourseReviewDto();
         var reviewUpsertDto = new CourseReviewUpsertDto();
-        
+
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.AddReview(course, reviewUpsertDto))
             .ReturnsAsync(courseReviewDto);
-        
+
         // Act
         var result = await _courseController.AddReview(id, reviewUpsertDto);
-        
+
         // Assert
         var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
         Assert.Equal(courseReviewDto, createdAtActionResult.Value);
@@ -365,7 +375,7 @@ public class CourseControllerTests
         var reviewUpsertDto = new CourseReviewUpsertDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync((Course?)null);
-        
+
         // Act
         var result = await _courseController.AddReview(id, reviewUpsertDto);
 

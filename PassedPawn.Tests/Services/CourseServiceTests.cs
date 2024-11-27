@@ -11,8 +11,8 @@ namespace PassedPawn.Tests.Services;
 
 public class CourseServiceTests
 {
-    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly CourseService _courseService;
+    private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
     public CourseServiceTests()
     {
@@ -26,7 +26,8 @@ public class CourseServiceTests
     }
 
     private static Course SampleCourse()
-        => new()
+    {
+        return new Course
         {
             Title = "Test",
             Description = "Test",
@@ -49,20 +50,25 @@ public class CourseServiceTests
                 }
             }
         };
+    }
 
     private static CourseUpsertDto SampleCourseDto(IEnumerable<LessonUpsertDto> lessons)
-        => new()
+    {
+        return new CourseUpsertDto
         {
             Title = "Test",
             Description = "Test",
             Lessons = lessons
         };
+    }
 
     private static LessonUpsertDto SampleLessonDto(int lessonNumber)
-        => new()
+    {
+        return new LessonUpsertDto
         {
             LessonNumber = lessonNumber
         };
+    }
 
     [Theory]
     [InlineData(1, 2, 3)]
@@ -81,14 +87,14 @@ public class CourseServiceTests
 
         var course = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
-        
+
         // Act
         var result = await _courseService.ValidateAndAddCourse(course);
-        
+
         // Assert
         Assert.True(result.IsSuccess);
     }
-    
+
     [Theory]
     [InlineData(0, 1, 2)]
     [InlineData(1, 3, 4)]
@@ -106,14 +112,14 @@ public class CourseServiceTests
 
         var course = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
-        
+
         // Act
         var result = await _courseService.ValidateAndAddCourse(course);
-        
+
         // Assert
         Assert.False(result.IsSuccess);
     }
-    
+
     [Theory]
     [InlineData(1, 2, 3)]
     [InlineData(1, 3, 2)]
@@ -132,16 +138,16 @@ public class CourseServiceTests
         var course = SampleCourse();
         var courseDto = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Update(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
-        
+
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Data);
         Assert.Equal(3, result.Data!.Lessons.Count());
     }
-    
+
     [Theory]
     [InlineData(0, 1, 2)]
     [InlineData(1, 3, 4)]
@@ -160,10 +166,10 @@ public class CourseServiceTests
         var course = SampleCourse();
         var courseDto = SampleCourseDto(lessons);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Update(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndUpdateCourse(course, courseDto);
-        
+
         // Assert
         Assert.False(result.IsSuccess);
     }
@@ -179,16 +185,16 @@ public class CourseServiceTests
         var course = SampleCourse();
         var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndAddLesson(course, lesson);
-        
+
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Data);
         Assert.True(OneToN(course.Lessons));
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(5)]
@@ -198,14 +204,14 @@ public class CourseServiceTests
         var course = SampleCourse();
         var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndAddLesson(course, lesson);
-        
+
         // Assert
         Assert.False(result.IsSuccess);
     }
-    
+
     [Theory]
     [InlineData(1, 1)]
     [InlineData(1, 2)]
@@ -222,16 +228,16 @@ public class CourseServiceTests
         var course = SampleCourse();
         var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
-        
+
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Data);
         Assert.True(OneToN(course.Lessons));
     }
-    
+
     [Theory]
     [InlineData(1, 0)]
     [InlineData(1, 4)]
@@ -245,10 +251,10 @@ public class CourseServiceTests
         var course = SampleCourse();
         var lesson = SampleLessonDto(newLessonNumber);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(course));
-        
+
         // Act
         var result = await _courseService.ValidateAndUpdateLesson(course, lessonId, lesson);
-        
+
         // Assert
         Assert.False(result.IsSuccess);
     }

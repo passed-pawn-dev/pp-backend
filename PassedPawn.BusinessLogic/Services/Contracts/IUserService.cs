@@ -1,10 +1,9 @@
 ﻿using PassedPawn.Models;
-using PassedPawn.Models.DTOs.Keycloak;
 using PassedPawn.Models.DTOs.User.Student;
 
 namespace PassedPawn.BusinessLogic.Services.Contracts;
 
 public interface IUserService
 {
-    public Task<ServiceResult<HttpResponseMessage>> AddUser(StudentUpsertDto student);
+    public Task<ServiceResult<StudentDto>> AddUser(StudentUpsertDto student);
 }

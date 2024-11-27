@@ -13,7 +13,7 @@ Content-Type: application/json
   "title": "Test1",
   "description": "Test1",
   "price": 12.44,
-  "thumbnail": { },
+  "thumbnail": {},
   "lessons": [
     {
       "lessonNumber": 1,
