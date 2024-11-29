@@ -40,7 +40,6 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(NationalityDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [SwaggerOperation(
         Summary = "Creates a nationality"
     )]
@@ -59,7 +58,6 @@ public class NationalityController(IUnitOfWork unitOfWork, IMapper mapper) : Api
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NationalityDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [SwaggerOperation(
         Summary = "Updates a nationality"
     )]

@@ -27,7 +27,6 @@ public class CourseReviewController(IUnitOfWork unitOfWork) : ApiControllerBase
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseReviewDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Updates a course review"

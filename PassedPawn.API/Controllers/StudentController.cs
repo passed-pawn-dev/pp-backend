@@ -11,7 +11,6 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(StudentDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(
         Summary = "Registers a new student"
     )]

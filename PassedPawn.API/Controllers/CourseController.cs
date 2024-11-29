@@ -40,7 +40,6 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [SwaggerOperation(
         Summary = "Creates a course"
     )]
@@ -57,7 +56,6 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Updates a course"
@@ -116,7 +114,6 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     [HttpPost("{courseId:int}/lesson")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LessonDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Adds a new lesson to a course",
@@ -161,7 +158,6 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     [HttpPost("{courseId:int}/review")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseReviewDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Adds a new review to a course"
