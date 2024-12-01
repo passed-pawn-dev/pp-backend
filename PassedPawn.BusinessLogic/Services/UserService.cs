@@ -1,13 +1,8 @@
-﻿using System.Net.Http.Json;
-using AutoMapper;
-using Microsoft.Extensions.Options;
+﻿using AutoMapper;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
-using PassedPawn.Models.Configuration;
-using PassedPawn.Models.DTOs.Keycloak;
-using PassedPawn.Models.DTOs.User;
 using PassedPawn.Models.DTOs.User.Coach;
 using PassedPawn.Models.DTOs.User.Student;
 
@@ -16,7 +11,6 @@ namespace PassedPawn.BusinessLogic.Services;
 public class UserService(
     IUnitOfWork unitOfWork,
     IMapper mapper,
-    IOptions<KeycloakConfig> keycloakConfig,
     IKeycloakService keycloakService) : IUserService
 {
     public async Task<ServiceResult<StudentDto>> AddStudent(StudentUpsertDto studentUpsertDto)
@@ -31,7 +25,7 @@ public class UserService(
         if (!await unitOfWork.SaveChangesAsync())
             return ServiceResult<StudentDto>.Failure(["Fail to save to database from UserService"]);
 
-        var response = await RegisterUserInKeycloak(studentUpsertDto);
+        var response = await keycloakService.RegisterUserInKeycloak(studentUpsertDto);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -56,7 +50,7 @@ public class UserService(
         if (!await unitOfWork.SaveChangesAsync())
             return ServiceResult<CoachDto>.Failure(["Fail to save to database from UserService"]);
 
-        var response = await RegisterUserInKeycloak(coachUpsertDto);
+        var response = await keycloakService.RegisterUserInKeycloak(coachUpsertDto);
 
         if (!response.IsSuccessStatusCode)
         {
@@ -67,19 +61,5 @@ public class UserService(
 
         var coachDto = mapper.Map<CoachDto>(coach);
         return ServiceResult<CoachDto>.Success(coachDto);
-    }
-
-    private async Task<HttpResponseMessage> RegisterUserInKeycloak<T>(T dto) where T : UserUpsertDto
-    {
-        var userRegistrationDto = mapper.Map<UserRegistrationDto>(dto);
-        
-        var baseUrl = keycloakConfig.Value.BaseUrl;
-        var realm = keycloakConfig.Value.Realm;
-        
-        var accessTokenResponse = await keycloakService.GetAccessTokenAsync();
-
-        var client = new HttpClient();
-        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessTokenResponse.Token);
-        return await client.PostAsJsonAsync($"{baseUrl}/admin/realms/{realm}/users", userRegistrationDto);
     }
 }

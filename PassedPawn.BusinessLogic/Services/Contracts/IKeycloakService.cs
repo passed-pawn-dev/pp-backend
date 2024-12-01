@@ -1,8 +1,8 @@
-﻿using PassedPawn.Models.DTOs.Keycloak;
+﻿using PassedPawn.Models.DTOs.User;
 
 namespace PassedPawn.BusinessLogic.Services.Contracts;
 
 public interface IKeycloakService
 {
-    public Task<KeycloakRegistrationResponse> GetAccessTokenAsync();
+    public Task<HttpResponseMessage> RegisterUserInKeycloak<T>(T dto) where T : UserUpsertDto;
 }
