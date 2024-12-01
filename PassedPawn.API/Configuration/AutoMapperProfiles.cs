@@ -10,6 +10,7 @@ using PassedPawn.Models.DTOs.Course.Video;
 using PassedPawn.Models.DTOs.Keycloak;
 using PassedPawn.Models.DTOs.Nationality;
 using PassedPawn.Models.DTOs.Photo;
+using PassedPawn.Models.DTOs.User.Coach;
 using PassedPawn.Models.DTOs.User.Student;
 
 namespace PassedPawn.API.Configuration;
@@ -21,10 +22,19 @@ public class AutoMapperProfiles : Profile
         CreateMap<StudentUpsertDto, Student>();
         CreateMap<Student, StudentDto>();
 
+        CreateMap<CoachUpsertDto, Coach>();
+        CreateMap<Coach, CoachDto>();
+
         CreateMap<StudentUpsertDto, UserRegistrationDto>()
             .ForMember(dest => dest.Credentials,
-                opt => opt.MapFrom(src => new List<CredentialDto> { new() { Value = src.Password } }));
+                opt => opt.MapFrom(src => new List<CredentialDto> { new() { Value = src.Password } }))
+            .ForMember(dest => dest.RealmRoles, opt => opt.MapFrom(_ => new List<string> { "student" }));
 
+        CreateMap<CoachUpsertDto, UserRegistrationDto>()
+            .ForMember(dest => dest.Credentials,
+                opt => opt.MapFrom(src => new List<CredentialDto> { new() { Value = src.Password } }))
+            .ForMember(dest => dest.RealmRoles, opt => opt.MapFrom(_ => new List<string> { "student" }));
+        
         CreateMap<PhotoUpsertDto, Photo>();
         CreateMap<Photo, PhotoDto>();
 

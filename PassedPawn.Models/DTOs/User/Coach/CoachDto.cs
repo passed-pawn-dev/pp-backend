@@ -1,8 +1,7 @@
-﻿namespace PassedPawn.DataAccess.Entities;
+namespace PassedPawn.Models.DTOs.User.Coach;
 
-public class Coach : User
+public class CoachDto : UserDto
 {
     public string? DetailedDescription { get; init; }
-
     public string? ShortDescription { get; init; }
 }
