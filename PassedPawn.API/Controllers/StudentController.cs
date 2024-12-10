@@ -11,11 +11,10 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
 {
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(StudentDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(
         Summary = "Registers a new student"
     )]
-    public async Task<IActionResult> Register(StudentUpsertDto studentUpsertDto)
+    public async Task<IActionResult> RegisterStudent(StudentUpsertDto studentUpsertDto)
     {
         // User service 
         var serviceResponse = await userService.AddUser(studentUpsertDto);
@@ -23,7 +22,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
         if (!serviceResponse.IsSuccess)
             return BadRequest(serviceResponse.Errors);
 
-        return CreatedAtAction(nameof(Get), new { id = serviceResponse.Data.Id }, serviceResponse.Data);
+        return CreatedAtAction(nameof(GetStudent), new { id = serviceResponse.Data.Id }, serviceResponse.Data);
     }
 
     // TODO: Protect this route
@@ -33,7 +32,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     [SwaggerOperation(
         Summary = "Returns student details"
     )]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> GetStudent(int id)
     {
         var studentDto = await unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id);
 

@@ -27,7 +27,6 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     [HttpPut("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Updates a lesson",
