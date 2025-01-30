@@ -1,3 +1,5 @@
+using PassedPawn.DataAccess;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Extensions;
@@ -57,11 +59,14 @@ builder.Services.AddOptions<KeycloakConfig>()
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
 }
+
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseExceptionHandler();
 
