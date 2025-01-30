@@ -9,6 +9,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.Tests", "PassedP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.BusinessLogic", "PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj", "{649DF420-C5D5-4451-BCCA-254DE59794B6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.ChessLogic", "PassedPawn.ChessLogic\PassedPawn.ChessLogic.csproj", "{037BAB00-A733-4606-A960-A84716F21735}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PassedPawn.ChessLogicTests", "PassedPawn.ChessLogicTests\PassedPawn.ChessLogicTests.csproj", "{5FCEAAF1-6F1B-4DCA-81A9-BB30B7328223}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -35,5 +39,13 @@ Global
 		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{649DF420-C5D5-4451-BCCA-254DE59794B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{037BAB00-A733-4606-A960-A84716F21735}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{037BAB00-A733-4606-A960-A84716F21735}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{037BAB00-A733-4606-A960-A84716F21735}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{037BAB00-A733-4606-A960-A84716F21735}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5FCEAAF1-6F1B-4DCA-81A9-BB30B7328223}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5FCEAAF1-6F1B-4DCA-81A9-BB30B7328223}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5FCEAAF1-6F1B-4DCA-81A9-BB30B7328223}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5FCEAAF1-6F1B-4DCA-81A9-BB30B7328223}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

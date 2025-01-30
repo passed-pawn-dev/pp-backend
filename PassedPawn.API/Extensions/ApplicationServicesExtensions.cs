@@ -23,7 +23,11 @@ public static class ApplicationServicesExtensions
         {
             options.UseNpgsql(
                 configuration.GetConnectionString("DefaultConnection"),
-                x => x.MigrationsAssembly("PassedPawn.DataAccess")
+                x =>
+                {
+                    x.MigrationsAssembly("PassedPawn.DataAccess");
+                    x.EnableRetryOnFailure();
+                }
             );
         });
     }
