@@ -75,6 +75,12 @@ public partial class ChessBoard
             Board[prevRow, prevCol] = null;
             Board[newRow, newCol] = piece;
         }
+        else if (piece is Pawn && Board[newRow, newCol] is null && newCol != prevCol)
+        {
+            Board[newRow + (CurrentPlayer == Color.White ?  -1 : 1), newCol] = null;
+            Board[prevRow, prevCol] = null;
+            Board[newRow, newCol] = piece;
+        }
         else
         {
             Board[prevRow, prevCol] = null;
