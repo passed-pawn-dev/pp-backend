@@ -1,3 +1,4 @@
+using System.Text;
 using PassedPawn.ChessLogic.Models;
 using PassedPawn.ChessLogic.Pieces;
 
@@ -6,30 +7,51 @@ namespace PassedPawn.ChessLogic.ChessBoard;
 public partial class ChessBoard
 {
     private LastMove? _lastMove;
+
+    private bool _canWhiteCastleKingSide = true;
+    private bool _canWhiteCastleQueenSide = true;
+    private bool _canBlackCastleKingSide = true;
+    private bool _canBlackCastleQueenSide = true;
     
-    public Piece?[,] Board { get; } =
+    public Piece?[,] Board { get; }
+
+    public ChessBoard()
     {
+        Board = new Piece?[,]
         {
-            new Rook(Color.White), new Knight(Color.White), new Bishop(Color.White), new Queen(Color.White),
-            new King(Color.White), new Bishop(Color.White), new Knight(Color.White), new Rook(Color.White)
-        },
-        {
-            new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White),
-            new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White)
-        },
-        { null, null, null, null, null, null, null, null},
-        { null, null, null, null, null, null, null, null},
-        { null, null, null, null, null, null, null, null},
-        { null, null, null, null, null, null, null, null},
-        {
-            new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black),
-            new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black)
-        },
-        {
-            new Rook(Color.Black), new Knight(Color.Black), new Bishop(Color.Black), new Queen(Color.Black),
-            new King(Color.Black), new Bishop(Color.Black), new Knight(Color.Black), new Rook(Color.Black)
-        }
-    };
+            {
+                new Rook(Color.White), new Knight(Color.White), new Bishop(Color.White), new Queen(Color.White),
+                new King(Color.White), new Bishop(Color.White), new Knight(Color.White), new Rook(Color.White)
+            },
+            {
+                new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White),
+                new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White), new Pawn(Color.White)
+            },
+            { null, null, null, null, null, null, null, null},
+            { null, null, null, null, null, null, null, null},
+            { null, null, null, null, null, null, null, null},
+            { null, null, null, null, null, null, null, null},
+            {
+                new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black),
+                new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black), new Pawn(Color.Black)
+            },
+            {
+                new Rook(Color.Black), new Knight(Color.Black), new Bishop(Color.Black), new Queen(Color.Black),
+                new King(Color.Black), new Bishop(Color.Black), new Knight(Color.Black), new Rook(Color.Black)
+            }
+        };
+    }
+
+    public ChessBoard(Piece?[,] board, Color currentPlayer, bool canWhiteCastleKingSide, bool canWhiteCastleQueenSide,
+        bool canBlackCastleKingSide, bool canBlackCastleQueenSide)
+    {
+        Board = board;
+        CurrentPlayer = currentPlayer;
+        _canWhiteCastleKingSide = canWhiteCastleKingSide;
+        _canWhiteCastleQueenSide = canWhiteCastleQueenSide;
+        _canBlackCastleKingSide = canBlackCastleKingSide;
+        _canBlackCastleQueenSide = canBlackCastleQueenSide;
+    }
 
     public Color CurrentPlayer { get; private set; } = Color.White;
     private const int BoardSize = 8;
@@ -92,11 +114,35 @@ public partial class ChessBoard
             case Pawn pawn:
                 pawn.SetHasMoved();
                 break;
-            case Rook rook:
-                rook.SetHasMoved();
+            case Rook:
+                switch (prevCol)
+                {
+                    case 0 when CurrentPlayer == Color.White:
+                        _canWhiteCastleQueenSide = false;
+                        break;
+                    case 0 when CurrentPlayer == Color.Black:
+                        _canBlackCastleQueenSide = false;
+                        break;
+                    case 7 when CurrentPlayer == Color.White:
+                        _canWhiteCastleKingSide = false;
+                        break;
+                    case 7 when CurrentPlayer == Color.Black:
+                        _canBlackCastleKingSide = false;
+                        break;
+                }
+
                 break;
-            case King king:
-                king.SetHasMoved();
+            case King:
+                if (CurrentPlayer == Color.White)
+                {
+                    _canWhiteCastleKingSide = false;
+                    _canWhiteCastleQueenSide = false;
+                }
+                else
+                {
+                    _canBlackCastleKingSide = false;
+                    _canBlackCastleQueenSide = false;
+                }
                 break;
         }
         

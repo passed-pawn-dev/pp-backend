@@ -18,7 +18,7 @@ public partial class ChessBoard
             Knight => CanKnightMove(prevRow, prevCol, newRow, newCol),
             Rook => CanRookMove(prevRow, prevCol, newRow, newCol),
             Queen => CanQueenMove(prevRow, prevCol, newRow, newCol),
-            King king => CanKingMove(king.HasMoved, prevRow, prevCol, newRow, newCol),
+            King king => CanKingMove(prevRow, prevCol, newRow, newCol),
             _ => throw new ArgumentOutOfRangeException()
         };
     }

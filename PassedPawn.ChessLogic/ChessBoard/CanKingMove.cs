@@ -5,7 +5,7 @@ namespace PassedPawn.ChessLogic.ChessBoard;
 
 public partial class ChessBoard
 {
-    private bool CanKingMove(bool hasMoved, int prevRow, int prevCol, int newRow, int newCol)
+    private bool CanKingMove(int prevRow, int prevCol, int newRow, int newCol)
     {
         if (Math.Abs(newCol - prevCol) == 2 && newRow == prevRow)
             return CanCastle(newCol > prevCol);
@@ -20,14 +20,30 @@ public partial class ChessBoard
 
         bool CanCastle(bool kingSideCastle)
         {
-            if (hasMoved || IsInCheck())
+            if (IsInCheck())
                 return false;
             
             var rookPositionCol = kingSideCastle ? 7 : 0;
             var possibleRook = Board[prevRow, rookPositionCol];
 
-            if (possibleRook is not Rook rook || rook.HasMoved)
+            if (possibleRook is not Rook)
                 return false;
+
+            switch (rookPositionCol)
+            {
+                case 0 when CurrentPlayer == Color.White:
+                    if (!_canWhiteCastleQueenSide) return false;
+                    break;
+                case 0 when CurrentPlayer == Color.Black:
+                    if (!_canBlackCastleQueenSide) return false;
+                    break;
+                case 7 when CurrentPlayer == Color.White:
+                    if (!_canWhiteCastleKingSide) return false;
+                    break;
+                case 7 when CurrentPlayer == Color.Black:
+                    if (!_canBlackCastleKingSide) return false;
+                    break;
+            }
 
             var firstKingPositionCol = prevCol + (kingSideCastle ? 1 : -1);
             var secondKingPositionCol = prevCol + (kingSideCastle ? 2 : -2);
