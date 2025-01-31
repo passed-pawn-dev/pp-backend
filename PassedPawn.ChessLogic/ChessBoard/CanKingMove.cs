@@ -7,32 +7,42 @@ public partial class ChessBoard
 {
     private bool CanKingMove(bool hasMoved, int prevRow, int prevCol, int newRow, int newCol)
     {
+        if (Math.Abs(newCol - prevCol) == 2 && newRow == prevRow)
+            return CanCastle(newCol > prevCol);
+        
         IEnumerable<Coords> directions = [
-            new Coords(0, 2), new Coords(0, 2),
             new Coords(0, 1), new Coords(0, -1), new Coords(1, 0), new Coords(1, -1),
             new Coords(1, 1), new Coords(-1, 0), new Coords(-1, 1), new Coords(-1, -1)
         ];
         
-        if (!hasMoved || RookHasNotMoved())
-        {
-            return NoPieceOnTheWay()
-                   && directions.Contains(new Coords(newRow - prevRow, newCol - prevCol));
-        }
-        
         return !IsFriendlyPieceThere(newRow, newCol)
-               && directions.Skip(2).Contains(new Coords(newRow - prevRow, newCol - prevCol));
-        
-        bool RookHasNotMoved()
-        {
-            var piece = newCol > prevCol ? Board[prevRow, 7] : Board[prevRow, 0];
-            return piece is Rook { HasMoved: false };
-        }
+               && directions.Contains(new Coords(newRow - prevRow, newCol - prevCol));
 
-        bool NoPieceOnTheWay()
+        bool CanCastle(bool kingSideCastle)
         {
-            var piece1 = newCol > prevCol ? Board[prevRow, 5] : Board[prevRow, 3];
-            var piece2 = newCol > prevCol ? Board[prevRow, 6] : Board[prevRow, 2];
-            return piece1 is null && piece2 is null;
+            if (hasMoved || IsInCheck())
+                return false;
+            
+            var rookPositionCol = kingSideCastle ? 7 : 0;
+            var possibleRook = Board[prevRow, rookPositionCol];
+
+            if (possibleRook is not Rook rook || rook.HasMoved)
+                return false;
+
+            var firstKingPositionCol = prevCol + (kingSideCastle ? 1 : -1);
+            var secondKingPositionCol = prevCol + (kingSideCastle ? 2 : -2);
+
+            if (Board[prevRow, firstKingPositionCol] is not null
+                || Board[prevRow, secondKingPositionCol] is not null)
+                return false;
+
+            if (!kingSideCastle && Board[prevRow, 1] is not null)
+                return false;
+
+            return IsPositionSafeAfterMove(prevRow, prevCol,
+                       firstKingPositionCol, firstKingPositionCol)
+                   && IsPositionSafeAfterMove(prevRow, prevCol,
+                       firstKingPositionCol, secondKingPositionCol);
         }
     }
 }

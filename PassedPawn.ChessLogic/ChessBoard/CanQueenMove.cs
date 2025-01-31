@@ -27,7 +27,7 @@ public partial class ChessBoard
                     distanceCol += distanceCol > 0 ? -1 : 1;
                 }
 
-                return true;
+                return IsPositionSafeAfterMove(prevRow, prevCol, newRow, newCol);
             }
         
             distanceRow += distanceRow > 0 ? -1 : 1;
@@ -40,7 +40,7 @@ public partial class ChessBoard
                 distanceRow += distanceRow > 0 ? -1 : 1;
             }
 
-            return true;
+            return IsPositionSafeAfterMove(prevRow, prevCol, newRow, newCol);
         }
 
         if (IsFriendlyPieceThere(newRow, newCol))
@@ -58,6 +58,6 @@ public partial class ChessBoard
             distanceCol += distanceCol > 0 ? -1 : 1;
         }
 
-        return true;
+        return IsPositionSafeAfterMove(prevRow, prevCol, newRow, newCol);
     }
 }

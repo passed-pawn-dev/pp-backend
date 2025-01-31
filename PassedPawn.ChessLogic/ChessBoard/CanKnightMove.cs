@@ -13,6 +13,7 @@ public partial class ChessBoard
         ];
         
         return !IsFriendlyPieceThere(newRow, newCol)
-               && directions.Contains(new Coords(newRow - prevRow, newCol - prevCol));
+               && directions.Contains(new Coords(newRow - prevRow, newCol - prevCol))
+               && IsPositionSafeAfterMove(prevRow, prevCol, newRow, newCol);
     }
 }

@@ -22,7 +22,5 @@ public static class Program
         Console.WriteLine(chessBoard.Board[0, 5]);
         Console.WriteLine("Old Rook:");
         Console.WriteLine(chessBoard.Board[0, 7]);
-        Console.WriteLine("Knight:");
-        Console.WriteLine(chessBoard.Board[2, 5]);
     }
 }

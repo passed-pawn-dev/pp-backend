@@ -25,6 +25,6 @@ public partial class ChessBoard
             distanceCol += distanceCol > 0 ? -1 : 1;
         }
 
-        return true;
+        return IsPositionSafeAfterMove(prevRow, prevCol, newRow, newCol);
     }
 }
