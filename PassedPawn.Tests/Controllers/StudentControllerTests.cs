@@ -58,7 +58,7 @@ public class StudentControllerTests
     {
         // Arrange
         const int id = 1;
-        var studentDto = SampleStudentDto;
+        var studentDto = SampleStudentDto();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetByIdAsync<StudentDto>(id)).ReturnsAsync(studentDto);
 
         // Act
