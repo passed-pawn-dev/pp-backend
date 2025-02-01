@@ -25,7 +25,7 @@ public abstract class UserDto
 
     public int Elo { get; init; }
 
-    public ChessTitle? ChessTitle { get; init; }
+    public string? ChessTitle { get; init; }
 
     public int NationalityId { get; init; }
 }
