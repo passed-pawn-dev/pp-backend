@@ -11,6 +11,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.ConfigureAuthentication(builder.Configuration);
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

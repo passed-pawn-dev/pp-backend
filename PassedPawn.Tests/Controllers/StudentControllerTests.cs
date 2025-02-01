@@ -90,7 +90,7 @@ public class StudentControllerTests
         var studentUpsertDto = SampleStudentUpsertDto();
         var studentDto = SampleStudentDto();
         
-        _userServiceMock.Setup(userService => userService.AddUser(studentUpsertDto)).ReturnsAsync(ServiceResult<StudentDto>.Success(studentDto));
+        _userServiceMock.Setup(userService => userService.AddStudent(studentUpsertDto)).ReturnsAsync(ServiceResult<StudentDto>.Success(studentDto));
 
         // Act
         var result = await _studentController.RegisterStudent(studentUpsertDto);
@@ -106,7 +106,7 @@ public class StudentControllerTests
         // Arrange
         var studentUpsertDto = SampleStudentUpsertDto();
         var errors = new List<string> { "Error Test" };
-        _userServiceMock.Setup(userService => userService.AddUser(studentUpsertDto)).ReturnsAsync(ServiceResult<StudentDto>.Failure(errors));
+        _userServiceMock.Setup(userService => userService.AddStudent(studentUpsertDto)).ReturnsAsync(ServiceResult<StudentDto>.Failure(errors));
 
         // Act
         var result = await _studentController.RegisterStudent(studentUpsertDto);
