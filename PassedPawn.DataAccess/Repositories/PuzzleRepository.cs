@@ -11,6 +11,8 @@ public class PuzzleRepository(ApplicationDbContext dbContext, IMapper mapper)
     public async Task<Puzzle?> GetPuzzleById(int id)
     {
         return await DbSet
-            .SingleOrDefaultAsync(puzzle => puzzle.Id == id);
+            .Where(puzzle => puzzle.Id == id)
+            .Include(puzzle => puzzle.Students)
+            .SingleOrDefaultAsync();
     }
 }

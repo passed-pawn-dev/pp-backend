@@ -12,5 +12,5 @@ public class Puzzle : IEntity
     
     public required string Solution { get; set; }
 
-    public List<Student> Student { get; set; } = [];
+    public List<Student> Students { get; set; } = [];
 }
