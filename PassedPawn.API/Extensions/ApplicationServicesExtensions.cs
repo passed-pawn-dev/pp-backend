@@ -1,10 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PassedPawn.API.Configuration;
 using PassedPawn.BusinessLogic.Services;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.Keyclock;
 
 namespace PassedPawn.API.Extensions;
 
@@ -17,7 +22,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IKeycloakService, KeycloakService>();
-
+        
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<ApplicationDbContext>(options =>
         {
@@ -30,5 +35,59 @@ public static class ApplicationServicesExtensions
                 }
             );
         });
+    }
+
+    public static void ConfigureAuthentication(this IServiceCollection services, IConfiguration configuration)
+    {
+        var keycloakConfiguration = configuration.GetSection("Keycloak");
+        
+        services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                options.RequireHttpsMetadata = false;
+                options.Authority = $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}";
+                // options.Audience = keycloakConfiguration["resource"];
+                options.Audience = "account";
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidIssuers =
+                    [
+                        $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}",
+                        $"http://localhost:8081/realms/{keycloakConfiguration["realm"]}"
+                    ]
+                };
+                
+                options.Events = new JwtBearerEvents
+                {
+                    OnTokenValidated = context =>
+                    {
+                        if (context.Principal?.Identity is not ClaimsIdentity claimsIdentity)
+                            return Task.CompletedTask;
+                        
+                        var resourceRoles = context.Principal.FindFirst("resource_access")?.Value;
+                        
+                        if (resourceRoles is null)
+                            return Task.CompletedTask;
+                        
+                        var deserializedResourceRoles = JsonSerializer.Deserialize<ResourceAccess>(resourceRoles);
+                        var roles = deserializedResourceRoles?.ApiClient?.Roles;
+
+                        foreach (var role in roles ?? [])
+                            claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role));
+
+                        return Task.CompletedTask;
+                    }
+                };
+            });
+        
+        // services
+        //     .AddAuthorization()
+        //     .AddAuthorizationBuilder()
+        //     .AddPolicy("require admin role", policy => policy.RequireRole("admin", "owner"))
+        //     .AddPolicy("require owner role", policy => policy.RequireRole("owner"));
     }
 }
