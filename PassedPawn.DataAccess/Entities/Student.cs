@@ -2,4 +2,5 @@
 
 public class Student : User
 {
+    public List<Puzzle> Puzzles { get; set; } = [];
 }

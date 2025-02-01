@@ -14,6 +14,7 @@
 
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
             <PrivateAssets>all</PrivateAssets>
@@ -26,6 +27,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj"/>
+        <ProjectReference Include="..\PassedPawn.ChessLogic\PassedPawn.ChessLogic.csproj" />
         <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj"/>
         <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj"/>
     </ItemGroup>
