@@ -44,13 +44,15 @@ public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
 
         if (puzzle is null)
             return NotFound();
+        
+        var student = await unitOfWork.Students.GetUserByEmail(User.GetUserId())
+                      ?? throw new Exception("Coach exists in Keyclock but not in out database");
+
+        if (puzzle.Student.Contains(student))
+            return Conflict(new ErrorResponseDto("Already solved this puzzle"));
 
         if (puzzle.Solution != solution)
             return BadRequest(new ErrorResponseDto("Invalid solution"));
-        
-        var email = User.GetUserId();
-        var student = await unitOfWork.Students.GetUserByEmail(email)
-                      ?? throw new Exception("Coach exists in Keyclock but not in out database");
         
         student.Puzzles.Add(puzzle);
         unitOfWork.Students.Update(student);
