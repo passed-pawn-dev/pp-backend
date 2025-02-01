@@ -641,12 +641,12 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<int>("PuzzlesId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StudentId")
+                    b.Property<int>("StudentsId")
                         .HasColumnType("integer");
 
-                    b.HasKey("PuzzlesId", "StudentId");
+                    b.HasKey("PuzzlesId", "StudentsId");
 
-                    b.HasIndex("StudentId");
+                    b.HasIndex("StudentsId");
 
                     b.ToTable("PuzzleStudent");
                 });
@@ -788,7 +788,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Student", null)
                         .WithMany()
-                        .HasForeignKey("StudentId")
+                        .HasForeignKey("StudentsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

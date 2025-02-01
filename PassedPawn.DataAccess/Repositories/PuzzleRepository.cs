@@ -12,7 +12,7 @@ public class PuzzleRepository(ApplicationDbContext dbContext, IMapper mapper)
     {
         return await DbSet
             .Where(puzzle => puzzle.Id == id)
-            .Include(puzzle => puzzle.Student)
+            .Include(puzzle => puzzle.Students)
             .SingleOrDefaultAsync();
     }
 }
