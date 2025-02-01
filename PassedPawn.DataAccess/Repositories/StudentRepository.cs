@@ -8,11 +8,10 @@ namespace PassedPawn.DataAccess.Repositories;
 public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) : 
     RepositoryBase<Student>(dbContext, mapper), IStudentRepository
 {
-    public async Task<int?> GetUserIdByEmail(string email)
+    public async Task<Student?> GetUserByEmail(string email)
     {
         return await DbSet
             .Where(student => student.Email == email)
-            .Select(student => student.Id)
             .SingleOrDefaultAsync();
     }
 }

@@ -5,6 +5,7 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.API.Extensions;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Puzzle;
 
 namespace PassedPawn.API.Controllers;
@@ -27,12 +28,33 @@ public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
     {
         var email = User.GetUserId();
         var puzzle = mapper.Map<Puzzle>(dto);
-        puzzle.CoachId = await unitOfWork.Coaches.GetUserIdByEmail(email) ?? throw new Exception("Coach exists in Keyclock but not in out database");
+        puzzle.CoachId = await unitOfWork.Coaches.GetUserIdByEmail(email)
+                         ?? throw new Exception("Coach exists in Keyclock but not in out database");
         
         unitOfWork.Puzzles.Add(puzzle);
         await unitOfWork.SaveChangesAsync();
         return CreatedAtAction(nameof(Get), new { id = puzzle.Id }, puzzle);
     }
-    
-    
+
+    [Authorize]
+    [HttpPost("{id:int}")]
+    public async Task<IActionResult> PostSolution(int id, [FromBody] string solution)
+    {
+        var puzzle = await unitOfWork.Puzzles.GetPuzzleById(id);
+
+        if (puzzle is null)
+            return NotFound();
+
+        if (puzzle.Solution != solution)
+            return BadRequest(new ErrorResponseDto("Invalid solution"));
+        
+        var email = User.GetUserId();
+        var student = await unitOfWork.Students.GetUserByEmail(email)
+                      ?? throw new Exception("Coach exists in Keyclock but not in out database");
+        
+        student.Puzzles.Add(puzzle);
+        unitOfWork.Students.Update(student);
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
+    }
 }
