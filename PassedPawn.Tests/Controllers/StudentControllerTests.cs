@@ -58,15 +58,15 @@ public class StudentControllerTests
     {
         // Arrange
         const int id = 1;
-        var studentUpsertDto = SampleStudentUpsertDto();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id)).ReturnsAsync(studentUpsertDto);
+        var studentDto = SampleStudentDto;
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetByIdAsync<StudentDto>(id)).ReturnsAsync(studentDto);
 
         // Act
         var result = await _studentController.GetStudent(id);
         
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(studentUpsertDto, okObject.Value);
+        Assert.Equal(studentDto, okObject.Value);
     }
 
     [Fact]
