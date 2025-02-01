@@ -1,8 +1,6 @@
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using PassedPawn.API.Extensions;
 using PassedPawn.API.Handlers;
-using PassedPawn.DataAccess;
 using PassedPawn.Models.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,7 +11,6 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();
 
 builder.Services.AddApplicationServices(builder.Configuration);
-builder.Services.ConfigureAuthentication(builder.Configuration);
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
@@ -41,17 +38,5 @@ app.UseExceptionHandler();
 app.UseHttpsRedirection();
 
 app.MapControllers();
-
-using var scope = app.Services.CreateScope();
-var services = scope.ServiceProvider;
-try
-{ 	var context = services.GetRequiredService<ApplicationDbContext>();
-    await context.Database.MigrateAsync();
-}
-catch (Exception ex)
-{
-    var logger = services.GetRequiredService<ILogger<Program>>();
-    logger.LogError(ex, "An error occurred during migration");
-}
 
 app.Run();

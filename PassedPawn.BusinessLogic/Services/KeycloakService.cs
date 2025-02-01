@@ -1,15 +1,31 @@
 ﻿using System.Net.Http.Json;
+using AutoMapper;
 using Microsoft.Extensions.Options;
 using PassedPawn.BusinessLogic.Exceptions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.Models.Configuration;
 using PassedPawn.Models.DTOs.Keycloak;
+using PassedPawn.Models.DTOs.User;
 
 namespace PassedPawn.BusinessLogic.Services;
 
-public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig) : IKeycloakService
+public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig, IMapper mapper) : IKeycloakService
 {
-    public async Task<KeycloakRegistrationResponse> GetAccessTokenAsync()
+    public async Task<HttpResponseMessage> RegisterUserInKeycloak<T>(T dto) where T : UserUpsertDto
+    {
+        var userRegistrationDto = mapper.Map<UserRegistrationDto>(dto);
+        
+        var baseUrl = keycloakConfig.Value.BaseUrl;
+        var realm = keycloakConfig.Value.Realm;
+        
+        var accessTokenResponse = await GetAccessTokenAsync();
+
+        var client = new HttpClient();
+        client.DefaultRequestHeaders.Add("Authorization", "Bearer " + accessTokenResponse.Token);
+        return await client.PostAsJsonAsync($"{baseUrl}/admin/realms/{realm}/users", userRegistrationDto);
+    }
+    
+    private async Task<KeycloakRegistrationResponse> GetAccessTokenAsync()
     {
         var baseUrl = keycloakConfig.Value.BaseUrl;
         var realm = keycloakConfig.Value.Realm;

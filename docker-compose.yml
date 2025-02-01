@@ -1,0 +1,103 @@
+services:
+  postgres:
+    container_name: pp-postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: passedpawn
+    networks:
+      - api-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      retries: 3
+      start_period: 30s
+      timeout: 10s
+  pgadmin:
+    container_name: pp-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: user-name@domain-name.com
+      PGADMIN_DEFAULT_PASSWORD: strong-password
+    depends_on: 
+      postgres:
+        condition: service_healthy
+        restart: true
+
+  api:
+    container_name: pp-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: pp-backend
+    ports: 
+      - 8080:8080
+    networks:
+      - api-network
+    depends_on: 
+      postgres:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c 'if echo -n > /dev/tcp/localhost/8080; then exit 0; else exit 1; fi'"]
+      interval: 10s
+      retries: 3
+      start_period: 15s
+      timeout: 10s
+
+  keycloak:
+    container_name: pp-keycloak
+    image: quay.io/keycloak/keycloak:26.0.5
+    ports:
+      - 8081:8080
+    command: -v start-dev --import-realm
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      DB_VENDOR: postgres
+      DB_ADDR: keycloak-postgres
+      DB_PORT: ${POSTGRES_DB_PORT}
+      DB_DATABASE: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - ./keycloak:/opt/keycloak/data/import
+    networks:
+      - keycloak-network
+
+  keycloak-postgres:
+    container_name: pp-keycloak-postgres
+    image: postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    networks:
+      - keycloak-network
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+
+  nginx-local:
+    container_name: pp-nginx
+    image: nginx:stable-alpine3.20-perl
+    ports:
+      - '5500:5500'
+    depends_on:
+      api: 
+        condition: service_healthy
+        restart: true
+    volumes:
+      - ./nginx-local.conf:/etc/nginx/nginx.conf
+    networks:
+      - api-network
+    
+networks:
+  keycloak-network:
+  api-network:
+
+volumes:
+  keycloak-db-data:

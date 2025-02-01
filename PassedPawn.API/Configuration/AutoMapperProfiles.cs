@@ -10,7 +10,6 @@ using PassedPawn.Models.DTOs.Course.Video;
 using PassedPawn.Models.DTOs.Keycloak;
 using PassedPawn.Models.DTOs.Nationality;
 using PassedPawn.Models.DTOs.Photo;
-using PassedPawn.Models.DTOs.Puzzle;
 using PassedPawn.Models.DTOs.User.Student;
 
 namespace PassedPawn.API.Configuration;
@@ -49,11 +48,5 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<CourseReviewUpsertDto, CourseReview>();
         CreateMap<CourseReview, CourseReviewDto>();
-        
-        CreateMap<Puzzle, PuzzleUpsertDto>();
-        CreateMap<PuzzleUpsertDto, Puzzle>();
-        
-        CreateMap<Puzzle, PuzzleDto>();
-        CreateMap<PuzzleDto, Puzzle>();
     }
 }
