@@ -17,7 +17,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     public async Task<IActionResult> RegisterStudent(StudentUpsertDto studentUpsertDto)
     {
         // User service 
-        var serviceResponse = await userService.AddUser(studentUpsertDto);
+        var serviceResponse = await userService.AddStudent(studentUpsertDto);
 
         if (!serviceResponse.IsSuccess)
             return BadRequest(serviceResponse.Errors);
@@ -34,7 +34,7 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
     )]
     public async Task<IActionResult> GetStudent(int id)
     {
-        var studentDto = await unitOfWork.Students.GetByIdAsync<StudentUpsertDto>(id);
+        var studentDto = await unitOfWork.Students.GetByIdAsync<StudentDto>(id);
 
         if (studentDto is null)
             return NotFound();

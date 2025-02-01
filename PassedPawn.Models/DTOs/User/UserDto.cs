@@ -19,7 +19,7 @@ public abstract class UserDto
 
     public string? PhoneNumber { get; init; }
 
-    public PhotoUpsertDto? Photo { get; init; }
+    public PhotoDto? Photo { get; init; }
 
     public DateOnly DateOfBirth { get; init; }
 
