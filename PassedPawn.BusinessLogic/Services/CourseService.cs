@@ -12,7 +12,7 @@ namespace PassedPawn.BusinessLogic.Services;
 
 public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseService
 {
-    public async Task<ServiceResult<CourseDto>> ValidateAndAddCourse(CourseUpsertDto courseUpsertDto)
+    public async Task<ServiceResult<CourseDto>> ValidateAndAddCourse(int coachId, CourseUpsertDto courseUpsertDto)
     {
         var errors = ValidateLessonNumbers(courseUpsertDto);
 
@@ -20,6 +20,7 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
             return ServiceResult<CourseDto>.Failure(errors);
 
         var course = mapper.Map<Course>(courseUpsertDto);
+        course.CoachId = coachId;
         unitOfWork.Courses.Add(course);
 
         if (!await unitOfWork.SaveChangesAsync())

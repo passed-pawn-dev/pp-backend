@@ -10,7 +10,7 @@ public static class ClaimsPrincipalExtensions
     /// <param name="claimsPrincipal">User's claims principal</param>
     /// <exception cref="NullReferenceException">User not logged in, or id not present in claims</exception>
     /// <returns>User's id</returns>
-    public static string GetUserId(this ClaimsPrincipal claimsPrincipal)
+    public static string GetUserEmail(this ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal.Claims
             .FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value;

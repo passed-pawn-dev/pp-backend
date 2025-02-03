@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250203134032_MadeCourseThumbnailOptional")]
+    partial class MadeCourseThumbnailOptional
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -193,6 +196,9 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CoachId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
@@ -216,6 +222,8 @@ namespace PassedPawn.DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CoachId");
 
                     b.HasIndex("LessonId");
 
@@ -256,7 +264,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<int>("LessonNumber")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("VideoId")
+                    b.Property<int>("VideoId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -716,11 +724,19 @@ namespace PassedPawn.DataAccess.Migrations
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExercise", b =>
                 {
+                    b.HasOne("PassedPawn.DataAccess.Entities.Coach", "Coach")
+                        .WithMany()
+                        .HasForeignKey("CoachId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
                         .WithMany("Exercises")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Coach");
 
                     b.Navigation("Lesson");
                 });
@@ -735,7 +751,9 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseVideo", "Video")
                         .WithMany()
-                        .HasForeignKey("VideoId");
+                        .HasForeignKey("VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 

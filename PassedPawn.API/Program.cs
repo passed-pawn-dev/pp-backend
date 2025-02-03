@@ -1,6 +1,8 @@
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using PassedPawn.API.Extensions;
 using PassedPawn.API.Handlers;
+using PassedPawn.DataAccess;
 using PassedPawn.Models.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,10 +30,13 @@ builder.Services.AddOptions<KeycloakConfig>()
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI();
+
+using (var scope = app.Services.CreateScope())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
 }
 
 app.UseExceptionHandler();

@@ -9,8 +9,11 @@ public class Course : IEntity
 
     public float Price { get; set; }
 
-    public int ThumbnailId { get; set; }
+    public int? ThumbnailId { get; set; }
     public Photo? Thumbnail { get; set; }
+    
+    public int CoachId { get; set; }
+    public Coach? Coach { get; set; }
 
     public ICollection<Lesson> Lessons { get; init; } = [];
     public ICollection<CourseReview> Reviews { get; init; } = [];

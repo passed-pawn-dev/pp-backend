@@ -13,7 +13,7 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public ICourseRepository Courses { get; } = new CourseRepository(dbContext, mapper);
     public IRepositoryBase<Lesson> Lessons { get; } = new RepositoryBase<Lesson>(dbContext, mapper);
     public IRepositoryBase<CourseReview> CourseReviews { get; } = new RepositoryBase<CourseReview>(dbContext, mapper);
-    public IPuzzleRepository Puzzles { get; } = new PuzzleRepository(dbContext, mapper);
+    public ICourseExerciseRepository Puzzles { get; } = new CourseExerciseRepository(dbContext, mapper);
 
 
     public async Task<bool> SaveChangesAsync()

@@ -1,7 +1,12 @@
+using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
+using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -26,6 +31,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpPut("{id:int}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -38,6 +44,12 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         if (course is null)
             return NotFound();
+        
+        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
+                      ?? throw new Exception("User does not exist in database");
+
+        if (course.CoachId != coachId)
+            return Forbid();
 
         var serviceResult =
             await courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto);
@@ -49,6 +61,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         return Ok(lessonDto);
     }
 
+    // TODO: Protect
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -68,5 +81,36 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
             throw new Exception("Failed to save database");
 
         return NoContent();
+    }
+    
+    // Only for coach
+    //TODO roles
+    [Authorize]
+    [HttpPost("{lessonId:int}/exercise")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Create new puzzle by Coach"
+    )]
+    public async Task<IActionResult> Post(int lessonId, CourseExerciseUpsertDto dto, IMapper mapper)
+    {
+        var email = User.GetUserEmail();
+        var course = await unitOfWork.Courses.GetByLessonId(lessonId);
+
+        if (course is null)
+            return UnprocessableEntity("Invalid course");
+        
+        var courseId = await unitOfWork.Coaches.GetUserIdByEmail(email)
+                       ?? throw new Exception("Coach exists in Keyclock but not in out database");
+
+        if (course.CoachId != courseId)
+            return Forbid();
+
+        var exercise = mapper.Map<CourseExercise>(dto);
+        var lesson = course.Lessons.First(lesson => lesson.Id == lessonId);
+        lesson.Exercises.Add(exercise);
+        await unitOfWork.SaveChangesAsync();
+        var responseDto = mapper.Map<CourseExerciseDto>(exercise);
+        return CreatedAtAction("Get", "CourseExercise", new { id = exercise.Id }, responseDto);
     }
 }

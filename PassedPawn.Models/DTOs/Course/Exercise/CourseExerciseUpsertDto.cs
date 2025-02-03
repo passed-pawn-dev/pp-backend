@@ -1,9 +1,12 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace PassedPawn.Models.DTOs.Course.Exercise;
 
 public class CourseExerciseUpsertDto
 {
-    public required string Title { get; init; }
-    public string? Description { get; init; }
-    public required string Pgn { get; init; }
+    [Required] public string Title { get; init; } = string.Empty;
+    [Required] public string Description { get; init; } = string.Empty;
+    [Required] public string Fen { get; init; } = string.Empty;
+    [Required] public string Solution { get; set; } = string.Empty;
     public int Order { get; init; }
 }
