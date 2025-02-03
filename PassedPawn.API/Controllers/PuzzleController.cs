@@ -30,7 +30,7 @@ public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper, IPuzzleSer
     
     // Only for coach
     //TODO roles
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(PuzzleDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

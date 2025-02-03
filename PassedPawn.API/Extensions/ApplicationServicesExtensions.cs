@@ -52,7 +52,7 @@ public static class ApplicationServicesExtensions
                 options.RequireHttpsMetadata = false;
                 options.Authority = $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}";
                 // options.Audience = keycloakConfiguration["resource"];
-                options.Audience = "account";
+                options.Audience = "realm-management";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuers =
@@ -85,10 +85,10 @@ public static class ApplicationServicesExtensions
                 };
             });
         
-        // services
-        //     .AddAuthorization()
-        //     .AddAuthorizationBuilder()
-        //     .AddPolicy("require admin role", policy => policy.RequireRole("admin", "owner"))
-        //     .AddPolicy("require owner role", policy => policy.RequireRole("owner"));
+        services
+            .AddAuthorization()
+            .AddAuthorizationBuilder()
+            .AddPolicy("require student role", policy => policy.RequireRole("student"))
+            .AddPolicy("require coach role", policy => policy.RequireRole("coach"));
     }
 }
