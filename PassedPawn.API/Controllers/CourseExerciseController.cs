@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.API.Extensions;
@@ -10,7 +9,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class CourseExerciseController(IUnitOfWork unitOfWork, IMapper mapper, IPuzzleService puzzleService) : ApiControllerBase
+public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puzzleService) : ApiControllerBase
 {
     
     [HttpGet("{id:int}")]
@@ -44,7 +43,7 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IMapper mapper, IP
         {
             "Puzzle not found" => NotFound(),
             "Already solved this puzzle" => Conflict("Already solved this puzzle"),
-            "Invalid answer" => UnprocessableEntity("Invalid answer"),
+            "Invalid solution" => UnprocessableEntity("Invalid answer"),
             "Invalid number of moves" => UnprocessableEntity("Invalid number of moves"),
             _ => throw new Exception("This shouldn't have happened")
         };

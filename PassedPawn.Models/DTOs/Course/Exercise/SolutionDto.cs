@@ -4,5 +4,7 @@ namespace PassedPawn.Models.DTOs.Course.Exercise;
 
 public class SolutionDto
 {
-    [Required] public required string Solution { get; init; }
+    [Required]
+    [RegularExpression(@"^[^,\s][^,\s]*(,[^,\s]+)*[^,\s]$")]
+    public required string Solution { get; init; }
 }

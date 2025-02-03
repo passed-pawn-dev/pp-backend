@@ -40,8 +40,16 @@ public class AutoMapperProfiles : Profile
         CreateMap<Nationality, NationalityDto>();
 
         CreateMap<CourseUpsertDto, Course>();
-        CreateMap<Course, CourseDto>();
+        CreateMap<Course, CourseDto>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Reviews.Count > 0 ? src.Reviews.Average(review => review.Value) : 0));
 
+        CreateMap<Course, NonUserCourse>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Students.Count));
+
+        CreateMap<Course, CourseDetails>();
+            
         CreateMap<LessonUpsertDto, Lesson>();
         CreateMap<Lesson, LessonDto>();
 
@@ -59,5 +67,8 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<CourseExercise, CourseExerciseDto>();
         CreateMap<CourseExerciseUpsertDto, CourseExercise>();
+
+        CreateMap<Course, UserCourseDto>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count));
     }
 }

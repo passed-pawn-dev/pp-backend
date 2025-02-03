@@ -29,6 +29,7 @@ public class CourseServiceTests
     {
         return new Course
         {
+            CoachId = 1,
             Title = "Test",
             Description = "Test",
             Lessons = new List<Lesson>
@@ -89,7 +90,7 @@ public class CourseServiceTests
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
 
         // Act
-        var result = await _courseService.ValidateAndAddCourse(course);
+        var result = await _courseService.ValidateAndAddCourse(1, course);
 
         // Assert
         Assert.True(result.IsSuccess);
@@ -114,7 +115,7 @@ public class CourseServiceTests
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.Add(It.IsAny<Course>()));
 
         // Act
-        var result = await _courseService.ValidateAndAddCourse(course);
+        var result = await _courseService.ValidateAndAddCourse(1, course);
 
         // Assert
         Assert.False(result.IsSuccess);

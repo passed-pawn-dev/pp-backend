@@ -13,6 +13,12 @@ public static class ClaimsPrincipalExtensions
     public static string GetUserEmail(this ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal.Claims
-            .FirstOrDefault(x => x.Type == ClaimTypes.Email)!.Value;
+            .First(x => x.Type == ClaimTypes.Email).Value;
+    }
+    
+    public static string? GetUserEmailOptional(this ClaimsPrincipal claimsPrincipal)
+    {
+        return claimsPrincipal.Claims
+            .FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
     }
 }

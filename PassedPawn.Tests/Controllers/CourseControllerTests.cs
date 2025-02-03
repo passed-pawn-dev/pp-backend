@@ -28,6 +28,7 @@ public class CourseControllerTests
     {
         return new Course
         {
+            CoachId = 1,
             Title = "Test",
             Description = "Test"
         };
@@ -123,7 +124,7 @@ public class CourseControllerTests
         // Arrange
         var courseUpsertDto = SampleCourseUpsertDto();
         var courseDto = SampleCourseDto();
-        _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(courseUpsertDto))
+        _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(1, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Success(courseDto));
 
         // Act
@@ -140,7 +141,7 @@ public class CourseControllerTests
         // Arrange
         var courseUpsertDto = SampleCourseUpsertDto();
         var errors = new List<string> { "Test error" };
-        _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(courseUpsertDto))
+        _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(1, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Failure(errors));
 
         // Act

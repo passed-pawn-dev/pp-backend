@@ -11,7 +11,9 @@ public class RepositoryBase<T>(
     ApplicationDbContext dbContext,
     IMapper mapper) : IRepositoryBase<T> where T : class, IEntity
 {
+    protected readonly DbContext DbContext = dbContext;
     protected readonly DbSet<T> DbSet = dbContext.Set<T>();
+    protected readonly IConfigurationProvider MapperConfiguration = mapper.ConfigurationProvider;
 
     public async Task<IEnumerable<T>> GetAllAsync()
     {
@@ -21,7 +23,7 @@ public class RepositoryBase<T>(
     public async Task<IEnumerable<TDto>> GetAllAsync<TDto>()
     {
         return await DbSet
-            .ProjectTo<TDto>(mapper.ConfigurationProvider)
+            .ProjectTo<TDto>(MapperConfiguration)
             .ToListAsync();
     }
 
@@ -36,7 +38,7 @@ public class RepositoryBase<T>(
     {
         return await DbSet
             .Where(predicate)
-            .ProjectTo<TDto>(mapper.ConfigurationProvider)
+            .ProjectTo<TDto>(MapperConfiguration)
             .ToListAsync();
     }
 
@@ -49,7 +51,7 @@ public class RepositoryBase<T>(
     {
         return await DbSet
             .Where(x => x.Id == id)
-            .ProjectTo<TDto>(mapper.ConfigurationProvider)
+            .ProjectTo<TDto>(MapperConfiguration)
             .FirstOrDefaultAsync();
     }
 
