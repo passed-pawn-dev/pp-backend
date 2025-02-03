@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.API.Extensions;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs;
@@ -12,7 +13,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper) : ApiControllerBase
+public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper, IPuzzleService puzzleService) : ApiControllerBase
 {
     
     [HttpGet("{id:int}")]
@@ -49,32 +50,27 @@ public class PuzzleController(IUnitOfWork unitOfWork, IMapper mapper) : ApiContr
     }
 
     [Authorize]
-    [HttpPost("{id:int}")]
+    [HttpPost("{puzzleId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
     [SwaggerOperation(
         Summary = "Send puzzle solution by Student"
     )]
-    public async Task<IActionResult> PostSolution(int id, [FromBody] string solution)
+    public async Task<IActionResult> PostSolution(int puzzleId, SolutionDto solution)
     {
-        var puzzle = await unitOfWork.Puzzles.GetPuzzleById(id);
+        var serviceResult = await puzzleService.CheckPuzzleSolution(User.GetUserId(), puzzleId, solution.Solution);
 
-        if (puzzle is null)
-            return NotFound();
-        
-        var student = await unitOfWork.Students.GetUserByEmail(User.GetUserId())
-                      ?? throw new Exception("Coach exists in Keyclock but not in out database");
+        if (serviceResult.IsSuccess)
+            return Ok(serviceResult.Data);
 
-        if (puzzle.Students.Contains(student))
-            return Conflict(new ErrorResponseDto("Already solved this puzzle"));
-
-        if (puzzle.Solution != solution)
-            return BadRequest(new ErrorResponseDto("Invalid solution"));
-        
-        student.Puzzles.Add(puzzle);
-        unitOfWork.Students.Update(student);
-        await unitOfWork.SaveChangesAsync();
-        return NoContent();
+        return serviceResult.Errors.First() switch
+        {
+            "Puzzle not found" => NotFound(),
+            "Already solved this puzzle" => Conflict("Already solved this puzzle"),
+            "Invalid answer" => UnprocessableEntity("Invalid answer"),
+            "Invalid number of moves" => UnprocessableEntity("Invalid number of moves"),
+            _ => throw new Exception("This shouldn't have happened")
+        };
     }
 }
