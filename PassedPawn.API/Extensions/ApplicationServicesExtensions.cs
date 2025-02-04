@@ -22,6 +22,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<IKeycloakService, KeycloakService>();
+        services.AddScoped<IPuzzleService, PuzzleService>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<ApplicationDbContext>(options =>
@@ -84,10 +85,10 @@ public static class ApplicationServicesExtensions
                 };
             });
         
-        // services
-        //     .AddAuthorization()
-        //     .AddAuthorizationBuilder()
-        //     .AddPolicy("require admin role", policy => policy.RequireRole("admin", "owner"))
-        //     .AddPolicy("require owner role", policy => policy.RequireRole("owner"));
+        services
+            .AddAuthorization()
+            .AddAuthorizationBuilder()
+            .AddPolicy("require student role", policy => policy.RequireRole("student"))
+            .AddPolicy("require coach role", policy => policy.RequireRole("coach"));
     }
 }
