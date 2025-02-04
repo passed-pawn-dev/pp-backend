@@ -19,8 +19,11 @@ public class AutoMapperProfiles : Profile
 {
     public AutoMapperProfiles()
     {
-        CreateMap<StudentUpsertDto, Student>();
-        CreateMap<Student, StudentDto>();
+        CreateMap<StudentUpsertDto, Student>()
+            .ForMember(dest => dest.ChessTitle, opt => opt.MapFrom(src => src.ChessTitle == null ? null : src.ChessTitle.ToString()));
+        
+        CreateMap<Student, StudentDto>()
+            .ForMember(dest => dest.ChessTitle, opt => opt.MapFrom(src => src.ChessTitle == null ? null : src.ChessTitle.ToString()));
 
         CreateMap<StudentUpsertDto, UserRegistrationDto>()
             .ForMember(dest => dest.Credentials,

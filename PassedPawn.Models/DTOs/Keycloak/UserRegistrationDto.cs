@@ -7,7 +7,7 @@ public class UserRegistrationDto
     public bool Enabled { get; } = true;
     public required string FirstName { get; init; }
     public required string LastName { get; init; }
-    public required IEnumerable<string> RealmRoles { get; init; }
+    // public required Dictionary<string, IEnumerable<string>> ClientRoles { get; set; }
     public required List<CredentialDto> Credentials { get; init; }
 }
 
