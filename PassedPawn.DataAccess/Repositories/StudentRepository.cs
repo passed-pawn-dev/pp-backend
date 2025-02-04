@@ -37,6 +37,16 @@ public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .ToListAsync();
     }
 
+    public async Task<IEnumerable<UserCourseDto>> GetNotBoughtStudentsCourses(int userId)
+    {
+        return await DbContext
+            .Set<Course>()
+            .Include(course => course.Students)
+            .Where(course => course.Students.All(student => student.Id != userId))
+            .ProjectTo<UserCourseDto>(MapperConfiguration)
+            .ToListAsync();
+    }
+
     public async Task<bool> IsCourseBought(int userId, int courseId)
     {
         return await DbSet

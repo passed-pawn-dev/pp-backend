@@ -20,16 +20,21 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
     {
-        if (paid)
+        var userId = await claimsPrincipalService.GetStudentIdOptional(User);
+
+        if (userId is not null)
         {
-            if (!User.IsInRole("student"))
-                return Forbid();
+
+            if (paid)
+            {
+                var userCourses = await unitOfWork.Students.GetStudentCourses(userId.Value);
+                return Ok(userCourses);
+            }
             
-            var userId = await claimsPrincipalService.GetStudentId(User);
-            var userCourses = await unitOfWork.Students.GetStudentCourses(userId);
-            return Ok(userCourses);
+            var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId.Value);
+            return Ok(notBoughtCourses);
         }
-        
+
         var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
         return Ok(courses);
     }
