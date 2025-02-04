@@ -36,22 +36,14 @@ public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig, IMapper ma
 
         var response = await client.PostAsJsonAsync($"{baseUrl}/admin/realms/{realm}/users", userRegistrationDto);
         
-        // var userObject = await client.GetAsync($"{baseUrl}/admin/realms/{realm}/users/?username={userRegistrationDto.Username}");
-        
-        Console.WriteLine(response.Headers.Location);
-        
         var userId = response.Headers.Location?.ToString().Split('/').Last()!;
         
         var clientObject = await client.GetAsync($"{baseUrl}/admin/realms/{realm}/clients?clientId=api-client");
-    
-        Console.WriteLine(clientObject.StatusCode);
             
         var clientId = (await clientObject.Content.ReadAsStringAsync()).Split('"')[3];
         
 
         var rolesObject = await client.GetAsync($"{baseUrl}/admin/realms/{realm}/clients/{clientId}/roles/{role}");
-        
-        Console.WriteLine(await rolesObject.Content.ReadAsStringAsync());
         
         var roles = await rolesObject.Content.ReadFromJsonAsync<RoleDto>()
                     ?? throw new KeycloakNullResponseException();
@@ -71,8 +63,6 @@ public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig, IMapper ma
         });
         
         var assignRoles = await client.PostAsync($"{baseUrl}/admin/realms/{realm}/users/{userId}/role-mappings/clients/{clientId}", jsonContent);
-        
-        Console.WriteLine(await assignRoles.Content.ReadAsStringAsync());
         
         return response;
     }

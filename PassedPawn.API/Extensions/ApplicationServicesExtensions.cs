@@ -52,7 +52,7 @@ public static class ApplicationServicesExtensions
                 options.RequireHttpsMetadata = false;
                 options.Authority = $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}";
                 // options.Audience = keycloakConfiguration["resource"];
-                options.Audience = "realm-management";
+                options.Audience = "account";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidIssuers =
