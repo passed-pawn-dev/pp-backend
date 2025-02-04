@@ -50,6 +50,22 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         return Ok(course);
     }
     
+    [HttpGet("created")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [SwaggerOperation(
+        Summary = "Returns single course by id, when bought by user"
+    )]
+    public async Task<IActionResult> GetCoursesCreated()
+    {
+        var userId = await claimsPrincipalService.GetCoachId(User);
+        var courses = await unitOfWork.Courses
+            .GetAllWhereAsync<CourseDto>(course => course.CoachId == userId);
+
+        return Ok(courses);
+    }
+    
     [HttpGet("{id:int}/bought")]
     [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetails))]
