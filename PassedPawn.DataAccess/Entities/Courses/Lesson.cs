@@ -7,7 +7,7 @@ public class Lesson : IEntity
     public int CourseId { get; set; }
     public Course? Course { get; set; }
 
-    public int VideoId { get; set; }
+    public int? VideoId { get; set; }
     public CourseVideo? Video { get; set; }
 
     public ICollection<CourseExercise> Exercises { get; init; } = [];

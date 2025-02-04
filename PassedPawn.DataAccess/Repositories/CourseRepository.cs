@@ -12,6 +12,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     {
         return await DbSet
             .Include(course => course.Lessons)
+            .ThenInclude(lesson => lesson.Exercises)
             .SingleOrDefaultAsync(course => course.Lessons.Any(lesson => lesson.Id == id));
     }
 
@@ -19,6 +20,14 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     {
         return await DbSet
             .Include(course => course.Lessons)
+            .ThenInclude(lesson => lesson.Exercises)
             .SingleOrDefaultAsync(course => course.Id == id);
+    }
+
+    public async Task<Course?> GetWithStudentsById(int id)
+    {
+        return await DbSet
+            .Include(course => course.Students)
+            .SingleOrDefaultAsync();
     }
 }

@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
+using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
@@ -16,8 +18,22 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     [SwaggerOperation(
         Summary = "Returns all courses"
     )]
-    public async Task<IActionResult> GetAllCourses() // TODO: Add filters
+    public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
     {
+        if (paid)
+        {
+            var email = User.GetUserEmailOptional();
+
+            if (email is null)
+                return Unauthorized();
+
+            var userId = await unitOfWork.Students.GetIdByEmail(email) 
+                         ?? throw new Exception("User does not exist in database");
+
+            var userCourses = await unitOfWork.Students.GetStudentCourses(userId);
+            return Ok(userCourses);
+        }
+        
         var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
         return Ok(courses);
     }
@@ -30,22 +46,51 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetCourse(int id)
     {
-        var course = await unitOfWork.Courses.GetByIdAsync<CourseDto>(id);
+        var course = await unitOfWork.Courses.GetByIdAsync<NonUserCourse>(id);
 
         if (course is null)
             return NotFound();
 
         return Ok(course);
     }
+    
+    [HttpGet("{id:int}/bought")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Returns single course by id, when bought by user"
+    )]
+    public async Task<IActionResult> GetCourseBought(int id)
+    {
+        var userEmail = User.GetUserEmail();
+
+        var userId = await unitOfWork.Students.GetIdByEmail(userEmail)
+                     ?? throw new Exception("User does not exist in database");
+        
+        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetails>(id);
+
+        if (course is null)
+            return NotFound();
+        
+        if (!await unitOfWork.Students.IsCourseBought(userId, id))
+            return Forbid();
+
+        return Ok(course);
+    }
 
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseDto))]
     [SwaggerOperation(
         Summary = "Creates a course"
     )]
     public async Task<IActionResult> CreateCourse(CourseUpsertDto courseUpsertDto)
     {
-        var serviceResult = await courseService.ValidateAndAddCourse(courseUpsertDto);
+        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
+                      ?? throw new Exception("User does not exist in database");
+        
+        var serviceResult = await courseService.ValidateAndAddCourse(coachId, courseUpsertDto);
 
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
@@ -66,6 +111,12 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         if (course is null)
             return NotFound();
+        
+        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
+                      ?? throw new Exception("User does not exist in database");
+
+        if (course.CoachId != coachId)
+            return Forbid();
 
         var serviceResult = await courseService.ValidateAndUpdateCourse(course, courseUpsertDto);
 
@@ -77,6 +128,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -88,12 +140,74 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         if (course is null)
             return NotFound();
+        
+        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
+                      ?? throw new Exception("User does not exist in database");
+
+        if (course.CoachId != coachId)
+            return Forbid();
 
         unitOfWork.Courses.Delete(course);
 
         if (!await unitOfWork.SaveChangesAsync())
             throw new Exception("Failed to save database");
 
+        return NoContent();
+    }
+
+    [HttpPost("{id:int}/course-list")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Adds a course to user's list"
+    )]
+    public async Task<IActionResult> AddToCourses(int id)
+    {
+        var userEmail = User.GetUserEmail();
+        var student = await unitOfWork.Students.GetUserByEmail(userEmail);
+
+        if (student is null)
+            throw new Exception("User does not exist in database");
+
+        var course = await unitOfWork.Courses.GetWithStudentsById(id);
+
+        if (course is null)
+            return NotFound();
+
+        if (course.Students.Contains(student))
+            return Conflict("Course already on the list");
+        
+        course.Students.Add(student);
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
+    }
+    
+    [HttpDelete("{id:int}/course-list")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Adds a course to user's list"
+    )]
+    public async Task<IActionResult> RemoveFromCourses(int id)
+    {
+        var userEmail = User.GetUserEmail();
+        var student = await unitOfWork.Students.GetUserByEmail(userEmail);
+
+        if (student is null)
+            throw new Exception("User does not exist in database");
+
+        var course = await unitOfWork.Courses.GetWithStudentsById(id);
+
+        if (course is null)
+            return NotFound();
+
+        if (!course.Students.Contains(student))
+            return BadRequest("Course is not on the list");
+        
+        course.Students.Remove(student);
+        await unitOfWork.SaveChangesAsync();
         return NoContent();
     }
 
@@ -113,6 +227,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpPost("{courseId:int}/lesson")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LessonDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -125,6 +240,12 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         if (course is null)
             return NotFound();
+        
+        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
+                      ?? throw new Exception("User does not exist in database");
+
+        if (course.CoachId != coachId)
+            return Forbid();
 
         var serviceResult = await courseService.ValidateAndAddLesson(course, lessonUpsertDto);
 

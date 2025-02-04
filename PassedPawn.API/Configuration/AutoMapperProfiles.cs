@@ -10,7 +10,6 @@ using PassedPawn.Models.DTOs.Course.Video;
 using PassedPawn.Models.DTOs.Keycloak;
 using PassedPawn.Models.DTOs.Nationality;
 using PassedPawn.Models.DTOs.Photo;
-using PassedPawn.Models.DTOs.Puzzle;
 using PassedPawn.Models.DTOs.User.Coach;
 using PassedPawn.Models.DTOs.User.Student;
 
@@ -44,8 +43,16 @@ public class AutoMapperProfiles : Profile
         CreateMap<Nationality, NationalityDto>();
 
         CreateMap<CourseUpsertDto, Course>();
-        CreateMap<Course, CourseDto>();
+        CreateMap<Course, CourseDto>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.Score, opt => opt.MapFrom(src => src.Reviews.Count > 0 ? src.Reviews.Average(review => review.Value) : 0));
 
+        CreateMap<Course, NonUserCourse>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Students.Count));
+
+        CreateMap<Course, CourseDetails>();
+            
         CreateMap<LessonUpsertDto, Lesson>();
         CreateMap<Lesson, LessonDto>();
 
@@ -61,7 +68,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseReviewUpsertDto, CourseReview>();
         CreateMap<CourseReview, CourseReviewDto>();
 
-        CreateMap<Puzzle, PuzzleDto>();
-        CreateMap<PuzzleUpsertDto, Puzzle>();
+        CreateMap<CourseExercise, CourseExerciseDto>();
+        CreateMap<CourseExerciseUpsertDto, CourseExercise>();
+
+        CreateMap<Course, UserCourseDto>()
+            .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count));
     }
 }

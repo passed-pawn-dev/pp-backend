@@ -68,6 +68,7 @@ services:
       - ./keycloak:/opt/keycloak/data/import
     networks:
       - keycloak-network
+      - api-network
 
   keycloak-postgres:
     container_name: pp-keycloak-postgres
