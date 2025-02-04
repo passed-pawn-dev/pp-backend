@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
-using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Exercise;
@@ -34,7 +33,7 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
     )]
     public async Task<IActionResult> PostSolution(int puzzleId, SolutionDto solution)
     {
-        var serviceResult = await puzzleService.CheckPuzzleSolution(User.GetUserEmail(), puzzleId, solution.Solution);
+        var serviceResult = await puzzleService.CheckPuzzleSolution(User, puzzleId, solution.Solution);
 
         if (serviceResult.IsSuccess)
             return Ok(serviceResult.Data);

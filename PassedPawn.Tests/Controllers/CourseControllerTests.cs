@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
@@ -16,12 +17,15 @@ public class CourseControllerTests
     private readonly CourseController _courseController;
     private readonly Mock<ICourseService> _courseServiceMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly Mock<IClaimsPrincipalService> _claimsPrincipalServiceMock;
 
     public CourseControllerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _courseServiceMock = new Mock<ICourseService>();
-        _courseController = new CourseController(_unitOfWorkMock.Object, _courseServiceMock.Object);
+        _claimsPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
+        _courseController = new CourseController(_unitOfWorkMock.Object,
+            _courseServiceMock.Object, _claimsPrincipalServiceMock.Object);
     }
 
     private static Course SampleCourse()
@@ -37,6 +41,15 @@ public class CourseControllerTests
     private static CourseDto SampleCourseDto()
     {
         return new CourseDto
+        {
+            Title = "Test",
+            Description = "Test"
+        };
+    }
+    
+    private static NonUserCourse SampleNonUserCourse()
+    {
+        return new NonUserCourse
         {
             Title = "Test",
             Description = "Test"
@@ -78,7 +91,7 @@ public class CourseControllerTests
             .ReturnsAsync(courseList);
 
         // Act
-        var result = await _courseController.GetAllCourses();
+        var result = await _courseController.GetAllCourses(paid: false);
 
         // Assert
         var okObject = Assert.IsType<OkObjectResult>(result);
@@ -91,8 +104,8 @@ public class CourseControllerTests
     {
         // Arrange
         const int id = 1;
-        var courseDto = SampleCourseDto();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<CourseDto>(id))
+        var courseDto = SampleNonUserCourse();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<NonUserCourse>(id))
             .ReturnsAsync(courseDto);
 
         // Act
@@ -126,6 +139,8 @@ public class CourseControllerTests
         var courseDto = SampleCourseDto();
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(1, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Success(courseDto));
+        _claimsPrincipalServiceMock.Setup(course => course.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.CreateCourse(courseUpsertDto);
@@ -143,6 +158,8 @@ public class CourseControllerTests
         var errors = new List<string> { "Test error" };
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddCourse(1, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Failure(errors));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.CreateCourse(courseUpsertDto);
@@ -164,6 +181,8 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateCourse(course, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Success(courseDto));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
@@ -201,6 +220,8 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateCourse(course, courseUpsertDto))
             .ReturnsAsync(ServiceResult<CourseDto>.Failure(errors));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.UpdateCourse(id, courseUpsertDto);
@@ -221,6 +242,8 @@ public class CourseControllerTests
 
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.DeleteCourse(id);
@@ -255,7 +278,7 @@ public class CourseControllerTests
             SampleLessonDto()
         };
         _unitOfWorkMock.Setup(unitOfWork =>
-                unitOfWork.Lessons.GetAllWhereAsync<LessonDto>(lesson => lesson.CourseId == id))
+                unitOfWork.Lessons.GetUserLessons(It.IsAny<int>(), id))
             .ReturnsAsync(lessonDtoList);
 
         // Act
@@ -278,6 +301,8 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddLesson(course, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Success(lessonDto));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.AddLesson(id, lessonUpsertDto);
@@ -315,6 +340,8 @@ public class CourseControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndAddLesson(course, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Failure(errors));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.AddLesson(id, lessonUpsertDto);
@@ -357,8 +384,10 @@ public class CourseControllerTests
 
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
             .ReturnsAsync(course);
-        _courseServiceMock.Setup(courseService => courseService.AddReview(course, reviewUpsertDto))
+        _courseServiceMock.Setup(courseService => courseService.AddReview(1, course, reviewUpsertDto))
             .ReturnsAsync(courseReviewDto);
+        _claimsPrincipalServiceMock.Setup(service => service.GetStudentId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _courseController.AddReview(id, reviewUpsertDto);

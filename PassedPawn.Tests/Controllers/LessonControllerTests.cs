@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
@@ -14,18 +15,23 @@ public class LessonControllerTests
     private readonly Mock<ICourseService> _courseServiceMock;
     private readonly LessonController _lessonController;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
+    private readonly Mock<IClaimsPrincipalService> _claimsPrincipalServiceMock;
+
 
     public LessonControllerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _courseServiceMock = new Mock<ICourseService>();
-        _lessonController = new LessonController(_unitOfWorkMock.Object, _courseServiceMock.Object);
+        _claimsPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
+        _lessonController = new LessonController(_unitOfWorkMock.Object, _courseServiceMock.Object,
+            _claimsPrincipalServiceMock.Object);
     }
 
     private static Course SampleCourse()
     {
         return new Course
         {
+            CoachId = 1,
             Title = "Test",
             Description = "Test"
         };
@@ -99,6 +105,8 @@ public class LessonControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Success(lessonDto));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _lessonController.UpdateLesson(id, lessonUpsertDto);
@@ -136,6 +144,8 @@ public class LessonControllerTests
             .ReturnsAsync(course);
         _courseServiceMock.Setup(courseService => courseService.ValidateAndUpdateLesson(course, id, lessonUpsertDto))
             .ReturnsAsync(ServiceResult<LessonDto>.Failure(errors));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _lessonController.UpdateLesson(id, lessonUpsertDto);

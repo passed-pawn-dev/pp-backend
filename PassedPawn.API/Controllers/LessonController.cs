@@ -2,7 +2,6 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
-using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
@@ -12,7 +11,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class LessonController(IUnitOfWork unitOfWork, ICourseService courseService) : ApiControllerBase
+public class LessonController(IUnitOfWork unitOfWork,
+    ICourseService courseService, IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
@@ -44,9 +44,8 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         if (course is null)
             return NotFound();
-        
-        var coachId = await unitOfWork.Coaches.GetUserIdByEmail(User.GetUserEmail())
-                      ?? throw new Exception("User does not exist in database");
+
+        var coachId = await claimsPrincipalService.GetCoachId(User);
 
         if (course.CoachId != coachId)
             return Forbid();
@@ -95,16 +94,14 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> Post(int lessonId, CourseExerciseUpsertDto dto, IMapper mapper)
     {
-        var email = User.GetUserEmail();
         var course = await unitOfWork.Courses.GetByLessonId(lessonId);
 
         if (course is null)
             return UnprocessableEntity("Invalid course");
-        
-        var courseId = await unitOfWork.Coaches.GetUserIdByEmail(email)
-                       ?? throw new Exception("Coach exists in Keyclock but not in out database");
 
-        if (course.CoachId != courseId)
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (course.CoachId != coachId)
             return Forbid();
 
         var exercise = mapper.Map<CourseExercise>(dto);
