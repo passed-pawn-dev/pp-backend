@@ -59,7 +59,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetCourseBought(int id)
     {
-        var userId = await claimsPrincipalService.GetCoachId(User);
+        var userId = await claimsPrincipalService.GetStudentId(User);
         var course = await unitOfWork.Courses.GetByIdAsync<CourseDetails>(id);
 
         if (course is null)
