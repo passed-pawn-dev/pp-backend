@@ -27,6 +27,9 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
             if (paid)
             {
+                if (!User.IsInRole("student"))
+                    return Forbid();
+                
                 var userCourses = await unitOfWork.Students.GetStudentCourses(userId.Value);
                 return Ok(userCourses);
             }
