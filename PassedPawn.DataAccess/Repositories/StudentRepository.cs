@@ -5,6 +5,7 @@ using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
+using PassedPawn.Models.DTOs.Course.Lesson;
 
 namespace PassedPawn.DataAccess.Repositories;
 

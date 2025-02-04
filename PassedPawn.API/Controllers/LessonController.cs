@@ -31,7 +31,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpPut("{id:int}")]
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -63,6 +63,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     // TODO: Protect
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -85,7 +86,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     
     // Only for coach
     //TODO roles
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/exercise")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

@@ -15,5 +15,5 @@ public interface ICourseService
     public Task<ServiceResult<LessonDto>> ValidateAndUpdateLesson(Course course, int lessonId,
         LessonUpsertDto lessonUpsertDto);
 
-    public Task<CourseReviewDto> AddReview(Course course, CourseReviewUpsertDto reviewUpsertDto);
+    public Task<CourseReviewDto> AddReview(int studentId, Course course, CourseReviewUpsertDto reviewUpsertDto);
 }
