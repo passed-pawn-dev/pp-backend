@@ -29,6 +29,6 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     {
         return await DbSet
             .Include(course => course.Students)
-            .SingleOrDefaultAsync();
+            .SingleOrDefaultAsync(course => course.Id == id);
     }
 }
