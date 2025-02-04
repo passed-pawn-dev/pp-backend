@@ -14,6 +14,13 @@ public class ClaimsPrincipalService(IUnitOfWork unitOfWork) : IClaimsPrincipalSe
                ?? throw new Exception("Student does not exist in database");
     }
 
+    public async Task<int?> GetStudentIdOptional(ClaimsPrincipal principal)
+    {
+        var email = GetUserEmail(principal);
+        return await unitOfWork.Students.GetIdByEmail(email)
+               ?? null;
+    }
+
     public async Task<Student> GetStudent(ClaimsPrincipal principal)
     {
         var email = GetUserEmail(principal);
