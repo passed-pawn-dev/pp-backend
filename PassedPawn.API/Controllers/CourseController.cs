@@ -35,7 +35,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NonUserCourse))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single course by id"
@@ -52,7 +52,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     
     [HttpGet("{id:int}/bought")]
     [Authorize(Policy = "require student role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single course by id, when bought by user"
