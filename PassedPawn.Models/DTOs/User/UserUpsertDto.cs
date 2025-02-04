@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using PassedPawn.Models.DTOs.Photo;
 using PassedPawn.Models.Enums;
 
@@ -24,7 +25,7 @@ public class UserUpsertDto
 
     [Required] public int Elo { get; init; }
 
-    public ChessTitle? ChessTitle { get; init; }
+    [JsonConverter(typeof(JsonStringEnumConverter))] public ChessTitle? ChessTitle { get; init; }
 
     [Required] public int NationalityId { get; init; }
 }
