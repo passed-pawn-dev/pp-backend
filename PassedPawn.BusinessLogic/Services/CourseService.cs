@@ -147,8 +147,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
 
     private static int GetHighestLessonNumber(Course course)
     {
-        return course.Lessons
-            .Select(lesson => lesson.LessonNumber)
-            .Max();
+        return course.Lessons.Count > 0
+            ? course.Lessons
+                .Select(lesson => lesson.LessonNumber)
+                .Max()
+            : 0;
     }
 }
