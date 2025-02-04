@@ -1,20 +1,21 @@
-﻿using PassedPawn.BusinessLogic.Services.Contracts;
+﻿using System.Security.Claims;
+using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
 
 namespace PassedPawn.BusinessLogic.Services;
 
-public class PuzzleService(IUnitOfWork unitOfWork) : IPuzzleService
+public class PuzzleService(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService) : IPuzzleService
 {
-    public async Task<ServiceResult<string>> CheckPuzzleSolution(string userEmail, int puzzleId, string puzzleSolution)
+    public async Task<ServiceResult<string>> CheckPuzzleSolution(ClaimsPrincipal user, int puzzleId, string puzzleSolution)
     {
         var puzzle = await unitOfWork.Puzzles.GetPuzzleById(puzzleId);
 
         if (puzzle is null)
             return ServiceResult<string>.Failure(["Puzzle not found"]);
 
-        var student = await unitOfWork.Students.GetUserByEmail(userEmail)
-                      ?? throw new Exception("Coach exists in Keyclock but not in out database");
+        var student = await claimsPrincipalService.GetStudent(user);
 
         if (puzzle.Students.Contains(student))
             return ServiceResult<string>.Failure(["Already solved this puzzle"]);

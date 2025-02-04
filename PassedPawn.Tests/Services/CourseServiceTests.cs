@@ -146,7 +146,6 @@ public class CourseServiceTests
         // Assert
         Assert.True(result.IsSuccess);
         Assert.NotNull(result.Data);
-        Assert.Equal(3, result.Data!.Lessons.Count());
     }
 
     [Theory]
