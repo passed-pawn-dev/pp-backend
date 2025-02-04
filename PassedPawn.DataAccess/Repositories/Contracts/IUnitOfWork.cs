@@ -9,7 +9,7 @@ public interface IUnitOfWork
     ICoachRepository Coaches { get; }
     IRepositoryBase<Nationality> Nationalities { get; }
     ICourseRepository Courses { get; }
-    IRepositoryBase<Lesson> Lessons { get; }
+    ILessonRepository Lessons { get; }
     IRepositoryBase<CourseReview> CourseReviews { get; }
     ICourseExerciseRepository Puzzles { get; }
 

@@ -86,9 +86,10 @@ public class CourseService(IUnitOfWork unitOfWork, IMapper mapper) : ICourseServ
         return ServiceResult<LessonDto>.Success(mapper.Map<LessonDto>(lesson));
     }
 
-    public async Task<CourseReviewDto> AddReview(Course course, CourseReviewUpsertDto reviewUpsertDto)
+    public async Task<CourseReviewDto> AddReview(int studentId, Course course, CourseReviewUpsertDto reviewUpsertDto)
     {
         var courseReview = mapper.Map<CourseReview>(reviewUpsertDto);
+        courseReview.StudentId = studentId;
         course.Reviews.Add(courseReview);
 
         if (!await unitOfWork.SaveChangesAsync())

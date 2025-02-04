@@ -215,20 +215,25 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     #region Lessons
 
     [HttpGet("{courseId:int}/lesson")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LessonDto>))]
     [SwaggerOperation(
         Summary = "Returns all lessons that belong to a course"
     )]
     public async Task<IActionResult> GetLessons(int courseId)
     {
+        var userEmail = User.GetUserEmail();
+        var userId = await unitOfWork.Students.GetIdByEmail(userEmail)
+            ?? throw new Exception("User not found in database");
+        
         var lessons = await unitOfWork.Lessons
-            .GetAllWhereAsync<LessonDto>(lesson => lesson.CourseId == courseId);
+            .GetUserLessons(userId, courseId);
 
         return Ok(lessons);
     }
 
     [HttpPost("{courseId:int}/lesson")]
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(LessonDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -274,11 +279,9 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         return Ok(reviews);
     }
-
-    // TODO Add User Id, who creates this review
-    // TODO Protect this endpoint
-
+    
     [HttpPost("{courseId:int}/review")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseReviewDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -291,7 +294,11 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (course is null)
             return NotFound();
 
-        var courseReviewDto = await courseService.AddReview(course, reviewUpsertDto);
+        var userEmail = User.GetUserEmail();
+        var userId = await unitOfWork.Students.GetIdByEmail(userEmail)
+                     ?? throw new Exception("User does not exist in database");
+
+        var courseReviewDto = await courseService.AddReview(userId, course, reviewUpsertDto);
         return CreatedAtAction("GetReview", "CourseReview", new { id = courseReviewDto.Id },
             courseReviewDto);
     }

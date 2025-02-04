@@ -17,7 +17,6 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
     )]
     public async Task<IActionResult> Register(CoachUpsertDto coachUpsertDto)
     {
-        // User service 
         var serviceResponse = await userService.AddCoach(coachUpsertDto);
 
         if (!serviceResponse.IsSuccess)
@@ -26,7 +25,6 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
         return CreatedAtAction(nameof(Get), new { id = serviceResponse.Data.Id }, serviceResponse.Data);
     }
 
-    // TODO: Protect this route
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoachDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -42,6 +40,4 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
 
         return Ok(coachDto);
     }
-
-    // TODO: Rest of CRUD
 }
