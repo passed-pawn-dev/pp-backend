@@ -24,7 +24,7 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
         return puzzle is null ? NotFound() : Ok(puzzle);
     }
 
-    [Authorize]
+    [Authorize(Policy = "require student role")]
     [HttpPost("{puzzleId:int}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

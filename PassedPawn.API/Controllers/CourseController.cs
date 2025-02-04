@@ -80,7 +80,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpPost]
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseDto))]
     [SwaggerOperation(
         Summary = "Creates a course"
@@ -100,6 +100,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -128,7 +129,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
 
     [HttpDelete("{id:int}")]
-    [Authorize]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(

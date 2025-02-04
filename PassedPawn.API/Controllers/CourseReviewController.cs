@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.DataAccess.Repositories.Contracts;
@@ -26,6 +27,7 @@ public class CourseReviewController(IUnitOfWork unitOfWork) : ApiControllerBase
     }
 
     [HttpPut("{id:int}")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseReviewDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -49,6 +51,7 @@ public class CourseReviewController(IUnitOfWork unitOfWork) : ApiControllerBase
     }
 
     [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
