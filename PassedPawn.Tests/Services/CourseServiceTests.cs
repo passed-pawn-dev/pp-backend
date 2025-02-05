@@ -6,6 +6,7 @@ using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Review;
 
 namespace PassedPawn.Tests.Services;
 
@@ -68,6 +69,15 @@ public class CourseServiceTests
         return new LessonUpsertDto
         {
             LessonNumber = lessonNumber
+        };
+    }
+
+    private static CourseReviewUpsertDto SampleCourseReviewUpsertDto()
+    {
+        return new CourseReviewUpsertDto
+        {
+            Value = 2,
+            Content = "Review"
         };
     }
 
@@ -257,6 +267,36 @@ public class CourseServiceTests
 
         // Assert
         Assert.False(result.IsSuccess);
+    }
+
+    [Fact]
+    public async Task AddReview_ShouldAddReview()
+    {
+        // Arrange
+        const int studentId = 1;
+        var course = SampleCourse();
+        var review = SampleCourseReviewUpsertDto();
+
+        // Act
+        await _courseService.AddReview(studentId, course, review);
+
+        // Assert
+        Assert.Contains(course.Reviews, r => r.StudentId == studentId);
+    }
+    
+    [Fact]
+    public async Task AddReview_ShouldReturnDto()
+    {
+        // Arrange
+        const int studentId = 1;
+        var course = SampleCourse();
+        var review = SampleCourseReviewUpsertDto();
+
+        // Act
+        var result = await _courseService.AddReview(studentId, course, review);
+
+        // Assert
+        Assert.IsType<CourseReviewDto>(result);
     }
 
     private static bool OneToN(IEnumerable<Lesson> lessons)
