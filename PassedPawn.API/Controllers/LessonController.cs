@@ -59,8 +59,7 @@ public class LessonController(IUnitOfWork unitOfWork,
         var lessonDto = serviceResult.Data;
         return Ok(lessonDto);
     }
-
-    // TODO: Protect
+    
     [HttpDelete("{id:int}")]
     [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -70,11 +69,17 @@ public class LessonController(IUnitOfWork unitOfWork,
     )]
     public async Task<IActionResult> DeleteLesson(int id)
     {
-        var lesson = await unitOfWork.Lessons.GetByIdAsync(id);
+        var course = await unitOfWork.Courses.GetByLessonId(id);
 
-        if (lesson is null)
+        if (course is null)
             return NotFound();
 
+        var userId = await claimsPrincipalService.GetCoachId(User);
+
+        if (course.CoachId != userId)
+            return Forbid();
+
+        var lesson = course.Lessons.First(lesson => lesson.Id == id);
         unitOfWork.Lessons.Delete(lesson);
 
         if (!await unitOfWork.SaveChangesAsync())
@@ -83,8 +88,6 @@ public class LessonController(IUnitOfWork unitOfWork,
         return NoContent();
     }
     
-    // Only for coach
-    //TODO roles
     [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/exercise")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]

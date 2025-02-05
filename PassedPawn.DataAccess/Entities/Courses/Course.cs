@@ -5,8 +5,6 @@ public class Course : IEntity
     public required string Title { get; set; }
     public required string Description { get; set; }
 
-    // TODO: Add coach Id
-
     public float Price { get; set; }
 
     public int? ThumbnailId { get; set; }
