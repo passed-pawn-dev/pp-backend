@@ -484,5 +484,6 @@ $RECYCLE.BIN/
 *.swp
 
 # keycloak
-#keycloak
+keycloak
+keycloak-copy
 .env

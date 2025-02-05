@@ -33,9 +33,6 @@ public partial class FenValidationAttribute : ValidationAttribute
         if (!int.TryParse(parts[4], out var halfmoveClock) || halfmoveClock < 0)
             return new ValidationResult("Halfmove clock must be a non-negative integer.");
 
-        if (!int.TryParse(parts[5], out var fullmoveNumber) || fullmoveNumber < 1)
-            return new ValidationResult("Fullmove number must be a positive integer.");
-
         return ValidationResult.Success;
     }
 

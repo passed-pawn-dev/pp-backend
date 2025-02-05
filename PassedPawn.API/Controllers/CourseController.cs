@@ -57,6 +57,25 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         return Ok(course);
     }
+
+    
+    [HttpGet("{id:int}/details")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NonUserCourse))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Returns single course by id"
+    )]
+    public async Task<IActionResult> GetCourseDetails(int id)
+    {
+        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetails>(id);
+
+        if (course is null)
+            return NotFound();
+
+        return Ok(course);
+    }
+    
     
     [HttpGet("created")]
     [Authorize(Policy = "require coach role")]
