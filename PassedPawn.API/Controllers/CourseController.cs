@@ -61,7 +61,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     
     [HttpGet("{id:int}/details")]
     [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NonUserCourse))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetails))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single course by id"
