@@ -25,7 +25,6 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
         return CreatedAtAction(nameof(GetStudent), new { id = serviceResponse.Data.Id }, serviceResponse.Data);
     }
 
-    // TODO: Protect this route
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(StudentDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -41,6 +40,4 @@ public class StudentController(IUserService userService, IUnitOfWork unitOfWork)
 
         return Ok(studentDto);
     }
-
-    // TODO: Rest of CRUD
 }

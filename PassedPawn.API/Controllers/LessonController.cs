@@ -88,8 +88,6 @@ public class LessonController(IUnitOfWork unitOfWork,
         return NoContent();
     }
     
-    // Only for coach
-    //TODO roles
     [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/exercise")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
