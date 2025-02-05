@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
-using PassedPawn.BusinessLogic.Services;
 using PassedPawn.BusinessLogic.Services.Contracts;
-using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
 using PassedPawn.Models.DTOs.User.Student;
@@ -21,16 +19,6 @@ public class StudentControllerTests
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _userServiceMock = new Mock<IUserService>();
         _studentController = new StudentController(_userServiceMock.Object, _unitOfWorkMock.Object);
-    }
-
-    private static Student SampleStudent()
-    {
-        return new Student()
-        {
-            FirstName = "Test",
-            LastName = "Test",
-            Email = "test@test.com",
-        };
     }
 
     private static StudentDto SampleStudentDto()
