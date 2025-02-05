@@ -33,7 +33,15 @@ public class LessonControllerTests
         {
             CoachId = 1,
             Title = "Test",
-            Description = "Test"
+            Description = "Test",
+            Lessons =
+            [
+                new Lesson
+                {
+                    Id = 1,
+                    LessonNumber = 1
+                }
+            ]
         };
     }
 
@@ -48,14 +56,6 @@ public class LessonControllerTests
     private static LessonUpsertDto SampleLessonUpsertDto()
     {
         return new LessonUpsertDto
-        {
-            LessonNumber = 1
-        };
-    }
-
-    private static Lesson SampleLesson()
-    {
-        return new Lesson
         {
             LessonNumber = 1
         };
@@ -160,11 +160,14 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        var lesson = SampleLesson();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync(id))
-            .ReturnsAsync(lesson);
+        var course = SampleCourse();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByLessonId(id))
+            .ReturnsAsync(course);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
+        _unitOfWorkMock.Setup(_unitOfWorkMock => _unitOfWorkMock.Lessons.Delete(It.IsAny<Lesson>()));
+        _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(1);
 
         // Act
         var result = await _lessonController.DeleteLesson(id);
@@ -178,8 +181,8 @@ public class LessonControllerTests
     {
         // Arrange
         const int id = 1;
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync(id))
-            .ReturnsAsync((Lesson?)null);
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByLessonId(id))
+            .ReturnsAsync((Course?)null);
 
         // Act
         var result = await _lessonController.DeleteLesson(id);
