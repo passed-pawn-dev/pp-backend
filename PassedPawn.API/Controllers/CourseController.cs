@@ -13,7 +13,6 @@ namespace PassedPawn.API.Controllers;
 public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
-    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CourseDto>))]
     [SwaggerOperation(
@@ -21,26 +20,21 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
     {
-        var userId = await claimsPrincipalService.GetStudentIdOptional(User);
-
-        if (userId is not null)
+        if (User.Identity is {IsAuthenticated:false} || !User.IsInRole("student"))
         {
-            
-            if (!User.IsInRole("student"))
-                return Forbid();
-
-            if (paid)
-            {
-                var userCourses = await unitOfWork.Students.GetStudentCourses(userId.Value);
-                return Ok(userCourses);
-            }
-            
-            var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId.Value);
-            return Ok(notBoughtCourses);
+            var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
+            return Ok(courses);
         }
+        var userId = await claimsPrincipalService.GetStudentId(User);
 
-        var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
-        return Ok(courses);
+        if (paid)
+        {
+            var userCourses = await unitOfWork.Students.GetStudentCourses(userId);
+            return Ok(userCourses);
+        }
+        
+        var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId);
+        return Ok(notBoughtCourses);
     }
 
     [HttpGet("{id:int}")]
