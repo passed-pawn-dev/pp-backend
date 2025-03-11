@@ -13,6 +13,7 @@ namespace PassedPawn.API.Controllers;
 public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
+    [Authorize]
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CourseDto>))]
     [SwaggerOperation(
