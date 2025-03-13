@@ -34,7 +34,12 @@ public class ClaimsPrincipalService(IUnitOfWork unitOfWork) : IClaimsPrincipalSe
         return await unitOfWork.Coaches.GetUserIdByEmail(email)
                ?? throw new Exception("Coach not found in database");
     }
-    
+
+    public bool IsLoggedInAsStudent(ClaimsPrincipal principal)
+    {
+        return principal.Identity is { IsAuthenticated: true } && principal.IsInRole("student");
+    }
+
     private static string GetUserEmail(ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal.Claims

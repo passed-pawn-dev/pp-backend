@@ -20,7 +20,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
     {
-        if (User.Identity is {IsAuthenticated:false} || !User.IsInRole("student"))
+        if (!claimsPrincipalService.IsLoggedInAsStudent(User))
         {
             var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
             return Ok(courses);
