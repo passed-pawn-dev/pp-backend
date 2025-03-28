@@ -23,7 +23,7 @@ public class User : IEntity
 
     public ChessTitle? ChessTitle { get; set; }
 
-    public int NationalityId { get; set; }
+    public int? NationalityId { get; set; }
 
     public Nationality? Nationality { get; set; }
 
