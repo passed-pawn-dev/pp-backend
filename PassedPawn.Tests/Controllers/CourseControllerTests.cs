@@ -87,6 +87,8 @@ public class CourseControllerTests
         // Arrange
         var courseDto = SampleCourseDto();
         var courseList = new List<CourseDto> { courseDto };
+        _claimsPrincipalServiceMock.Setup(service => service.IsLoggedInAsStudent(It.IsAny<ClaimsPrincipal>()))
+            .Returns(false);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync<CourseDto>())
             .ReturnsAsync(courseList);
 

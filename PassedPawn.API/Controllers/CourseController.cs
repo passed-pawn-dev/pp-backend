@@ -20,26 +20,21 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     )]
     public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
     {
-        var userId = await claimsPrincipalService.GetStudentIdOptional(User);
-
-        if (userId is not null)
+        if (!claimsPrincipalService.IsLoggedInAsStudent(User))
         {
-            
-            if (!User.IsInRole("student"))
-                return Forbid();
-
-            if (paid)
-            {
-                var userCourses = await unitOfWork.Students.GetStudentCourses(userId.Value);
-                return Ok(userCourses);
-            }
-            
-            var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId.Value);
-            return Ok(notBoughtCourses);
+            var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
+            return Ok(courses);
         }
+        var userId = await claimsPrincipalService.GetStudentId(User);
 
-        var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
-        return Ok(courses);
+        if (paid)
+        {
+            var userCourses = await unitOfWork.Students.GetStudentCourses(userId);
+            return Ok(userCourses);
+        }
+        
+        var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId);
+        return Ok(notBoughtCourses);
     }
 
     [HttpGet("{id:int}")]
