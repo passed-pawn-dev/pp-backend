@@ -17,7 +17,8 @@ public class UserService(
     {
         var student = mapper.Map<Student>(studentUpsertDto);
 
-        if (!await unitOfWork.Nationalities.ExistsAsync(studentUpsertDto.NationalityId))
+        if (studentUpsertDto.NationalityId is not null &&
+            !await unitOfWork.Nationalities.ExistsAsync(studentUpsertDto.NationalityId.Value))
             return ServiceResult<StudentDto>.Failure(["Invalid Nationality Id"]);
 
         unitOfWork.Students.Add(student);
@@ -42,7 +43,8 @@ public class UserService(
     {
         var coach = mapper.Map<Coach>(coachUpsertDto);
 
-        if (!await unitOfWork.Nationalities.ExistsAsync(coachUpsertDto.NationalityId))
+        if (coachUpsertDto.NationalityId is not null &&
+            !await unitOfWork.Nationalities.ExistsAsync(coachUpsertDto.NationalityId.Value))
             return ServiceResult<CoachDto>.Failure(["Invalid Nationality Id"]);
 
         unitOfWork.Coaches.Add(coach);

@@ -27,5 +27,5 @@ public class UserUpsertDto
 
     [JsonConverter(typeof(JsonStringEnumConverter))] public ChessTitle? ChessTitle { get; init; }
 
-    [Required] public int NationalityId { get; init; }
+    public int? NationalityId { get; init; }
 }
