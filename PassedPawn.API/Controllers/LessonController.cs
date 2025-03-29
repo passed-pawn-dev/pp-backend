@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
-using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
@@ -102,7 +101,7 @@ public class LessonController(IUnitOfWork unitOfWork,
         var course = await unitOfWork.Courses.GetByLessonId(lessonId);
 
         if (course is null)
-            return UnprocessableEntity("Invalid course");
+            return UnprocessableEntity("Invalid lessonId");
 
         var coachId = await claimsPrincipalService.GetCoachId(User);
 
@@ -119,7 +118,7 @@ public class LessonController(IUnitOfWork unitOfWork,
     
     [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/example")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExampleDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Create new puzzle by Coach"
@@ -129,7 +128,7 @@ public class LessonController(IUnitOfWork unitOfWork,
         var course = await unitOfWork.Courses.GetByLessonId(lessonId);
 
         if (course is null)
-            return UnprocessableEntity("Invalid course");
+            return UnprocessableEntity("Invalid lessonId");
 
         var coachId = await claimsPrincipalService.GetCoachId(User);
 
