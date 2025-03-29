@@ -1,0 +1,13 @@
+using PassedPawn.Models.Enums;
+
+namespace PassedPawn.DataAccess.Entities.Courses;
+
+public class CourseExampleMoveHighlight : IEntity
+{
+    public int Id { get; set; }
+    public required string Position { get; set; }
+    public Severity Severity { get; set; }
+    
+    public int ExampleMoveId { get; init; }
+    public CourseExampleMove? ExampleMove { get; init; }
+}
