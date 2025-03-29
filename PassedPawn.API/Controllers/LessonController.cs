@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
 using Swashbuckle.AspNetCore.Annotations;
@@ -113,5 +115,33 @@ public class LessonController(IUnitOfWork unitOfWork,
         await unitOfWork.SaveChangesAsync();
         var responseDto = mapper.Map<CourseExerciseDto>(exercise);
         return CreatedAtAction("Get", "CourseExercise", new { id = exercise.Id }, responseDto);
+    }
+    
+    [Authorize(Policy = "require coach role")]
+    [HttpPost("{lessonId:int}/example")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Create new puzzle by Coach"
+    )]
+    public async Task<IActionResult> PostExample(int lessonId, CourseExampleUpsertDto dto, IMapper mapper)
+    {
+        var course = await unitOfWork.Courses.GetByLessonId(lessonId);
+
+        if (course is null)
+            return UnprocessableEntity("Invalid course");
+
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (course.CoachId != coachId)
+            return Forbid();
+
+        var example = mapper.Map<CourseExample>(dto);
+        var lesson = course.Lessons.First(lesson => lesson.Id == lessonId);
+        lesson.Examples.Add(example);
+
+        await unitOfWork.SaveChangesAsync();
+        var responseDto = mapper.Map<CourseExampleDto>(example);
+        return CreatedAtAction("Get", "CourseExercise", new { id = example.Id }, responseDto);
     }
 }

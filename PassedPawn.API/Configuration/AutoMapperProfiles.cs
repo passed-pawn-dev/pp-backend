@@ -3,6 +3,9 @@ using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Example;
+using PassedPawn.Models.DTOs.Course.Example.Move;
+using PassedPawn.Models.DTOs.Course.Example.Move.Arrow;
+using PassedPawn.Models.DTOs.Course.Example.Move.Highlight;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
 using PassedPawn.Models.DTOs.Course.Review;
@@ -70,6 +73,15 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<CourseExercise, CourseExerciseDto>();
         CreateMap<CourseExerciseUpsertDto, CourseExercise>();
+
+        CreateMap<CourseExampleMove, CourseExampleMoveDto>();
+        CreateMap<CourseExampleMoveUpsertDto, CourseExampleMove>();
+        
+        CreateMap<CourseExampleMoveArrow, CourseExampleMoveArrowDto>();
+        CreateMap<CourseExampleMoveArrowUpsertDto, CourseExampleMoveArrow>();
+        
+        CreateMap<CourseExampleMoveHighlight, CourseExampleMoveHighlightDto>();
+        CreateMap<CourseExampleMoveHighlightUpsertDto, CourseExampleMoveHighlight>();
 
         CreateMap<Course, UserCourseDto>()
             .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count));

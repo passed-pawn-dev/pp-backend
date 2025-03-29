@@ -10,5 +10,5 @@ public class CourseExampleMove : IEntity
     public ICollection<CourseExampleMoveHighlight> Highlights { get; init; } = [];
     
     public int ExampleId { get; init; }
-    public CourseExampleMove? Example { get; init; }
+    public CourseExample? Example { get; init; }
 }
