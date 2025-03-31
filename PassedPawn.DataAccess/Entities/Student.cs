@@ -1,4 +1,5 @@
 ﻿using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 
 namespace PassedPawn.DataAccess.Entities;
 

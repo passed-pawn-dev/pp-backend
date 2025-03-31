@@ -1,6 +1,7 @@
 using AutoMapper;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Example.Move;

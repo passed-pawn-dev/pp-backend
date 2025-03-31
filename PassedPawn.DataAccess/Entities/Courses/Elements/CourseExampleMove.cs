@@ -1,4 +1,4 @@
-namespace PassedPawn.DataAccess.Entities.Courses;
+namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
 public class CourseExampleMove : IEntity
 {

@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
-using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
@@ -12,8 +12,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class LessonController(IUnitOfWork unitOfWork,
-    ICourseService courseService, IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
+public class LessonController(IUnitOfWork unitOfWork, ICourseService courseService,
+    ICourseExampleService exampleService, IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
@@ -115,32 +115,37 @@ public class LessonController(IUnitOfWork unitOfWork,
         var responseDto = mapper.Map<CourseExerciseDto>(exercise);
         return CreatedAtAction("Get", "CourseExercise", new { id = exercise.Id }, responseDto);
     }
-    
-    [Authorize(Policy = "require coach role")]
+
+    #region Elements
+
     [HttpPost("{lessonId:int}/example")]
+    [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExampleDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
-        Summary = "Create new puzzle by Coach"
+        Summary = "Adds a new example to a lesson",
+        Description = "New example's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> PostExample(int lessonId, CourseExampleUpsertDto dto, IMapper mapper)
+    public async Task<IActionResult> AddExample(int lessonId, CourseExampleUpsertDto upsertDto)
     {
-        var course = await unitOfWork.Courses.GetByLessonId(lessonId);
+        var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
 
-        if (course is null)
-            return UnprocessableEntity("Invalid lessonId");
+        if (lesson is null)
+            return NotFound();
 
-        var coachId = await claimsPrincipalService.GetCoachId(User);
-
-        if (course.CoachId != coachId)
+        if (lesson.Course?.CoachId != await claimsPrincipalService.GetCoachId(User))
             return Forbid();
 
-        var example = mapper.Map<CourseExample>(dto);
-        var lesson = course.Lessons.First(lesson => lesson.Id == lessonId);
-        lesson.Examples.Add(example);
+        var serviceResult = await exampleService.ValidateAndAddExample(lesson, upsertDto);
 
-        await unitOfWork.SaveChangesAsync();
-        var responseDto = mapper.Map<CourseExampleDto>(example);
-        return CreatedAtAction("Get", "CourseExercise", new { id = example.Id }, responseDto);
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+
+        var lessonDto = serviceResult.Data;
+
+        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
     }
+
+    #endregion
 }
