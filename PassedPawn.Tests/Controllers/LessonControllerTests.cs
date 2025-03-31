@@ -16,16 +16,14 @@ public class LessonControllerTests
     private readonly LessonController _lessonController;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IClaimsPrincipalService> _claimsPrincipalServiceMock;
-    private readonly Mock<ICourseExampleService> _exampleService;
 
     public LessonControllerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
         _courseServiceMock = new Mock<ICourseService>();
         _claimsPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
-        _exampleService = new Mock<ICourseExampleService>();
         _lessonController = new LessonController(_unitOfWorkMock.Object, _courseServiceMock.Object,
-            _exampleService.Object, _claimsPrincipalServiceMock.Object);
+            _claimsPrincipalServiceMock.Object);
     }
 
     private static Course SampleCourse()

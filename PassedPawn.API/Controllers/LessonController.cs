@@ -1,9 +1,7 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
-using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
@@ -13,7 +11,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace PassedPawn.API.Controllers;
 
 public class LessonController(IUnitOfWork unitOfWork, ICourseService courseService,
-    ICourseExampleService exampleService, IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
+    IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
@@ -88,33 +86,6 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         return NoContent();
     }
-    
-    [Authorize(Policy = "require coach role")]
-    [HttpPost("{lessonId:int}/exercise")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Create new puzzle by Coach"
-    )]
-    public async Task<IActionResult> Post(int lessonId, CourseExerciseUpsertDto dto, IMapper mapper)
-    {
-        var course = await unitOfWork.Courses.GetByLessonId(lessonId);
-
-        if (course is null)
-            return UnprocessableEntity("Invalid lessonId");
-
-        var coachId = await claimsPrincipalService.GetCoachId(User);
-
-        if (course.CoachId != coachId)
-            return Forbid();
-
-        var exercise = mapper.Map<CourseExercise>(dto);
-        var lesson = course.Lessons.First(lesson => lesson.Id == lessonId);
-        lesson.Exercises.Add(exercise);
-        await unitOfWork.SaveChangesAsync();
-        var responseDto = mapper.Map<CourseExerciseDto>(exercise);
-        return CreatedAtAction("Get", "CourseExercise", new { id = exercise.Id }, responseDto);
-    }
 
     #region Elements
 
@@ -127,7 +98,8 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         Summary = "Adds a new example to a lesson",
         Description = "New example's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> AddExample(int lessonId, CourseExampleUpsertDto upsertDto)
+    public async Task<IActionResult> AddExample(int lessonId, CourseExampleUpsertDto upsertDto,
+        ICourseExampleService exampleService)
     {
         var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
 
@@ -143,7 +115,36 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
             return BadRequest(serviceResult.Errors);
 
         var lessonDto = serviceResult.Data;
+        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
+    }
+    
+    [Authorize(Policy = "require coach role")]
+    [HttpPost("{lessonId:int}/exercise")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "Adds a new exercise to a lesson",
+        Description = "New exercise's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
+    public async Task<IActionResult> Post(int lessonId, CourseExerciseUpsertDto upsertDto,
+        ICourseExerciseService exerciseService)
+    {
+        var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
 
+        if (lesson is null)
+            return NotFound();
+
+        if (lesson.Course?.CoachId != await claimsPrincipalService.GetCoachId(User))
+            return Forbid();
+
+        var serviceResult = await exerciseService.ValidateAndAddExercise(lesson, upsertDto);
+
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+
+        var lessonDto = serviceResult.Data;
         return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
     }
 
