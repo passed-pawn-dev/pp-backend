@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250329112426_ExtendedCourseExample")]
+    partial class ExtendedCourseExample
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -84,7 +87,7 @@ namespace PassedPawn.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("NationalityId")
+                    b.Property<int>("NationalityId")
                         .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
@@ -217,6 +220,9 @@ namespace PassedPawn.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("CourseExampleId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
@@ -224,6 +230,8 @@ namespace PassedPawn.DataAccess.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseExampleId");
 
                     b.HasIndex("ExampleId");
 
@@ -716,7 +724,7 @@ namespace PassedPawn.DataAccess.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("NationalityId")
+                    b.Property<int>("NationalityId")
                         .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
@@ -768,7 +776,9 @@ namespace PassedPawn.DataAccess.Migrations
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Nationality", "Nationality")
                         .WithMany()
-                        .HasForeignKey("NationalityId");
+                        .HasForeignKey("NationalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Photo", "Photo")
                         .WithMany()
@@ -832,8 +842,12 @@ namespace PassedPawn.DataAccess.Migrations
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExample", "Example")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExample", null)
                         .WithMany("Moves")
+                        .HasForeignKey("CourseExampleId");
+
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", "Example")
+                        .WithMany()
                         .HasForeignKey("ExampleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -906,7 +920,9 @@ namespace PassedPawn.DataAccess.Migrations
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Nationality", "Nationality")
                         .WithMany()
-                        .HasForeignKey("NationalityId");
+                        .HasForeignKey("NationalityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("PassedPawn.DataAccess.Entities.Photo", "Photo")
                         .WithMany()

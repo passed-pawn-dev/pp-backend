@@ -16,5 +16,6 @@ public class Course : IEntity
     public ICollection<Student> Students { get; init; } = [];
     public ICollection<Lesson> Lessons { get; init; } = [];
     public ICollection<CourseReview> Reviews { get; init; } = [];
+    public ICollection<CourseExample> Examples { get; init; } = [];
     public int Id { get; set; }
 }

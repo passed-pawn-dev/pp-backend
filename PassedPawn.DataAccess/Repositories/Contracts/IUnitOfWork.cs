@@ -12,6 +12,7 @@ public interface IUnitOfWork
     ILessonRepository Lessons { get; }
     IRepositoryBase<CourseReview> CourseReviews { get; }
     ICourseExerciseRepository Puzzles { get; }
+    IRepositoryBase<CourseExample> Examples { get; }
 
     Task<bool> SaveChangesAsync();
 }
