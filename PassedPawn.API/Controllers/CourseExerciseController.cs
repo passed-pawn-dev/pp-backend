@@ -50,8 +50,8 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data;
-        return Ok(lessonDto);
+        var courseExerciseDto = serviceResult.Data;
+        return Ok(courseExerciseDto);
     }
 
     [Authorize(Policy = "require student role")]
