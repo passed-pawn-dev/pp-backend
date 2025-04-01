@@ -114,8 +114,8 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data;
-        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
+        var courseExampleDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CourseExample", new { id = courseExampleDto.Id }, courseExampleDto);
     }
     
     [Authorize(Policy = "require coach role")]
@@ -144,8 +144,8 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data;
-        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
+        var courseExerciseDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, courseExerciseDto);
     }
 
     #endregion
