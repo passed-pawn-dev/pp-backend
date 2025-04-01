@@ -49,7 +49,7 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var lessonDto = serviceResult.Data;
-        return Ok(lessonDto);
+        var courseExampleDto = serviceResult.Data;
+        return Ok(courseExampleDto);
     }
 }
