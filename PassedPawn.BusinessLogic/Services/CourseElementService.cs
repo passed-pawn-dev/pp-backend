@@ -2,7 +2,7 @@ using PassedPawn.DataAccess.Entities.Courses;
 
 namespace PassedPawn.BusinessLogic.Services;
 
-public class CourseElementService
+public abstract class CourseElementService
 {
     protected static int GetHighestOrderNumber(Lesson lesson)
     {
