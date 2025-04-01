@@ -1,3 +1,5 @@
+using PassedPawn.DataAccess.Entities.Courses.Elements;
+
 namespace PassedPawn.DataAccess.Entities.Courses;
 
 public class Course : IEntity

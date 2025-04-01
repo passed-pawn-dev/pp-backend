@@ -1,13 +1,9 @@
-namespace PassedPawn.DataAccess.Entities.Courses;
+namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
-public class CourseExample : IEntity
+public class CourseExample : CourseElement, IEntity
 {
-    public int Id { get; set; }
-    public required string Title { get; set; }
     public string? InitialDescription { get; set; }
     public required string InitialFen { get; set; }
-    public int Order { get; set; }
-
     public ICollection<CourseExampleMove> Moves { get; init; } = [];
 
     public int LessonId { get; init; }

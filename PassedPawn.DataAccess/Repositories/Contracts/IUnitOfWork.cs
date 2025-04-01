@@ -1,5 +1,6 @@
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 
 namespace PassedPawn.DataAccess.Repositories.Contracts;
 

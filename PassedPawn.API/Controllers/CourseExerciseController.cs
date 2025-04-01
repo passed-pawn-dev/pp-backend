@@ -8,7 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puzzleService) : ApiControllerBase
+public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puzzleService,
+    IClaimsPrincipalService claimsPrincipalService, ICourseExerciseService exerciseService) : ApiControllerBase
 {
     
     [HttpGet("{id:int}")]
@@ -21,6 +22,36 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
     {
         var puzzle = await unitOfWork.Puzzles.GetByIdAsync<CourseExerciseDto>(id);
         return puzzle is null ? NotFound() : Ok(puzzle);
+    }
+    
+    [HttpPut("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Updates an exercise",
+        Description = "New exercise's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
+    public async Task<IActionResult> UpdateExercise(int id, CourseExerciseUpsertDto upsertDto)
+    {
+        var lesson = await unitOfWork.Lessons.GetByExampleId(id);
+
+        if (lesson is null)
+            return NotFound();
+
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var serviceResult = await exerciseService.ValidateAndUpdateExercise(lesson, id, upsertDto);
+
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+
+        var courseExerciseDto = serviceResult.Data;
+        return Ok(courseExerciseDto);
     }
 
     [Authorize(Policy = "require student role")]

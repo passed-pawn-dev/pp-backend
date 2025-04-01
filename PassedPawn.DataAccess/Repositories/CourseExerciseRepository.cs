@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.DataAccess.Repositories.Contracts;
 
 namespace PassedPawn.DataAccess.Repositories;

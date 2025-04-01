@@ -1,11 +1,8 @@
-namespace PassedPawn.DataAccess.Entities.Courses;
+namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
-public class CourseExercise : IEntity
+public class CourseExercise : CourseElement, IEntity
 {
-    public int Id { get; set; }
-    public required string Title { get; set; }
     public required string Description { get; set; }
-    public int Order { get; set; }
     public required string Fen { get; set; }
     public required string Solution { get; set; }
 

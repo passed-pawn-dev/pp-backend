@@ -17,7 +17,6 @@ public class LessonControllerTests
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IClaimsPrincipalService> _claimsPrincipalServiceMock;
 
-
     public LessonControllerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -165,7 +164,7 @@ public class LessonControllerTests
             .ReturnsAsync(course);
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.SaveChangesAsync())
             .ReturnsAsync(true);
-        _unitOfWorkMock.Setup(_unitOfWorkMock => _unitOfWorkMock.Lessons.Delete(It.IsAny<Lesson>()));
+        _unitOfWorkMock.Setup(unitOfWorkMock => unitOfWorkMock.Lessons.Delete(It.IsAny<Lesson>()));
         _claimsPrincipalServiceMock.Setup(service => service.GetCoachId(It.IsAny<ClaimsPrincipal>()))
             .ReturnsAsync(1);
 

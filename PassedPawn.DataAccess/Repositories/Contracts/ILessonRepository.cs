@@ -6,4 +6,6 @@ namespace PassedPawn.DataAccess.Repositories.Contracts;
 public interface ILessonRepository : IRepositoryBase<Lesson>
 {
     Task<IEnumerable<LessonDto>> GetUserLessons(int userId, int courseId);
+    Task<Lesson?> GetWithElementsAndCoachById(int lessonId);
+    Task<Lesson?> GetByExampleId(int exampleId);
 }
