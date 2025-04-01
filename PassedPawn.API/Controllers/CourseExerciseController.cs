@@ -33,7 +33,7 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
         Summary = "Updates an exercise",
         Description = "New exercise's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> UpdateExample(int id, CourseExerciseUpsertDto upsertDto)
+    public async Task<IActionResult> UpdateExercise(int id, CourseExerciseUpsertDto upsertDto)
     {
         var lesson = await unitOfWork.Lessons.GetByExampleId(id);
 
