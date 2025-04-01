@@ -18,7 +18,7 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
 
         if (example.Order > highestOrderNumber + 1 || example.Order < 1)
             return ServiceResult<CourseExampleDto>.Failure([
-                $"New lesson has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New example has wrong order. Maximum of {highestOrderNumber + 1} expected"
             ]);
 
         MoveOrderOnAdd(lesson, example.Order);
@@ -38,7 +38,7 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
 
         if (upsertDto.Order > highestOrderNumber || upsertDto.Order < 1)
             return ServiceResult<CourseExampleDto>.Failure([
-                $"New lesson has wrong order. Maximum of {highestOrderNumber} expected"
+                $"New example has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         var example = lesson.Examples.Single(example => example.Id == exampleId);

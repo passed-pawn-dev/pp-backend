@@ -19,7 +19,7 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
 
         if (exercise.Order > highestOrderNumber + 1 || exercise.Order < 1)
             return ServiceResult<CourseExerciseDto>.Failure([
-                $"New lesson has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New exercise has wrong order. Maximum of {highestOrderNumber + 1} expected"
             ]);
 
         MoveOrderOnAdd(lesson, exercise.Order);
@@ -39,7 +39,7 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
 
         if (upsertDto.Order > highestOrderNumber || upsertDto.Order < 1)
             return ServiceResult<CourseExerciseDto>.Failure([
-                $"New lesson has wrong order. Maximum of {highestOrderNumber} expected"
+                $"New exercise has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         var exercise = lesson.Exercises.Single(exercise => exercise.Id == exampleId);
