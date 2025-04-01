@@ -1,6 +1,6 @@
 namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
-public class CourseElement
+public abstract class CourseElement
 {
     public int Id { get; set; }
     public required string Title { get; set; }
