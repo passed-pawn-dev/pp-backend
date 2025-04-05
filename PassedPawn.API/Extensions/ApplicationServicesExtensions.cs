@@ -1,5 +1,6 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
+using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -10,6 +11,7 @@ using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.Keyclock;
+using Account = CloudinaryDotNet.Account;
 
 namespace PassedPawn.API.Extensions;
 
@@ -18,11 +20,21 @@ public static class ApplicationServicesExtensions
     public static void AddApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddAutoMapper(typeof(AutoMapperProfiles));
+        
+        var cloudinaryAccount = new Account(
+            configuration["Cloudinary:CloudName"],
+            configuration["Cloudinary:ApiKey"],
+            configuration["Cloudinary:ApiSecret"]
+        );
+
+        var cloudinary = new Cloudinary(cloudinaryAccount);
+        services.AddSingleton(cloudinary);
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<ICourseExampleService, CourseExampleService>();
         services.AddScoped<ICourseExerciseService, CourseExerciseService>();
+        services.AddScoped<ICourseVideoService, CourseVideoService>();
         services.AddScoped<IKeycloakService, KeycloakService>();
         services.AddScoped<IPuzzleService, PuzzleService>();
         services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();

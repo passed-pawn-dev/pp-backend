@@ -60,8 +60,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<LessonUpsertDto, Lesson>();
         CreateMap<Lesson, LessonDto>();
 
-        CreateMap<VideoUpsertDto, CourseVideo>();
-        CreateMap<CourseVideo, VideoDto>();
+        CreateMap<CourseVideoUpsertDto, CourseVideo>();
+        CreateMap<CourseVideo, CourseVideoDto>();
 
         CreateMap<CourseExerciseUpsertDto, CourseExercise>();
         CreateMap<CourseExercise, CourseExerciseDto>();

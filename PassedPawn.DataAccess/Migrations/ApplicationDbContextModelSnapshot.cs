@@ -168,7 +168,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("Courses");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExample", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExample", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -205,7 +205,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExamples");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMove", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -230,7 +230,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExampleMove");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMoveArrow", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMoveArrow", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -259,7 +259,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExampleMoveArrow");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMoveHighlight", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMoveHighlight", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -284,7 +284,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExampleMoveHighlight");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExercise", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -321,7 +321,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExercises");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseVideo", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseVideo", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -332,11 +332,27 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
+                    b.Property<int>("LessonId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("VideoPublicId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("VideoUrl")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("LessonId");
 
                     b.ToTable("CourseVideos");
                 });
@@ -355,14 +371,9 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<int>("LessonNumber")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("VideoId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
-
-                    b.HasIndex("VideoId");
 
                     b.ToTable("Lessons");
                 });
@@ -736,7 +747,7 @@ namespace PassedPawn.DataAccess.Migrations
 
             modelBuilder.Entity("CourseExerciseStudent", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExercise", null)
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", null)
                         .WithMany()
                         .HasForeignKey("PuzzlesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -815,7 +826,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Thumbnail");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExample", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExample", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.Course", null)
                         .WithMany("Examples")
@@ -830,9 +841,9 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Lesson");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMove", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExample", "Example")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExample", "Example")
                         .WithMany("Moves")
                         .HasForeignKey("ExampleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -841,9 +852,9 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Example");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMoveArrow", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMoveArrow", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", "ExampleMove")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMove", "ExampleMove")
                         .WithMany("Arrows")
                         .HasForeignKey("ExampleMoveId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -852,9 +863,9 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("ExampleMove");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMoveHighlight", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMoveHighlight", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", "ExampleMove")
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMove", "ExampleMove")
                         .WithMany("Highlights")
                         .HasForeignKey("ExampleMoveId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -863,10 +874,21 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("ExampleMove");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExercise", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
                         .WithMany("Exercises")
+                        .HasForeignKey("LessonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Lesson");
+                });
+
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseVideo", b =>
+                {
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
+                        .WithMany("Videos")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -882,13 +904,7 @@ namespace PassedPawn.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.CourseVideo", "Video")
-                        .WithMany()
-                        .HasForeignKey("VideoId");
-
                     b.Navigation("Course");
-
-                    b.Navigation("Video");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Nationality", b =>
@@ -926,12 +942,12 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Reviews");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExample", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExample", b =>
                 {
                     b.Navigation("Moves");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.CourseExampleMove", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExampleMove", b =>
                 {
                     b.Navigation("Arrows");
 
@@ -943,6 +959,8 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Examples");
 
                     b.Navigation("Exercises");
+
+                    b.Navigation("Videos");
                 });
 #pragma warning restore 612, 618
         }
