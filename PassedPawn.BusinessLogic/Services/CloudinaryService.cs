@@ -1,0 +1,41 @@
+using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using PassedPawn.BusinessLogic.Services.Contracts;
+
+namespace PassedPawn.BusinessLogic.Services;
+
+public class CloudinaryService : ICloudinaryService
+{
+    private Cloudinary Cloudinary { get; }
+
+    public CloudinaryService(IConfiguration configuration)
+    {
+        var cloudinaryAccount = new Account(
+            configuration["Cloudinary:CloudName"],
+            configuration["Cloudinary:ApiKey"],
+            configuration["Cloudinary:ApiSecret"]
+        );
+
+        Cloudinary = new Cloudinary(cloudinaryAccount);
+    }
+    
+    public async Task<UploadResult> UploadAsync(IFormFile file)
+    {
+        await using var stream = file.OpenReadStream();
+        var uploadParams = new VideoUploadParams
+        {
+            File = new FileDescription(file.FileName, stream),
+            Folder = "lesson_videos"
+        };
+
+        return await Cloudinary.UploadAsync(uploadParams);
+    }
+
+    public async Task<DeletionResult> DeleteAsync(string publicId)
+    {
+        var deletionParams = new DeletionParams(publicId);
+        return await Cloudinary.DestroyAsync(deletionParams);
+    }
+}
