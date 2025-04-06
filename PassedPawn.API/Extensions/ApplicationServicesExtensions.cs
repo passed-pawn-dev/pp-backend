@@ -26,6 +26,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IKeycloakService, KeycloakService>();
         services.AddScoped<IPuzzleService, PuzzleService>();
         services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
+        services.AddScoped<ICourseQuizService, CourseQuizService>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<ApplicationDbContext>(options =>
