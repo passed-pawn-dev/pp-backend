@@ -6,8 +6,8 @@ namespace PassedPawn.BusinessLogic.Services.Contracts;
 
 public interface ICourseVideoService
 {
-    public Task<ServiceResult<CourseVideoDto>> ValidateAndAddVideo(Lesson lesson, CourseVideoUpsertDto upsertDto);
+    public Task<ServiceResult<CourseVideoDto>> ValidateAndAddVideo(Lesson lesson, CourseVideoAddDto addDto);
 
     public Task<ServiceResult<CourseVideoDto>> ValidateAndUpdateVideo(Lesson lesson, int exampleId,
-        CourseVideoUpsertDto upsertDto);
+        CourseVideoUpdateDto updateDto);
 }

@@ -12,9 +12,9 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
     ICloudinaryService cloudinaryService) : CourseElementService, ICourseVideoService
 {
     public async Task<ServiceResult<CourseVideoDto>> ValidateAndAddVideo(Lesson lesson,
-        CourseVideoUpsertDto upsertDto)
+        CourseVideoAddDto addDto)
     {
-        var video = mapper.Map<CourseVideo>(upsertDto);
+        var video = mapper.Map<CourseVideo>(addDto);
         var highestOrderNumber = GetHighestOrderNumber(lesson);
 
         if (video.Order > highestOrderNumber + 1 || video.Order < 1)
@@ -22,14 +22,17 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
                 $"New example has wrong order. Maximum of {highestOrderNumber + 1} expected"
             ]);
 
-        var uploadResult = await cloudinaryService.UploadAsync(upsertDto.Video);
-        video.VideoUrl = uploadResult.Url.AbsoluteUri;
-        video.VideoPublicId = uploadResult.PublicId;
-
-        MoveOrderOnAdd(lesson, video.Order);
+        var uploadResult = await cloudinaryService.UploadAsync(addDto.Video);
+        
+        if (uploadResult.Error is not null)
+            return ServiceResult<CourseVideoDto>.Failure([uploadResult.Error.Message]);
 
         try
         {
+            video.VideoUrl = uploadResult.Url.AbsoluteUri;
+            video.VideoPublicId = uploadResult.PublicId;
+
+            MoveOrderOnAdd(lesson, video.Order);
             lesson.Videos.Add(video);
             unitOfWork.Lessons.Update(lesson);
 
@@ -41,14 +44,70 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         catch
         {
             await cloudinaryService.DeleteAsync(uploadResult.PublicId);
-            return ServiceResult<CourseVideoDto>.Failure([
-                "Something went wrong"
-            ]);
+            throw;
         }
     }
 
-    public Task<ServiceResult<CourseVideoDto>> ValidateAndUpdateVideo(Lesson lesson, int exampleId, CourseVideoUpsertDto upsertDto)
+    public async Task<ServiceResult<CourseVideoDto>> ValidateAndUpdateVideo(Lesson lesson, int exampleId,
+        CourseVideoUpdateDto updateDto)
     {
-        throw new NotImplementedException();
+        var highestOrderNumber = GetHighestOrderNumber(lesson);
+
+        if (updateDto.Order > highestOrderNumber || updateDto.Order < 1)
+            return ServiceResult<CourseVideoDto>.Failure([
+                $"New example has wrong order. Maximum of {highestOrderNumber} expected"
+            ]);
+
+        var video = lesson.Videos.Single(video => video.Id == exampleId);
+
+        if (updateDto.Video is not null)
+        {
+            var oldVideoUrl = video.VideoUrl;
+            var oldVideoPublicId = video.VideoPublicId;
+            
+            var uploadResult = await cloudinaryService.UploadAsync(updateDto.Video);
+        
+            if (uploadResult.Error is not null)
+                return ServiceResult<CourseVideoDto>.Failure([uploadResult.Error.Message]);
+
+            try
+            {
+                video.VideoUrl = uploadResult.Url.AbsoluteUri;
+                video.VideoPublicId = uploadResult.PublicId;
+                MoveOrderOnUpdate(lesson, video.Order, updateDto.Order);
+                mapper.Map(updateDto, video);
+                unitOfWork.Videos.Update(video);
+
+                if (!await unitOfWork.SaveChangesAsync())
+                    throw new Exception("Failed to save database");
+                
+                var result = await cloudinaryService.DeleteAsync(oldVideoPublicId);
+                Console.WriteLine(oldVideoPublicId);
+                Console.WriteLine(oldVideoPublicId.Split('/').Last());
+                Console.WriteLine(result.Result);
+                Console.WriteLine(result.Error);
+                
+                if (result.Error is not null)
+                    Console.WriteLine(result.Error.Message);
+            }
+            catch
+            {
+                video.VideoUrl = oldVideoUrl;
+                video.VideoPublicId = oldVideoPublicId;
+                await cloudinaryService.DeleteAsync(uploadResult.PublicId);
+                throw;
+            }
+        }
+        else
+        {
+            MoveOrderOnUpdate(lesson, video.Order, updateDto.Order);
+            mapper.Map(updateDto, video);
+            unitOfWork.Videos.Update(video);
+
+            if (!await unitOfWork.SaveChangesAsync())
+                throw new Exception("Failed to save database");
+        }
+
+        return ServiceResult<CourseVideoDto>.Success(mapper.Map<CourseVideoDto>(video));
     }
 }

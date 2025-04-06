@@ -159,7 +159,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         Summary = "Adds a new video to a lesson",
         Description = "New video's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> AddVideo(int lessonId, [FromForm] CourseVideoUpsertDto upsertDto,
+    public async Task<IActionResult> AddVideo(int lessonId, [FromForm] CourseVideoAddDto addDto,
         ICourseVideoService videoService)
     {
         var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
@@ -170,13 +170,13 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (lesson.Course?.CoachId != await claimsPrincipalService.GetCoachId(User))
             return Forbid();
 
-        var serviceResult = await videoService.ValidateAndAddVideo(lesson, upsertDto);
+        var serviceResult = await videoService.ValidateAndAddVideo(lesson, addDto);
 
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var courseExerciseDto = serviceResult.Data;
-        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, courseExerciseDto);
+        var courseVideoDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CourseVideo", new { id = courseVideoDto.Id }, courseVideoDto);
     }
 
     #endregion

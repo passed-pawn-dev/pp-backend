@@ -33,9 +33,12 @@ public class CloudinaryService : ICloudinaryService
         return await Cloudinary.UploadAsync(uploadParams);
     }
 
-    public async Task<DeletionResult> DeleteAsync(string publicId)
+    public async Task<DeletionResult> DeleteAsync(string publicId, ResourceType resourceType = ResourceType.Video)
     {
-        var deletionParams = new DeletionParams(publicId);
+        var deletionParams = new DeletionParams(publicId)
+        {
+            ResourceType = resourceType
+        };
         return await Cloudinary.DestroyAsync(deletionParams);
     }
 }

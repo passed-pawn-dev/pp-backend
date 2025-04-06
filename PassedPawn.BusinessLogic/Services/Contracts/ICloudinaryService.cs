@@ -6,5 +6,5 @@ namespace PassedPawn.BusinessLogic.Services.Contracts;
 public interface ICloudinaryService
 {
     Task<UploadResult> UploadAsync(IFormFile file);
-    Task<DeletionResult> DeleteAsync(string publicId);
+    Task<DeletionResult> DeleteAsync(string publicId, ResourceType resourceType = ResourceType.Video);
 }
