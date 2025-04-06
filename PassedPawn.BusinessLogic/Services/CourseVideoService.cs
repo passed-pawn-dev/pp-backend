@@ -82,10 +82,6 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
                     throw new Exception("Failed to save database");
                 
                 var result = await cloudinaryService.DeleteAsync(oldVideoPublicId);
-                Console.WriteLine(oldVideoPublicId);
-                Console.WriteLine(oldVideoPublicId.Split('/').Last());
-                Console.WriteLine(result.Result);
-                Console.WriteLine(result.Error);
                 
                 if (result.Error is not null)
                     Console.WriteLine(result.Error.Message);
