@@ -1,6 +1,5 @@
 ﻿using System.Security.Claims;
 using System.Text.Json;
-using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -11,7 +10,6 @@ using PassedPawn.DataAccess;
 using PassedPawn.DataAccess.Repositories;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.Keyclock;
-using Account = CloudinaryDotNet.Account;
 
 namespace PassedPawn.API.Extensions;
 
