@@ -20,6 +20,12 @@ public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger) : IE
                 Status = StatusCodes.Status500InternalServerError,
                 Title = "Keycloak response is empty"
             },
+            CloudinaryException ex => new ProblemDetails
+            {
+                Status = StatusCodes.Status503ServiceUnavailable,
+                Title = "Cloudinary unavailable",
+                Detail = ex.Message
+            },
             // Wildcard. Catch specific exceptions above.
             _ => new ProblemDetails
             {

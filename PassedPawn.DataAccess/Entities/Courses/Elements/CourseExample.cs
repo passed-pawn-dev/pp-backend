@@ -5,7 +5,4 @@ public class CourseExample : CourseElement, IEntity
     public string? InitialDescription { get; set; }
     public required string InitialFen { get; set; }
     public ICollection<CourseExampleMove> Moves { get; init; } = [];
-
-    public int LessonId { get; init; }
-    public Lesson? Lesson { get; init; }
 }
