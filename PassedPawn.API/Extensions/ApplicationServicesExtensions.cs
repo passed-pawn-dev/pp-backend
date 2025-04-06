@@ -21,7 +21,7 @@ public static class ApplicationServicesExtensions
     {
         services.AddAutoMapper(typeof(AutoMapperProfiles));
 
-        services.AddScoped<ICloudinaryService, CloudinaryService>();
+        services.AddSingleton<ICloudinaryService, CloudinaryService>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
