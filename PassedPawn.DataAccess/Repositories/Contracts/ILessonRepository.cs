@@ -10,4 +10,5 @@ public interface ILessonRepository : IRepositoryBase<Lesson>
     Task<Lesson?> GetByExampleId(int exampleId);
     Task<Lesson?> GetByExerciseId(int exampleId);
     Task<Lesson?> GetByVideoId(int exampleId);
+    Task<Lesson?> GetByQuizId(int quizId);
 }

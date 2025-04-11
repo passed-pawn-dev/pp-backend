@@ -1,3 +1,4 @@
+using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using PassedPawn.DataAccess.Entities.Courses.Elements;
 
@@ -13,8 +14,9 @@ public class Lesson : IEntity
     public ICollection<CourseExercise> Exercises { get; init; } = [];
     public ICollection<CourseExample> Examples { get; init; } = [];
     public ICollection<CourseVideo> Videos { get; init; } = [];
+    public ICollection<CourseQuiz> Quizzes { get; init; } = [];
     public int Id { get; set; }
 
     [NotMapped]
-    public IEnumerable<CourseElement> Elements => [..Exercises, ..Examples, ..Videos];
+    public IEnumerable<CourseElement> Elements => [..Exercises, ..Examples, ..Videos, ..Quizzes];
 }

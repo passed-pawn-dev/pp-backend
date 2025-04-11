@@ -1,11 +1,17 @@
-﻿namespace PassedPawn.Models.DTOs.Course.Quiz;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace PassedPawn.Models.DTOs.Course.Quiz;
 
 public class CourseQuizUpsertDto
 {
-    public required string Question { get; set; }
-    public ICollection<AnswerDto> Answers { get; set; } = [];
-    public int Number { get; set; }
-    public string? Hint { get; set; }
-    public string? Position { get; set; }
-    public string? Explanation  { get; set; }
+    [Required]
+    public string Question { get; init; } = string.Empty;
+    public ICollection<AnswerUpsertDto> Answers { get; init; } = [];
+    public int Number { get; init; }
+    public string? Hint { get; init; }
+    public string? Fen { get; init; }
+    public string? Explanation  { get; init; }
+    public int Order { get; init; }
+    [Required] 
+    public string Title { get; set; } = string.Empty;
 }

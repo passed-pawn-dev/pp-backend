@@ -29,6 +29,7 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(lesson => lesson.Exercises)
             .Include(lesson => lesson.Videos)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
             .SingleOrDefaultAsync();
 
     }
@@ -41,6 +42,7 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(lesson => lesson.Exercises)
             .Include(lesson => lesson.Videos)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
             .SingleOrDefaultAsync();
 
     }
@@ -53,6 +55,7 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(lesson => lesson.Examples)
             .Include(lesson => lesson.Videos)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
             .SingleOrDefaultAsync();
     }
 
@@ -64,6 +67,20 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(lesson => lesson.Exercises)
             .Include(lesson => lesson.Examples)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<Lesson?> GetByQuizId(int quizId)
+    {
+        return await DbSet
+            .Include(lesson => lesson.Quizzes)
+            .ThenInclude(quiz => quiz.Answers)
+            .Where(lesson => lesson.Quizzes.Any(quiz => quiz.Id == quizId))
+            .Include(lesson => lesson.Exercises)
+            .Include(lesson => lesson.Examples)
+            .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Videos)
             .SingleOrDefaultAsync();
     }
 }
