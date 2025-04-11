@@ -14,6 +14,7 @@ public interface IUnitOfWork
     IRepositoryBase<CourseReview> CourseReviews { get; }
     ICourseExerciseRepository Puzzles { get; }
     IRepositoryBase<CourseExample> Examples { get; }
+    IRepositoryBase<CourseQuiz> Quizzes { get; }
     IRepositoryBase<CourseVideo> Videos { get; }
 
     Task<bool> SaveChangesAsync();

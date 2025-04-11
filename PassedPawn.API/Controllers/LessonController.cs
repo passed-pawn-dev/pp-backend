@@ -6,6 +6,7 @@ using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Quiz;
 using PassedPawn.Models.DTOs.Course.Video;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -129,7 +130,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         Summary = "Adds a new exercise to a lesson",
         Description = "New exercise's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> Post(int lessonId, CourseExerciseUpsertDto upsertDto,
+    public async Task<IActionResult> AddExercise(int lessonId, CourseExerciseUpsertDto upsertDto,
         ICourseExerciseService exerciseService)
     {
         var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
@@ -146,7 +147,8 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
             return BadRequest(serviceResult.Errors);
 
         var courseExerciseDto = serviceResult.Data;
-        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, courseExerciseDto);
+        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, 
+            courseExerciseDto);
     }
     
     [Authorize(Policy = "require coach role")]
@@ -177,6 +179,36 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
 
         var courseVideoDto = serviceResult.Data;
         return CreatedAtAction("Get", "CourseVideo", new { id = courseVideoDto.Id }, courseVideoDto);
+    }
+    
+    [Authorize(Policy = "require coach role")]
+    [HttpPost("{lessonId:int}/quiz")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseQuizDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "Adds a new quiz to a lesson",
+        Description = "New quiz's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
+    public async Task<IActionResult> AddQuiz(int lessonId, CourseQuizUpsertDto upsertDto, 
+        ICourseQuizService quizService)
+    {
+        var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
+
+        if (lesson is null)
+            return NotFound();
+
+        if (lesson.Course?.CoachId != await claimsPrincipalService.GetCoachId(User))
+            return Forbid();
+
+        var serviceResult = await quizService.ValidateAndAddQuiz(lesson, upsertDto);
+
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+
+        var courseQuizDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CourseQuiz", new { id = courseQuizDto.Id }, courseQuizDto);
     }
 
     #endregion

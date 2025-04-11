@@ -16,6 +16,7 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public IRepositoryBase<CourseReview> CourseReviews { get; } = new RepositoryBase<CourseReview>(dbContext, mapper);
     public ICourseExerciseRepository Puzzles { get; } = new CourseExerciseRepository(dbContext, mapper);
     public IRepositoryBase<CourseExample> Examples { get; } = new RepositoryBase<CourseExample>(dbContext, mapper);
+    public IRepositoryBase<CourseQuiz> Quizzes { get; } = new RepositoryBase<CourseQuiz>(dbContext, mapper);
     public IRepositoryBase<CourseVideo> Videos { get; } = new RepositoryBase<CourseVideo>(dbContext, mapper);
 
 
