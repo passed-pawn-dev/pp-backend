@@ -10,6 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
+// TODO: REFACTOR: Rethink endpoints, DTOs, required roles
 public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
@@ -55,15 +56,15 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
 
     
     [HttpGet("{id:int}/details")]
-    [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetails))]
+    // [Authorize(Policy = "require coach role")] Why is it here?????
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetailsDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single course by id"
     )]
     public async Task<IActionResult> GetCourseDetails(int id)
     {
-        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetails>(id);
+        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetailsDto>(id);
 
         if (course is null)
             return NotFound();
@@ -90,7 +91,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     
     [HttpGet("{id:int}/bought")]
     [Authorize(Policy = "require student role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetails))]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetailsDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single course by id, when bought by user"
@@ -98,7 +99,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
     public async Task<IActionResult> GetCourseBought(int id)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
-        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetails>(id);
+        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetailsDto>(id);
 
         if (course is null)
             return NotFound();

@@ -55,7 +55,8 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count))
             .ForMember(dest => dest.StudentNumber, opt => opt.MapFrom(src => src.Students.Count));
 
-        CreateMap<Course, CourseDetails>();
+        CreateMap<Course, CourseDetailsDto>()
+            .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => $"{src.Coach!.FirstName} {src.Coach!.LastName}"));
             
         CreateMap<LessonUpsertDto, Lesson>();
         CreateMap<Lesson, LessonDto>();
