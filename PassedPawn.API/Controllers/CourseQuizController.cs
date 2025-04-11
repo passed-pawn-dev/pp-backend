@@ -4,16 +4,19 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Quiz;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
 public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService, ICourseQuizService quizService) : ApiControllerBase
 {
-    // Add Quiz service and inherit from generic class
-    // Add Quiz Controller
-    // Add quizes to some model to update order (need to check where)
-    
     [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseQuizDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Get Course Quiz by id",
+        Description = "New quiz's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
     public async Task<IActionResult> Get(int id)
     {
         var quiz = await unitOfWork.Quizzes.GetByIdAsync<CourseQuizDto>(id);
@@ -27,9 +30,16 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
         return Ok();
     }
     
-    // Put doent work inseatd of updating answers it add new to existing ones
     [Authorize(Policy = "require coach role")]
     [HttpPut("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseQuizDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "Update quiz",
+        Description = "New quiz's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
     public async Task<IActionResult> Put(int id, CourseQuizUpsertDto upsertDto)
     {
         var lesson = await unitOfWork.Lessons.GetByQuizId(id);

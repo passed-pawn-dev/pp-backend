@@ -1,4 +1,3 @@
-using System.Collections;
 using System.ComponentModel.DataAnnotations.Schema;
 using PassedPawn.DataAccess.Entities.Courses.Elements;
 

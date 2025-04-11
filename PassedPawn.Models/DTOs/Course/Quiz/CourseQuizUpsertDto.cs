@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using PassedPawn.Models.Validators;
 
 namespace PassedPawn.Models.DTOs.Course.Quiz;
 
@@ -9,6 +10,7 @@ public class CourseQuizUpsertDto
     public ICollection<AnswerUpsertDto> Answers { get; init; } = [];
     public int Number { get; init; }
     public string? Hint { get; init; }
+    [FenValidation]
     public string? Fen { get; init; }
     public string? Explanation  { get; init; }
     public int Order { get; init; }

@@ -7,6 +7,4 @@ public class Student : User
 {
     public List<Course> Courses { get; init; } = [];
     public List<CourseExercise> Puzzles { get; init; } = [];
-    
-    // Add relation to quiz
 }

@@ -146,9 +146,9 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var courseQuizDto = serviceResult.Data;
-        return CreatedAtAction("Get", "CourseExercise", new { id = courseQuizDto.Id }, 
-            courseQuizDto);
+        var courseExerciseDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, 
+            courseExerciseDto);
     }
     
     [Authorize(Policy = "require coach role")]
@@ -183,6 +183,14 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     
     [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/quiz")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseQuizDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [SwaggerOperation(
+        Summary = "Adds a new quiz to a lesson",
+        Description = "New quiz's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+    )]
     public async Task<IActionResult> AddQuiz(int lessonId, CourseQuizUpsertDto upsertDto, 
         ICourseQuizService quizService)
     {

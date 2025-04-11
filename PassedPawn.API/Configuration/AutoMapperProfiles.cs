@@ -89,7 +89,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseQuiz, CourseQuizDto>();
         CreateMap<CourseQuizUpsertDto, CourseQuiz>();
         
-        CreateMap<QuizAnswer, AnswerDto>().ReverseMap();
+        CreateMap<QuizAnswer, AnswerDto>();
         CreateMap<AnswerUpsertDto, QuizAnswer>();
 
         CreateMap<Course, UserCourseDto>()
