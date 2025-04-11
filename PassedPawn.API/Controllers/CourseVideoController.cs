@@ -19,8 +19,8 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var puzzle = await unitOfWork.Videos.GetByIdAsync<CourseVideoDto>(id);
-        return puzzle is null ? NotFound() : Ok(puzzle);
+        var video = await unitOfWork.Videos.GetByIdAsync<CourseVideoDto>(id);
+        return video is null ? NotFound() : Ok(video);
     }
     
     [HttpPut("{id:int}")]
@@ -33,7 +33,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         Description = "New video's order can be in the middle of the lesson, so other elements' orders might be modified to account for that.\n" +
                       "All of the properties will be overriden, except for video. When left as null, old video will be kept"
     )]
-    public async Task<IActionResult> UpdateExercise(int id, CourseVideoUpdateDto updateDto)
+    public async Task<IActionResult> UpdateVideo(int id, [FromForm] CourseVideoUpdateDto updateDto)
     {
         var lesson = await unitOfWork.Lessons.GetByVideoId(id);
 

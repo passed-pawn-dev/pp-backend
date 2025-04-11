@@ -8,7 +8,7 @@ namespace PassedPawn.BusinessLogic.Services;
 
 public class CloudinaryService : ICloudinaryService
 {
-    private Cloudinary Cloudinary { get; }
+    private readonly Cloudinary _cloudinary;
 
     public CloudinaryService(IConfiguration configuration)
     {
@@ -18,7 +18,7 @@ public class CloudinaryService : ICloudinaryService
             configuration["Cloudinary:ApiSecret"]
         );
 
-        Cloudinary = new Cloudinary(cloudinaryAccount);
+        _cloudinary = new Cloudinary(cloudinaryAccount);
     }
     
     public async Task<UploadResult> UploadAsync(IFormFile file)
@@ -30,7 +30,7 @@ public class CloudinaryService : ICloudinaryService
             Folder = "lesson_videos"
         };
 
-        return await Cloudinary.UploadAsync(uploadParams);
+        return await _cloudinary.UploadAsync(uploadParams);
     }
 
     public async Task<DeletionResult> DeleteAsync(string publicId, ResourceType resourceType = ResourceType.Video)
@@ -39,6 +39,6 @@ public class CloudinaryService : ICloudinaryService
         {
             ResourceType = resourceType
         };
-        return await Cloudinary.DestroyAsync(deletionParams);
+        return await _cloudinary.DestroyAsync(deletionParams);
     }
 }
