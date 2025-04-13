@@ -45,4 +45,9 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
+var url = "http://pp-keycloak:8080";
+var httpClient = new HttpClient();
+var response = await httpClient.GetAsync($"{url}/realms/passed-pawn/protocol/openid-connect/token");
+Console.WriteLine(response.StatusCode);
+
 app.Run();

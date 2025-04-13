@@ -7,7 +7,7 @@ public class ResourceAccess
     [JsonPropertyName("account")]
     public Account? Account { get; init; }
     
-    [JsonPropertyName("api-client")]
+    [JsonPropertyName("pp-api")]
     public ApiClient? ApiClient { get; init; }
 }
 

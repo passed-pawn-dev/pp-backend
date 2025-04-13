@@ -53,15 +53,18 @@ public static class ApplicationServicesExtensions
             .AddJwtBearer(options =>
             {
                 options.RequireHttpsMetadata = false;
-                options.Authority = $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}";
-                // options.Audience = keycloakConfiguration["resource"];
+                options.Authority = $"{keycloakConfiguration["Authority"]}";
+                
                 options.Audience = "account";
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidateIssuerSigningKey = true,
+                    ValidateLifetime = true,
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
                     ValidIssuers =
                     [
-                        $"{keycloakConfiguration["auth-server-url"]}/realms/{keycloakConfiguration["realm"]}",
-                        $"http://localhost:8081/realms/{keycloakConfiguration["realm"]}"
+                        $"{keycloakConfiguration["Issuer"]}"
                     ]
                 };
                 
