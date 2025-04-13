@@ -19,7 +19,7 @@ services:
     container_name: pp-api
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.local
     image: pp-api-local
     ports: 
       - 8080:8080
