@@ -38,7 +38,7 @@ public class KeycloakService(IOptions<KeycloakConfig> keycloakConfig, IMapper ma
         
         var userId = response.Headers.Location?.ToString().Split('/').Last()!;
         
-        var clientObject = await client.GetAsync($"{baseUrl}/admin/realms/{realm}/clients?clientId=api-client");
+        var clientObject = await client.GetAsync($"{baseUrl}/admin/realms/{realm}/clients?clientId={keycloakConfig.Value.ClientId}");
             
         var clientId = (await clientObject.Content.ReadAsStringAsync()).Split('"')[3];
         

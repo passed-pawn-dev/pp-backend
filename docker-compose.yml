@@ -19,8 +19,8 @@ services:
     container_name: pp-api
     build:
       context: .
-      dockerfile: Dockerfile
-    image: pp-backend
+      dockerfile: Dockerfile.local
+    image: pp-api-local
     ports: 
       - 8080:8080
     networks:
@@ -69,20 +69,6 @@ services:
     volumes:
       - keycloak-db-data:/var/lib/postgresql/data
 
-  nginx:
-    container_name: pp-nginx
-    image: nginx:stable-alpine3.20-perl
-    ports:
-      - '5500:5500'
-    depends_on:
-      api: 
-        condition: service_healthy
-        restart: true
-    volumes:
-      - ./nginx.conf:/etc/nginx/nginx.conf
-    networks:
-      - api-network
-    
 networks:
   keycloak-network:
   api-network:
