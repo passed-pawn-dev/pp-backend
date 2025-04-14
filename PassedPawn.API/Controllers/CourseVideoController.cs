@@ -1,0 +1,56 @@
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using PassedPawn.API.Controllers.Base;
+using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs.Course.Video;
+using Swashbuckle.AspNetCore.Annotations;
+
+namespace PassedPawn.API.Controllers;
+
+public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService,
+    ICourseVideoService videoService) : ApiControllerBase
+{
+    [HttpGet("{id:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Returns single video by id"
+    )]
+    public async Task<IActionResult> Get(int id)
+    {
+        var video = await unitOfWork.Videos.GetByIdAsync<CourseVideoDto>(id);
+        return video is null ? NotFound() : Ok(video);
+    }
+    
+    [HttpPut("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(IEnumerable<string>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Updates a video",
+        Description = "New video's order can be in the middle of the lesson, so other elements' orders might be modified to account for that.\n" +
+                      "All of the properties will be overriden, except for video. When left as null, old video will be kept"
+    )]
+    public async Task<IActionResult> UpdateVideo(int id, [FromForm] CourseVideoUpdateDto updateDto)
+    {
+        var lesson = await unitOfWork.Lessons.GetByVideoId(id);
+
+        if (lesson is null)
+            return NotFound();
+
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var serviceResult = await videoService.ValidateAndUpdateVideo(lesson, id, updateDto);
+
+        if (!serviceResult.IsSuccess)
+            return BadRequest(serviceResult.Errors);
+
+        var courseVideoDto = serviceResult.Data;
+        return Ok(courseVideoDto);
+    }
+}

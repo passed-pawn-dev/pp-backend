@@ -9,6 +9,7 @@ using PassedPawn.Models.DTOs.Course.Example.Move.Arrow;
 using PassedPawn.Models.DTOs.Course.Example.Move.Highlight;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Quiz;
 using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.DTOs.Course.Video;
 using PassedPawn.Models.DTOs.Keycloak;
@@ -60,8 +61,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<LessonUpsertDto, Lesson>();
         CreateMap<Lesson, LessonDto>();
 
-        CreateMap<VideoUpsertDto, CourseVideo>();
-        CreateMap<CourseVideo, VideoDto>();
+        CreateMap<CourseVideoAddDto, CourseVideo>();
+        CreateMap<CourseVideoUpdateDto, CourseVideo>();
+        CreateMap<CourseVideo, CourseVideoDto>();
 
         CreateMap<CourseExerciseUpsertDto, CourseExercise>();
         CreateMap<CourseExercise, CourseExerciseDto>();
@@ -83,6 +85,12 @@ public class AutoMapperProfiles : Profile
         
         CreateMap<CourseExampleMoveHighlight, CourseExampleMoveHighlightDto>();
         CreateMap<CourseExampleMoveHighlightUpsertDto, CourseExampleMoveHighlight>();
+
+        CreateMap<CourseQuiz, CourseQuizDto>();
+        CreateMap<CourseQuizUpsertDto, CourseQuiz>();
+        
+        CreateMap<QuizAnswer, AnswerDto>();
+        CreateMap<AnswerUpsertDto, QuizAnswer>();
 
         CreateMap<Course, UserCourseDto>()
             .ForMember(dest => dest.LessonNumber, opt => opt.MapFrom(src => src.Lessons.Count));

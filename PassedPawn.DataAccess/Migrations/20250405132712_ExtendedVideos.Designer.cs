@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250405132712_ExtendedVideos")]
+    partial class ExtendedVideos
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -321,47 +324,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExercises");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseQuiz", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Explanation")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Fen")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Hint")
-                        .HasColumnType("text");
-
-                    b.Property<int>("LessonId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Number")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Question")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("LessonId");
-
-                    b.ToTable("CourseQuizes");
-                });
-
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseVideo", b =>
                 {
                     b.Property<int>("Id")
@@ -396,31 +358,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.HasIndex("LessonId");
 
                     b.ToTable("CourseVideos");
-                });
-
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.QuizAnswer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("LastMove")
-                        .HasColumnType("text");
-
-                    b.Property<int>("QuizId")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("QuizId");
-
-                    b.ToTable("QuizAnswer");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
@@ -951,17 +888,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Lesson");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseQuiz", b =>
-                {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
-                        .WithMany("Quizzes")
-                        .HasForeignKey("LessonId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Lesson");
-                });
-
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseVideo", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
@@ -971,17 +897,6 @@ namespace PassedPawn.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("Lesson");
-                });
-
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.QuizAnswer", b =>
-                {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseQuiz", "Quiz")
-                        .WithMany("Answers")
-                        .HasForeignKey("QuizId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
@@ -1042,18 +957,11 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Highlights");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseQuiz", b =>
-                {
-                    b.Navigation("Answers");
-                });
-
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Lesson", b =>
                 {
                     b.Navigation("Examples");
 
                     b.Navigation("Exercises");
-
-                    b.Navigation("Quizzes");
 
                     b.Navigation("Videos");
                 });

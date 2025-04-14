@@ -35,7 +35,7 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
     )]
     public async Task<IActionResult> UpdateExercise(int id, CourseExerciseUpsertDto upsertDto)
     {
-        var lesson = await unitOfWork.Lessons.GetByExampleId(id);
+        var lesson = await unitOfWork.Lessons.GetByExerciseId(id);
 
         if (lesson is null)
             return NotFound();

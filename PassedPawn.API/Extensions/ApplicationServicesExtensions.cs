@@ -19,13 +19,17 @@ public static class ApplicationServicesExtensions
     {
         services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+        services.AddSingleton<ICloudinaryService, CloudinaryService>();
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
         services.AddScoped<ICourseExampleService, CourseExampleService>();
         services.AddScoped<ICourseExerciseService, CourseExerciseService>();
+        services.AddScoped<ICourseVideoService, CourseVideoService>();
         services.AddScoped<IKeycloakService, KeycloakService>();
         services.AddScoped<IPuzzleService, PuzzleService>();
         services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
+        services.AddScoped<ICourseQuizService, CourseQuizService>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<ApplicationDbContext>(options =>

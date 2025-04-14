@@ -27,7 +27,9 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Where(lesson => lesson.Id == lessonId)
             .Include(lesson => lesson.Examples)
             .Include(lesson => lesson.Exercises)
+            .Include(lesson => lesson.Videos)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
             .SingleOrDefaultAsync();
 
     }
@@ -38,8 +40,47 @@ public class LessonRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(lesson => lesson.Examples)
             .Where(lesson => lesson.Examples.Any(example => example.Id == exampleId))
             .Include(lesson => lesson.Exercises)
+            .Include(lesson => lesson.Videos)
             .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
             .SingleOrDefaultAsync();
 
+    }
+
+    public async Task<Lesson?> GetByExerciseId(int exampleId)
+    {
+        return await DbSet
+            .Include(lesson => lesson.Exercises)
+            .Where(lesson => lesson.Exercises.Any(exercise => exercise.Id == exampleId))
+            .Include(lesson => lesson.Examples)
+            .Include(lesson => lesson.Videos)
+            .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<Lesson?> GetByVideoId(int exampleId)
+    {
+        return await DbSet
+            .Include(lesson => lesson.Videos)
+            .Where(lesson => lesson.Videos.Any(video => video.Id == exampleId))
+            .Include(lesson => lesson.Exercises)
+            .Include(lesson => lesson.Examples)
+            .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Quizzes)
+            .SingleOrDefaultAsync();
+    }
+
+    public async Task<Lesson?> GetByQuizId(int quizId)
+    {
+        return await DbSet
+            .Include(lesson => lesson.Quizzes)
+            .ThenInclude(quiz => quiz.Answers)
+            .Where(lesson => lesson.Quizzes.Any(quiz => quiz.Id == quizId))
+            .Include(lesson => lesson.Exercises)
+            .Include(lesson => lesson.Examples)
+            .Include(lesson => lesson.Course)
+            .Include(lesson => lesson.Videos)
+            .SingleOrDefaultAsync();
     }
 }
