@@ -86,7 +86,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseExampleMoveHighlight, CourseExampleMoveHighlightDto>();
         CreateMap<CourseExampleMoveHighlightUpsertDto, CourseExampleMoveHighlight>();
 
-        CreateMap<CourseQuiz, CourseQuizDto>();
+        CreateMap<CourseQuiz, CourseQuizDto>()
+            .ForMember(dest => dest.Solution, opt => opt.MapFrom(src => src.Number));
+        
         CreateMap<CourseQuizUpsertDto, CourseQuiz>();
         
         CreateMap<QuizAnswer, AnswerDto>();
