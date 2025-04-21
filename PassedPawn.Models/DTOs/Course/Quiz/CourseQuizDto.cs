@@ -7,7 +7,6 @@ public class CourseQuizDto
     public ICollection<AnswerDto> Answers { get; init; } = [];
     public int Number { get; init; }
     public string? Hint { get; init; }
-    //TODO rename it (fen)
-    public string? Position { get; init; }
+    public string? Fen { get; init; }
     public string? Explanation  { get; init; }
 }
