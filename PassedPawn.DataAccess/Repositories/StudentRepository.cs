@@ -5,7 +5,6 @@ using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
-using PassedPawn.Models.DTOs.Course.Lesson;
 
 namespace PassedPawn.DataAccess.Repositories;
 
@@ -37,14 +36,14 @@ public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .ToListAsync();
     }
 
-    public async Task<NonBoughtCourseDetailsDto?> GetStudentCourse(int userId, int courseId)
+    public async Task<BoughtCourseDetailsDto?> GetStudentCourse(int userId, int courseId)
     {
         return await DbContext
             .Set<Course>()
             .Where(course => course.Id == courseId)
             .Include(course => course.Students)
             .Where(course => course.Students.Any(student => student.Id == userId))
-            .ProjectTo<NonBoughtCourseDetailsDto>(MapperConfiguration)
+            .ProjectTo<BoughtCourseDetailsDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
     }
 

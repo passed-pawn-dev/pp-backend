@@ -30,7 +30,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
             return BadRequest(serviceResult.Errors);
 
         var courseDto = serviceResult.Data;
-        return Ok(courseDto);
+        return Ok(courseDto); // TODO: Should be 201. Should be changed during coach course refactor
     }
 
     [HttpPut("{id:int}")]
