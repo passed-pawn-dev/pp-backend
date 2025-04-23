@@ -9,7 +9,8 @@ namespace PassedPawn.API.Controllers;
 
 [ApiController]
 [Route("api/Course/Student")]
-public class CourseStudentController(IUnitOfWork unitOfWork) : ControllerBase
+public class CourseStudentController(IUnitOfWork unitOfWork,
+    IClaimsPrincipalService claimsPrincipalService) : ControllerBase
 {
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CourseDto>))]
@@ -29,7 +30,7 @@ public class CourseStudentController(IUnitOfWork unitOfWork) : ControllerBase
     [SwaggerOperation(
         Summary = "Returns all courses owned by a student"
     )]
-    public async Task<IActionResult> GetAllBoughtCourses(IClaimsPrincipalService claimsPrincipalService)
+    public async Task<IActionResult> GetAllBoughtCourses()
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
         return Ok(await unitOfWork.Students.GetStudentCourses(userId));
@@ -55,10 +56,56 @@ public class CourseStudentController(IUnitOfWork unitOfWork) : ControllerBase
     [SwaggerOperation(
         Summary = "Returns bought course details"
     )]
-    public async Task<IActionResult> GetBoughtCourseDetails(int id, IClaimsPrincipalService claimsPrincipalService)
+    public async Task<IActionResult> GetBoughtCourseDetails(int id)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
         var course = await unitOfWork.Students.GetStudentCourse(userId, id);
         return course is null ? NotFound() : Ok(course);
+    }
+    
+    [HttpPost("{id:int}/course-list")]
+    [Authorize(Policy = "require student role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Adds a course to user's list"
+    )]
+    public async Task<IActionResult> AddToCourses(int id)
+    {
+        var student = await claimsPrincipalService.GetStudent(User);
+        var course = await unitOfWork.Courses.GetWithStudentsById(id);
+
+        if (course is null)
+            return NotFound();
+
+        if (course.Students.Contains(student))
+            return Conflict("Course already on the list");
+        
+        course.Students.Add(student);
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
+    }
+    
+    [HttpDelete("{id:int}/course-list")]
+    [Authorize(Policy = "require student role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Adds a course to user's list"
+    )]
+    public async Task<IActionResult> RemoveFromCourses(int id)
+    {
+        var student = await claimsPrincipalService.GetStudent(User);
+        var course = await unitOfWork.Courses.GetWithStudentsById(id);
+
+        if (course is null)
+            return NotFound();
+
+        if (!course.Students.Contains(student))
+            return BadRequest("Course is not on the list");
+        
+        course.Students.Remove(student);
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
     }
 }

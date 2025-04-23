@@ -10,13 +10,19 @@ namespace PassedPawn.Tests.Controllers;
 
 public class CourseStudentControllerTests
 {
+    private const int UserId = 1;
     private readonly CourseStudentController _courseStudentController;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
 
     public CourseStudentControllerTests()
     {
         _unitOfWorkMock = new Mock<IUnitOfWork>();
-        _courseStudentController = new CourseStudentController(_unitOfWorkMock.Object);
+        var claimPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
+        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
+                claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(UserId);
+        _courseStudentController = new CourseStudentController(_unitOfWorkMock.Object,
+            claimPrincipalServiceMock.Object);
     }
 
     #region DTOs
@@ -176,19 +182,12 @@ public class CourseStudentControllerTests
     public async Task GetAllBoughtCourses_ShouldReturnUserCourses()
     {
         // Arrange
-        const int userId = 1;
         var courseDtos = new List<BoughtCourseDto> { SampleBoughtCourseDto() };
-
-        var claimPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
-        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
-                claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
-            .ReturnsAsync(userId);
-
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourses(userId))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourses(UserId))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllBoughtCourses(claimPrincipalServiceMock.Object);
+        var result = await _courseStudentController.GetAllBoughtCourses();
         
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
@@ -231,20 +230,14 @@ public class CourseStudentControllerTests
     public async Task GetBoughtCourseDetails_ShouldReturnBoughtCourse_IfExists()
     {
         // Arrange
-        const int userId = 1;
         const int id = 1;
         var courseDto = SampleBoughtCourseDetailsDto();
         
-        var claimPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
-        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
-                claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
-            .ReturnsAsync(userId);
-        
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourse(userId, id))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourse(UserId, id))
             .ReturnsAsync(courseDto);
         
         // Act
-        var result = await _courseStudentController.GetBoughtCourseDetails(id, claimPrincipalServiceMock.Object);
+        var result = await _courseStudentController.GetBoughtCourseDetails(id);
         
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
@@ -257,16 +250,12 @@ public class CourseStudentControllerTests
         // Arrange
         const int userId = 1;
         const int id = 1;
-        var claimPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
-        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
-                claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
-            .ReturnsAsync(userId);
         
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourse(userId, id))
             .ReturnsAsync((BoughtCourseDetailsDto?)null);
         
         // Act
-        var result = await _courseStudentController.GetBoughtCourseDetails(id, claimPrincipalServiceMock.Object);
+        var result = await _courseStudentController.GetBoughtCourseDetails(id);
         
         // Assert
         Assert.IsType<NotFoundResult>(result);

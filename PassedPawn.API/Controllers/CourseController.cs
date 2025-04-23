@@ -88,52 +88,6 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
         return NoContent();
     }
 
-    [HttpPost("{id:int}/course-list")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Adds a course to user's list"
-    )]
-    public async Task<IActionResult> AddToCourses(int id)
-    {
-        var student = await claimsPrincipalService.GetStudent(User);
-        var course = await unitOfWork.Courses.GetWithStudentsById(id);
-
-        if (course is null)
-            return NotFound();
-
-        if (course.Students.Contains(student))
-            return Conflict("Course already on the list");
-        
-        course.Students.Add(student);
-        await unitOfWork.SaveChangesAsync();
-        return NoContent();
-    }
-    
-    [HttpDelete("{id:int}/course-list")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Adds a course to user's list"
-    )]
-    public async Task<IActionResult> RemoveFromCourses(int id)
-    {
-        var student = await claimsPrincipalService.GetStudent(User);
-        var course = await unitOfWork.Courses.GetWithStudentsById(id);
-
-        if (course is null)
-            return NotFound();
-
-        if (!course.Students.Contains(student))
-            return BadRequest("Course is not on the list");
-        
-        course.Students.Remove(student);
-        await unitOfWork.SaveChangesAsync();
-        return NoContent();
-    }
-
     #region Lessons
 
     [HttpGet("{courseId:int}/lesson")]

@@ -67,6 +67,8 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.Reviews.Count))
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)));
 
+        CreateMap<Course, BoughtCourseDetailsDto>();
+            
         CreateMap<Lesson, BoughtCourseDetailsLessonDto>();
 
         CreateMap<CourseQuiz, BoughtCourseDetailsLessonElementSlimDto>();
