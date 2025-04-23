@@ -14,101 +14,6 @@ namespace PassedPawn.API.Controllers;
 public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
-    [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<CourseDto>))]
-    [SwaggerOperation(
-        Summary = "Returns all courses"
-    )]
-    public async Task<IActionResult> GetAllCourses([FromQuery] bool paid)
-    {
-        if (!claimsPrincipalService.IsLoggedInAsStudent(User))
-        {
-            var courses = await unitOfWork.Courses.GetAllAsync<CourseDto>();
-            return Ok(courses);
-        }
-        var userId = await claimsPrincipalService.GetStudentId(User);
-
-        if (paid)
-        {
-            var userCourses = await unitOfWork.Students.GetStudentCourses(userId);
-            return Ok(userCourses);
-        }
-        
-        var notBoughtCourses = await unitOfWork.Students.GetNotBoughtStudentCourses(userId);
-        return Ok(notBoughtCourses);
-    }
-
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(NonUserCourse))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Returns single course by id"
-    )]
-    public async Task<IActionResult> GetCourse(int id)
-    {
-        var course = await unitOfWork.Courses.GetByIdAsync<NonUserCourse>(id);
-
-        if (course is null)
-            return NotFound();
-
-        return Ok(course);
-    }
-
-    
-    [HttpGet("{id:int}/details")]
-    // [Authorize(Policy = "require coach role")] Why is it here?????
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetailsDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Returns single course by id"
-    )]
-    public async Task<IActionResult> GetCourseDetails(int id)
-    {
-        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetailsDto>(id);
-
-        if (course is null)
-            return NotFound();
-
-        return Ok(course);
-    }
-    
-    
-    [HttpGet("created")]
-    [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDto))]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [SwaggerOperation(
-        Summary = "Returns single course by id, when bought by user"
-    )]
-    public async Task<IActionResult> GetCoursesCreated()
-    {
-        var userId = await claimsPrincipalService.GetCoachId(User);
-        var courses = await unitOfWork.Courses
-            .GetAllWhereAsync<CourseDto>(course => course.CoachId == userId);
-
-        return Ok(courses);
-    }
-    
-    [HttpGet("{id:int}/bought")]
-    [Authorize(Policy = "require student role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseDetailsDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Returns single course by id, when bought by user"
-    )]
-    public async Task<IActionResult> GetCourseBought(int id)
-    {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        var course = await unitOfWork.Courses.GetByIdAsync<CourseDetailsDto>(id);
-
-        if (course is null)
-            return NotFound();
-        
-        if (!await unitOfWork.Students.IsCourseBought(userId, id))
-            return Forbid();
-
-        return Ok(course);
-    }
 
     [HttpPost]
     [Authorize(Policy = "require coach role")]
@@ -125,7 +30,7 @@ public class CourseController(IUnitOfWork unitOfWork, ICourseService courseServi
             return BadRequest(serviceResult.Errors);
 
         var courseDto = serviceResult.Data;
-        return CreatedAtAction(nameof(GetCourse), new { id = courseDto.Id }, courseDto);
+        return Ok(courseDto);
     }
 
     [HttpPut("{id:int}")]

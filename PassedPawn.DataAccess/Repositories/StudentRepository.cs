@@ -27,24 +27,25 @@ public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<UserCourseDto>> GetStudentCourses(int userId)
+    public async Task<IEnumerable<BoughtCourseDto>> GetStudentCourses(int userId)
     {
         return await DbContext
             .Set<Course>()
             .Include(course => course.Students)
             .Where(course => course.Students.Any(student => student.Id == userId))
-            .ProjectTo<UserCourseDto>(MapperConfiguration)
+            .ProjectTo<BoughtCourseDto>(MapperConfiguration)
             .ToListAsync();
     }
 
-    public async Task<IEnumerable<UserCourseDto>> GetNotBoughtStudentCourses(int userId)
+    public async Task<NonBoughtCourseDetailsDto?> GetStudentCourse(int userId, int courseId)
     {
         return await DbContext
             .Set<Course>()
+            .Where(course => course.Id == courseId)
             .Include(course => course.Students)
-            .Where(course => course.Students.All(student => student.Id != userId))
-            .ProjectTo<UserCourseDto>(MapperConfiguration)
-            .ToListAsync();
+            .Where(course => course.Students.Any(student => student.Id == userId))
+            .ProjectTo<NonBoughtCourseDetailsDto>(MapperConfiguration)
+            .SingleOrDefaultAsync();
     }
 
     public async Task<bool> IsCourseBought(int userId, int courseId)

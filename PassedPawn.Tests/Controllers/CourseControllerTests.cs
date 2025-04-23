@@ -15,6 +15,7 @@ namespace PassedPawn.Tests.Controllers;
 public class CourseControllerTests
 {
     private readonly CourseController _courseController;
+    private readonly CourseStudentController _courseStudentController;
     private readonly Mock<ICourseService> _courseServiceMock;
     private readonly Mock<IUnitOfWork> _unitOfWorkMock;
     private readonly Mock<IClaimsPrincipalService> _claimsPrincipalServiceMock;
@@ -26,6 +27,7 @@ public class CourseControllerTests
         _claimsPrincipalServiceMock = new Mock<IClaimsPrincipalService>();
         _courseController = new CourseController(_unitOfWorkMock.Object,
             _courseServiceMock.Object, _claimsPrincipalServiceMock.Object);
+        _courseStudentController = new CourseStudentController(_unitOfWorkMock.Object);
     }
 
     private static Course SampleCourse()
