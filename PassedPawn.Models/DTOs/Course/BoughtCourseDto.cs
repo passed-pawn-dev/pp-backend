@@ -1,13 +1,13 @@
 namespace PassedPawn.Models.DTOs.Course;
 
-public class CourseDto
+// TODO: Add progress field. Which data type should it be?
+public class BoughtCourseDto
 {
     public int Id { get; init; }
     public required string Title { get; init; }
     public required string Description { get; init; }
-    public int? EloRageStart { get; init; }
+    public int? EloRangeStart { get; init; }
     public int? EloRangeEnd { get; init; }
     public required string CoachName { get; init; }
-    public double AverageScore { get; init; }
     public string? PictureUrl { get; init; }
 }
