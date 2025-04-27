@@ -68,7 +68,26 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)));
 
         CreateMap<Course, BoughtCourseDetailsDto>();
-            
+
+        CreateMap<Course, CoachCourseDto>()
+            .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
+            .ForMember(dest => dest.LessonCount, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.ElementCount, opt => opt.MapFrom(src =>
+                src.Lessons.Sum(lesson => lesson.Examples.Count + lesson.Exercises.Count + lesson.Videos.Count + lesson.Quizzes.Count)));
+
+        CreateMap<Course, CourseEditViewDto>();
+
+        CreateMap<Course, CoachCourseDetailsDto>()
+            .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
+            .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
+
+        CreateMap<Lesson, CoachCourseDetailsLessonDto>();
+        
+        CreateMap<CourseQuiz, CoachCourseDetailsLessonElementDto>();
+        CreateMap<CourseExample, CoachCourseDetailsLessonElementDto>();
+        CreateMap<CourseExercise, CoachCourseDetailsLessonElementDto>();
+        CreateMap<CourseVideo, CoachCourseDetailsLessonElementDto>();
+        
         CreateMap<Lesson, BoughtCourseDetailsLessonDto>();
 
         CreateMap<CourseQuiz, BoughtCourseDetailsLessonElementSlimDto>();
