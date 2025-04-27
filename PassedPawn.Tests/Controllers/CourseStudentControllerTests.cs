@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
+using PassedPawn.Models.DTOs.Course.Review;
 
 namespace PassedPawn.Tests.Controllers;
 
@@ -257,6 +259,46 @@ public class CourseStudentControllerTests
         // Act
         var result = await _courseStudentController.GetBoughtCourseDetails(id);
         
+        // Assert
+        Assert.IsType<NotFoundResult>(result);
+    }
+    
+    [Fact]
+    public async Task AddReview_ShouldReturnCreatedAtAction_WhenCourseExists()
+    {
+        // Arrange
+        const int id = 1;
+        var course = new Course { Title = "Test", Description = "Test" };
+        var courseReviewDto = new CourseReviewDto();
+        var reviewUpsertDto = new CourseReviewUpsertDto();
+
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
+            .ReturnsAsync(course);
+        var courseServiceMock = new Mock<ICourseService>();
+        courseServiceMock.Setup(courseService => courseService.AddReview(1, course, reviewUpsertDto))
+            .ReturnsAsync(courseReviewDto);
+
+        // Act
+        var result = await _courseStudentController.AddReview(id, courseServiceMock.Object, reviewUpsertDto);
+
+        // Assert
+        var createdAtActionResult = Assert.IsType<CreatedAtActionResult>(result);
+        Assert.Equal(courseReviewDto, createdAtActionResult.Value);
+    }
+
+    [Fact]
+    public async Task AddReview_ShouldReturnNotFound_WhenCourseDoesNotExist()
+    {
+        // Arrange
+        const int id = 1;
+        var reviewUpsertDto = new CourseReviewUpsertDto();
+        var courseServiceMock = new Mock<ICourseService>();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))
+            .ReturnsAsync((Course?)null);
+
+        // Act
+        var result = await _courseStudentController.AddReview(id, courseServiceMock.Object, reviewUpsertDto);
+
         // Assert
         Assert.IsType<NotFoundResult>(result);
     }
