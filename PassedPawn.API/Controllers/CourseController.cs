@@ -12,27 +12,6 @@ namespace PassedPawn.API.Controllers;
 public class CourseController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
-
-    #region Lessons
-
-    [HttpGet("{courseId:int}/lesson")]
-    [Authorize(Policy = "require student role")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<LessonDto>))]
-    [SwaggerOperation(
-        Summary = "Returns all lessons that belong to a course"
-    )]
-    public async Task<IActionResult> GetLessons(int courseId)
-    {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        
-        var lessons = await unitOfWork.Lessons
-            .GetUserLessons(userId, courseId);
-
-        return Ok(lessons);
-    }
-
-    #endregion
-
     #region Reviews
 
     [HttpGet("{courseId:int}/review")]
