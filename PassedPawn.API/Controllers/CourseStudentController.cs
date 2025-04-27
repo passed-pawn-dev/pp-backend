@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
+using PassedPawn.Models.DTOs.Course.Review;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -107,5 +108,26 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         course.Students.Remove(student);
         await unitOfWork.SaveChangesAsync();
         return NoContent();
+    }
+    
+    [HttpPost("{courseId:int}/review")]
+    [Authorize(Policy = "require student role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseReviewDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Adds a new review to a course"
+    )]
+    public async Task<IActionResult> AddReview(int courseId, ICourseService courseService,
+        CourseReviewUpsertDto reviewUpsertDto)
+    {
+        var course = await unitOfWork.Courses.GetByIdAsync(courseId);
+
+        if (course is null)
+            return NotFound();
+
+        var userId = await claimsPrincipalService.GetStudentId(User);
+        var courseReviewDto = await courseService.AddReview(userId, course, reviewUpsertDto);
+        return CreatedAtAction("GetReview", "CourseReview", new { id = courseReviewDto.Id },
+            courseReviewDto);
     }
 }
