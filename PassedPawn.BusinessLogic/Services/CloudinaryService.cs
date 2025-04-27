@@ -21,7 +21,7 @@ public class CloudinaryService : ICloudinaryService
         _cloudinary = new Cloudinary(cloudinaryAccount);
     }
     
-    public async Task<UploadResult> UploadAsync(IFormFile file)
+    public async Task<UploadResult> UploadVideoAsync(IFormFile file)
     {
         await using var stream = file.OpenReadStream();
         var uploadParams = new VideoUploadParams
@@ -33,11 +33,32 @@ public class CloudinaryService : ICloudinaryService
         return await _cloudinary.UploadAsync(uploadParams);
     }
 
-    public async Task<DeletionResult> DeleteAsync(string publicId, ResourceType resourceType = ResourceType.Video)
+    public async Task<UploadResult> UploadPhotoAsync(IFormFile file)
+    {
+        await using var stream = file.OpenReadStream();
+        var uploadParams = new ImageUploadParams
+        {
+            File = new FileDescription(file.FileName, stream),
+            Folder = "coach_pfp"
+        };
+
+        return await _cloudinary.UploadAsync(uploadParams);
+    }
+
+    public async Task<DeletionResult> DeleteVideoAsync(string publicId)
     {
         var deletionParams = new DeletionParams(publicId)
         {
-            ResourceType = resourceType
+            ResourceType = ResourceType.Video
+        };
+        return await _cloudinary.DestroyAsync(deletionParams);
+    }
+    
+    public async Task<DeletionResult> DeletePhotoAsync(string publicId)
+    {
+        var deletionParams = new DeletionParams(publicId)
+        {
+            ResourceType = ResourceType.Image
         };
         return await _cloudinary.DestroyAsync(deletionParams);
     }

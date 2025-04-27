@@ -9,6 +9,7 @@ namespace PassedPawn.DataAccess.Repositories;
 public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitOfWork
 {
     public ICoachRepository Coaches { get; } = new CoachRepository(dbContext, mapper);
+    public IRepositoryBase<Photo> Photos { get; } = new RepositoryBase<Photo>(dbContext, mapper);
     public IStudentRepository Students { get; } = new StudentRepository(dbContext, mapper);
     public IRepositoryBase<Nationality> Nationalities { get; } = new RepositoryBase<Nationality>(dbContext, mapper);
     public ICourseRepository Courses { get; } = new CourseRepository(dbContext, mapper);

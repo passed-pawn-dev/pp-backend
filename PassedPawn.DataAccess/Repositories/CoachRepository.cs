@@ -36,4 +36,12 @@ public class CoachRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Select(coach => coach.Id)
             .SingleOrDefaultAsync();
     }
+
+    public async Task<Coach?> GetWithPhotoById(int id)
+    {
+        return await DbSet
+            .Where(coach => coach.Id == id)
+            .Include(coach => coach.Photo)
+            .SingleOrDefaultAsync();
+    }
 }
