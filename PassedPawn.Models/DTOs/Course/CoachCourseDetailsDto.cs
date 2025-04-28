@@ -8,6 +8,7 @@ public class CoachCourseDetailsDto
     public double AverageScore { get; init; }
     public float Price { get; init; }
     public int EnrolledStudentsCount { get; init; }
+    public string? ThumbnailUrl { get; init; }
     public IEnumerable<CoachCourseDetailsLessonDto> Lessons { get; init; } = [];
 }
 
