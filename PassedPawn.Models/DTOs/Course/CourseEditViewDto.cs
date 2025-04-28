@@ -6,6 +6,6 @@ public class CourseEditViewDto
     public required string Title { get; init; }
     public required string Description { get; init; }
     public float Price { get; init; }
-    public int EloRangeStart { get; init; }
-    public int EloRangeEnd { get; init; }
+    public int? EloRangeStart { get; init; }
+    public int? EloRangeEnd { get; init; }
 }
