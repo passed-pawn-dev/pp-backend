@@ -7,8 +7,8 @@ public class CoachCourseDto
     public required string Description { get; init; }
     public double AverageScore { get; init; }
     public float Price { get; init; }
-    public int EloRangeStart { get; init; }
-    public int EloRangeEnd { get; init; }
+    public int? EloRangeStart { get; init; }
+    public int? EloRangeEnd { get; init; }
     public int LessonCount { get; init; }
     public int ElementCount { get; init; }
     public string? ThumbnailUrl { get; init; }

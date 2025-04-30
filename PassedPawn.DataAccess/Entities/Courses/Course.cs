@@ -8,6 +8,9 @@ public class Course : IEntity
     public required string Description { get; set; }
 
     public float Price { get; set; }
+    
+    public int? EloRangeStart { get; set; }
+    public int? EloRangeEnd { get; set; }
 
     public int? ThumbnailId { get; set; }
     public Photo? Thumbnail { get; set; }
