@@ -22,7 +22,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
                 $"New example has wrong order. Maximum of {highestOrderNumber + 1} expected"
             ]);
 
-        var uploadResult = await cloudinaryService.UploadAsync(addDto.Video);
+        var uploadResult = await cloudinaryService.UploadVideoAsync(addDto.Video);
         
         if (uploadResult.Error is not null)
             return ServiceResult<CourseVideoDto>.Failure([uploadResult.Error.Message]);
@@ -43,7 +43,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         }
         catch
         {
-            await cloudinaryService.DeleteAsync(uploadResult.PublicId);
+            await cloudinaryService.DeleteVideoAsync(uploadResult.PublicId);
             throw;
         }
     }
@@ -65,7 +65,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
             var oldVideoUrl = video.VideoUrl;
             var oldVideoPublicId = video.VideoPublicId;
             
-            var uploadResult = await cloudinaryService.UploadAsync(updateDto.Video);
+            var uploadResult = await cloudinaryService.UploadVideoAsync(updateDto.Video);
         
             if (uploadResult.Error is not null)
                 return ServiceResult<CourseVideoDto>.Failure([uploadResult.Error.Message]);
@@ -81,13 +81,13 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
                 if (!await unitOfWork.SaveChangesAsync())
                     throw new Exception("Failed to save database");
                 
-                await cloudinaryService.DeleteAsync(oldVideoPublicId);
+                await cloudinaryService.DeleteVideoAsync(oldVideoPublicId);
             }
             catch
             {
                 video.VideoUrl = oldVideoUrl;
                 video.VideoPublicId = oldVideoPublicId;
-                await cloudinaryService.DeleteAsync(uploadResult.PublicId);
+                await cloudinaryService.DeleteVideoAsync(uploadResult.PublicId);
                 throw;
             }
         }

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PassedPawn.DataAccess;
@@ -11,9 +12,11 @@ using PassedPawn.DataAccess;
 namespace PassedPawn.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250414160229_AddPreviewToLesson")]
+    partial class AddPreviewToLesson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,12 +151,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int?>("EloRangeEnd")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("EloRangeStart")
-                        .HasColumnType("integer");
 
                     b.Property<float>("Price")
                         .HasColumnType("real");
@@ -461,7 +458,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("FlagId")
+                    b.Property<int>("FlagId")
                         .HasColumnType("integer");
 
                     b.Property<string>("FullName")
@@ -484,150 +481,175 @@ namespace PassedPawn.DataAccess.Migrations
                         new
                         {
                             Id = 1,
+                            FlagId = 1,
                             FullName = "United States",
                             ShortName = "USA"
                         },
                         new
                         {
                             Id = 2,
+                            FlagId = 2,
                             FullName = "Canada",
                             ShortName = "CAN"
                         },
                         new
                         {
                             Id = 3,
+                            FlagId = 3,
                             FullName = "United Kingdom",
                             ShortName = "UK"
                         },
                         new
                         {
                             Id = 4,
+                            FlagId = 4,
                             FullName = "Australia",
                             ShortName = "AUS"
                         },
                         new
                         {
                             Id = 5,
+                            FlagId = 5,
                             FullName = "Germany",
                             ShortName = "GER"
                         },
                         new
                         {
                             Id = 6,
+                            FlagId = 6,
                             FullName = "France",
                             ShortName = "FRA"
                         },
                         new
                         {
                             Id = 7,
+                            FlagId = 7,
                             FullName = "Italy",
                             ShortName = "ITA"
                         },
                         new
                         {
                             Id = 8,
+                            FlagId = 8,
                             FullName = "Spain",
                             ShortName = "ESP"
                         },
                         new
                         {
                             Id = 9,
+                            FlagId = 9,
                             FullName = "Japan",
                             ShortName = "JPN"
                         },
                         new
                         {
                             Id = 10,
+                            FlagId = 10,
                             FullName = "China",
                             ShortName = "CHN"
                         },
                         new
                         {
                             Id = 11,
+                            FlagId = 11,
                             FullName = "India",
                             ShortName = "IND"
                         },
                         new
                         {
                             Id = 12,
+                            FlagId = 12,
                             FullName = "Brazil",
                             ShortName = "BRA"
                         },
                         new
                         {
                             Id = 13,
+                            FlagId = 13,
                             FullName = "Mexico",
                             ShortName = "MEX"
                         },
                         new
                         {
                             Id = 14,
+                            FlagId = 14,
                             FullName = "Russia",
                             ShortName = "RUS"
                         },
                         new
                         {
                             Id = 15,
+                            FlagId = 15,
                             FullName = "South Africa",
                             ShortName = "RSA"
                         },
                         new
                         {
                             Id = 16,
+                            FlagId = 16,
                             FullName = "South Korea",
                             ShortName = "KOR"
                         },
                         new
                         {
                             Id = 17,
+                            FlagId = 17,
                             FullName = "Argentina",
                             ShortName = "ARG"
                         },
                         new
                         {
                             Id = 18,
+                            FlagId = 18,
                             FullName = "Saudi Arabia",
                             ShortName = "KSA"
                         },
                         new
                         {
                             Id = 19,
+                            FlagId = 19,
                             FullName = "Turkey",
                             ShortName = "TUR"
                         },
                         new
                         {
                             Id = 20,
+                            FlagId = 20,
                             FullName = "Netherlands",
                             ShortName = "NED"
                         },
                         new
                         {
                             Id = 21,
+                            FlagId = 21,
                             FullName = "Sweden",
                             ShortName = "SWE"
                         },
                         new
                         {
                             Id = 22,
+                            FlagId = 22,
                             FullName = "Switzerland",
                             ShortName = "CHE"
                         },
                         new
                         {
                             Id = 23,
+                            FlagId = 23,
                             FullName = "Poland",
                             ShortName = "POL"
                         },
                         new
                         {
                             Id = 24,
+                            FlagId = 24,
                             FullName = "Egypt",
                             ShortName = "EGY"
                         },
                         new
                         {
                             Id = 25,
+                            FlagId = 25,
                             FullName = "Nigeria",
                             ShortName = "NGA"
                         });
@@ -641,17 +663,111 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("PublicId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.HasKey("Id");
 
                     b.ToTable("Photos");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1
+                        },
+                        new
+                        {
+                            Id = 2
+                        },
+                        new
+                        {
+                            Id = 3
+                        },
+                        new
+                        {
+                            Id = 4
+                        },
+                        new
+                        {
+                            Id = 5
+                        },
+                        new
+                        {
+                            Id = 6
+                        },
+                        new
+                        {
+                            Id = 7
+                        },
+                        new
+                        {
+                            Id = 8
+                        },
+                        new
+                        {
+                            Id = 9
+                        },
+                        new
+                        {
+                            Id = 10
+                        },
+                        new
+                        {
+                            Id = 11
+                        },
+                        new
+                        {
+                            Id = 12
+                        },
+                        new
+                        {
+                            Id = 13
+                        },
+                        new
+                        {
+                            Id = 14
+                        },
+                        new
+                        {
+                            Id = 15
+                        },
+                        new
+                        {
+                            Id = 16
+                        },
+                        new
+                        {
+                            Id = 17
+                        },
+                        new
+                        {
+                            Id = 18
+                        },
+                        new
+                        {
+                            Id = 19
+                        },
+                        new
+                        {
+                            Id = 20
+                        },
+                        new
+                        {
+                            Id = 21
+                        },
+                        new
+                        {
+                            Id = 22
+                        },
+                        new
+                        {
+                            Id = 23
+                        },
+                        new
+                        {
+                            Id = 24
+                        },
+                        new
+                        {
+                            Id = 25
+                        });
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Student", b =>
@@ -768,7 +884,7 @@ namespace PassedPawn.DataAccess.Migrations
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Course", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Coach", "Coach")
-                        .WithMany("Courses")
+                        .WithMany()
                         .HasForeignKey("CoachId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -889,7 +1005,9 @@ namespace PassedPawn.DataAccess.Migrations
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Photo", "Flag")
                         .WithMany()
-                        .HasForeignKey("FlagId");
+                        .HasForeignKey("FlagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Flag");
                 });
@@ -907,11 +1025,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("Nationality");
 
                     b.Navigation("Photo");
-                });
-
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Coach", b =>
-                {
-                    b.Navigation("Courses");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Course", b =>

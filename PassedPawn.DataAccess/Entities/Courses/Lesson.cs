@@ -9,6 +9,7 @@ public class Lesson : IEntity
 
     public int CourseId { get; set; }
     public Course? Course { get; set; }
+    public bool Preview { get; set; } = false;
 
     public ICollection<CourseExercise> Exercises { get; init; } = [];
     public ICollection<CourseExample> Examples { get; init; } = [];
