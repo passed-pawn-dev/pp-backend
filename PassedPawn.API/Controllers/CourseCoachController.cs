@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PassedPawn.BusinessLogic.Exceptions;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
@@ -152,5 +154,75 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
         var lessonDto = serviceResult.Data;
 
         return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
+    }
+    
+    [HttpPatch("{courseId:int}/thumbnail")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Adds or updates pfp")]
+    public async Task<IActionResult> UploadThumbnail(int courseId, [FromForm] CourseThumbnailDto thumbnailDto,
+        ICloudinaryService cloudinaryService)
+    {
+        var userId = await claimsPrincipalService.GetCoachId(User);
+        var course = await unitOfWork.Courses.GetWithThumbnailById(courseId);
+
+        if (course is null)
+            return NotFound();
+
+        if (course.CoachId != userId)
+            return Forbid();
+
+        var uploadResult = await cloudinaryService.UploadPhotoAsync(thumbnailDto.Thumbnail!);
+
+        if (uploadResult.Error is not null)
+            throw new CloudinaryException(uploadResult.Error.Message);
+
+        if (course.Thumbnail is null)
+        {
+            course.Thumbnail = new Photo
+            {
+                Url = uploadResult.Url.AbsoluteUri,
+                PublicId = uploadResult.PublicId
+            };
+        }
+        else
+        {
+            _ = cloudinaryService.DeletePhotoAsync(course.Thumbnail.PublicId); // Fire and forget
+            course.Thumbnail.Url = uploadResult.Url.AbsoluteUri;
+            course.Thumbnail.PublicId = uploadResult.PublicId;
+        }
+
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
+    }
+
+    [HttpDelete("{courseId:int}/thumbnail")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Deletes a thumbnail")]
+    public async Task<IActionResult> DeleteThumbnail(int courseId,
+        ICloudinaryService cloudinaryService)
+    {
+        var userId = await claimsPrincipalService.GetCoachId(User);
+        var course = await unitOfWork.Courses.GetWithThumbnailById(courseId);
+
+        if (course is null)
+            return NotFound();
+
+        if (course.CoachId != userId)
+            return Forbid();
+
+        if (course.Thumbnail is null)
+            return NotFound(new { message = "Course has no thumbnail" });
+
+        _ = cloudinaryService.DeletePhotoAsync(course.Thumbnail.PublicId); // Fire and forget
+        unitOfWork.Photos.Delete(course.Thumbnail);
+        course.Thumbnail = null;
+        await unitOfWork.SaveChangesAsync();
+        return NoContent();
     }
 }

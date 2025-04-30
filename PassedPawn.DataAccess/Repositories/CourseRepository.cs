@@ -31,4 +31,12 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .Include(course => course.Students)
             .SingleOrDefaultAsync(course => course.Id == id);
     }
+
+    public async Task<Course?> GetWithThumbnailById(int id)
+    {
+        return await DbSet
+            .Where(course => course.Id == id)
+            .Include(course => course.Thumbnail)
+            .SingleOrDefaultAsync();
+    }
 }
