@@ -46,6 +46,7 @@ public class CourseCoachControllerTests
     {
         return new LessonDto
         {
+            Title = "Title 1",
             LessonNumber = 1
         };
     }

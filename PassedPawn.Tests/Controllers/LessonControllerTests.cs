@@ -38,6 +38,7 @@ public class LessonControllerTests
                 new Lesson
                 {
                     Id = 1,
+                    Title = "Title 1",
                     LessonNumber = 1
                 }
             ]
@@ -48,7 +49,8 @@ public class LessonControllerTests
     {
         return new LessonDto
         {
-            LessonNumber = 1
+            LessonNumber = 1,
+            Title = "Title 1"
         };
     }
 

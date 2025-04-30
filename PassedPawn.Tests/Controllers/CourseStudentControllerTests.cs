@@ -99,6 +99,7 @@ public class CourseStudentControllerTests
                 {
                     Id = 1,
                     LessonNumber = 1,
+                    Title = "Title 1",
                     Quizzes = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
                         new()
@@ -144,6 +145,7 @@ public class CourseStudentControllerTests
                 {
                     Id = 2,
                     LessonNumber = 2,
+                    Title = "Title 2",
                     Quizzes = [],
                     Exercises = [],
                     Examples = [],
