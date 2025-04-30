@@ -446,6 +446,10 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<bool>("Preview")
                         .HasColumnType("boolean");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.HasIndex("CourseId");
