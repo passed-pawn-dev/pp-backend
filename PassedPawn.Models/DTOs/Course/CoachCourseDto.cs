@@ -11,4 +11,5 @@ public class CoachCourseDto
     public int EloRangeEnd { get; init; }
     public int LessonCount { get; init; }
     public int ElementCount { get; init; }
+    public string? ThumbnailUrl { get; init; }
 }
