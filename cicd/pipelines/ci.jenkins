@@ -1,19 +1,36 @@
-#!/usr/bin/env groovy
-
-def label = "k8s-${UUID.randomUUID().toString()}"
-def home = "/home/jenkins"
-def workspace = "${home}/workspace/build-jenkins-operator"
-def workdir = "${workspace}/src/github.com/jenkinsci/kubernetes-operator/"
-
-podTemplate(label: label,
-        containers: [
-                containerTemplate(name: 'alpine', image: 'alpine:3.11', ttyEnabled: true, command: 'cat'),
-        ],
-        ) {
-    node(label) {
-        stage('Run shell') {
-            container('alpine') {
-                sh 'echo "hello world"'
+pipeline {
+    agent {
+        kubernetes {
+            inheritFrom 'kaniko'
+        }
+    }
+    stages {
+        stage('Prepare Version') {
+            steps {
+                script {
+                    def date = new Date().format('yyyy-MM-dd-HH-mm-ss', TimeZone.getTimeZone('GMT+2'))
+                    
+                    // Get short commit hash (first 7 characters)
+                    def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    
+                    env.IMAGE_TAG = "${date}-${commitHash}"
+                }
+            }
+        }
+        stage('Build and Push with Kaniko') {
+            steps {
+                container('kaniko') {
+                    sh '/kaniko/executor --cleanup --dockerfile=Dockerfile --context=git://github.com/passed-pawn-dev/pp-backend.git#refs/heads/main --destination=ghcr.io/passed-pawn-dev/pp-backend/pp-api:${IMAGE_TAG}'
+                }
+            }
+        }
+    }
+    post {
+        success {
+            script {
+                build job: "pp-dev-ops-ci-pipeline", 
+                    wait: false, 
+                    parameters: [string(name: 'BACKEND_IMAGE', value: "pp-api:${IMAGE_TAG}")]
             }
         }
     }
