@@ -7,4 +7,5 @@ public interface ICourseRepository : IRepositoryBase<Course>
     Task<Course?> GetByLessonId(int id);
     Task<Course?> GetWithLessonsById(int id);
     Task<Course?> GetWithStudentsById(int id);
+    public Task<Course?> GetWithThumbnailById(int id);
 }
