@@ -72,17 +72,21 @@ public class AutoMapperProfiles : Profile
         CreateMap<Course, CoachCourseDto>()
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
             .ForMember(dest => dest.LessonCount, opt => opt.MapFrom(src => src.Lessons.Count))
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url))
             .ForMember(dest => dest.ElementCount, opt => opt.MapFrom(src =>
                 src.Lessons.Sum(lesson => lesson.Examples.Count + lesson.Exercises.Count + lesson.Videos.Count + lesson.Quizzes.Count)));
 
-        CreateMap<Course, CourseEditViewDto>();
+        CreateMap<Course, CourseEditViewDto>()
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
 
         CreateMap<Course, CoachCourseDetailsDto>()
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url))
             .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
 
-        CreateMap<Lesson, CoachCourseDetailsLessonDto>();
-        
+        CreateMap<Lesson, CoachCourseDetailsLessonDto>()
+            .ForMember(dest => dest.Puzzles, opt => opt.MapFrom(src => src.Exercises));
+
         CreateMap<CourseQuiz, CoachCourseDetailsLessonElementDto>();
         CreateMap<CourseExample, CoachCourseDetailsLessonElementDto>();
         CreateMap<CourseExercise, CoachCourseDetailsLessonElementDto>();
