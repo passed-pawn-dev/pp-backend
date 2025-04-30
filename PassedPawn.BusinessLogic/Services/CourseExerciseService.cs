@@ -14,12 +14,13 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
     public async Task<ServiceResult<CourseExerciseDto>> ValidateAndAddExercise(Lesson lesson,
         CourseExerciseUpsertDto upsertDto)
     {
+        var highestOrderNumber = GetHighestOrderNumber(lesson) + 1;
+        upsertDto.Order ??= highestOrderNumber;
         var exercise = mapper.Map<CourseExercise>(upsertDto);
-        var highestOrderNumber = GetHighestOrderNumber(lesson);
 
-        if (exercise.Order > highestOrderNumber + 1 || exercise.Order < 1)
+        if (exercise.Order > highestOrderNumber || exercise.Order < 1)
             return ServiceResult<CourseExerciseDto>.Failure([
-                $"New exercise has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New exercise has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         MoveOrderOnAdd(lesson, exercise.Order);
@@ -36,6 +37,7 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
         CourseExerciseUpsertDto upsertDto)
     {
         var highestOrderNumber = GetHighestOrderNumber(lesson);
+        upsertDto.Order ??= highestOrderNumber;
 
         if (upsertDto.Order > highestOrderNumber || upsertDto.Order < 1)
             return ServiceResult<CourseExerciseDto>.Failure([
@@ -43,7 +45,7 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
             ]);
 
         var exercise = lesson.Exercises.Single(exercise => exercise.Id == exampleId);
-        MoveOrderOnUpdate(lesson, exercise.Order, upsertDto.Order);
+        MoveOrderOnUpdate(lesson, exercise.Order, upsertDto.Order.Value);
         mapper.Map(upsertDto, exercise);
         unitOfWork.Puzzles.Update(exercise);
 

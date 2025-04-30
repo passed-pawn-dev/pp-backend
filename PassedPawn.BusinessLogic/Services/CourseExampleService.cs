@@ -13,12 +13,13 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
     public async Task<ServiceResult<CourseExampleDto>> ValidateAndAddExample(Lesson lesson,
         CourseExampleUpsertDto upsertDto)
     {
+        var highestOrderNumber = GetHighestOrderNumber(lesson) + 1;
+        upsertDto.Order ??= highestOrderNumber;
         var example = mapper.Map<CourseExample>(upsertDto);
-        var highestOrderNumber = GetHighestOrderNumber(lesson);
 
-        if (example.Order > highestOrderNumber + 1 || example.Order < 1)
+        if (example.Order > highestOrderNumber || example.Order < 1)
             return ServiceResult<CourseExampleDto>.Failure([
-                $"New example has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New example has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         MoveOrderOnAdd(lesson, example.Order);
@@ -35,6 +36,7 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
         CourseExampleUpsertDto upsertDto)
     {
         var highestOrderNumber = GetHighestOrderNumber(lesson);
+        upsertDto.Order ??= highestOrderNumber;
 
         if (upsertDto.Order > highestOrderNumber || upsertDto.Order < 1)
             return ServiceResult<CourseExampleDto>.Failure([
@@ -42,7 +44,7 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
             ]);
 
         var example = lesson.Examples.Single(example => example.Id == exampleId);
-        MoveOrderOnUpdate(lesson, example.Order, upsertDto.Order);
+        MoveOrderOnUpdate(lesson, example.Order, upsertDto.Order.Value);
         mapper.Map(upsertDto, example);
         unitOfWork.Examples.Update(example);
 

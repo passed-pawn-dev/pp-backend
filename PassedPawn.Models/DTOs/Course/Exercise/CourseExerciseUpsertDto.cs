@@ -8,7 +8,7 @@ public class CourseExerciseUpsertDto
     [Required] public string Title { get; init; } = string.Empty;
     [Required] public string Description { get; init; } = string.Empty;
     [Required] [FenValidation] public string Fen { get; init; } = string.Empty;
-    public int Order { get; init; }
+    public int? Order { get; set; }
     
     [Required]
     [RegularExpression(@"^[^,\s][^,\s]*(,[^,\s]+)*[^,\s]$")]
