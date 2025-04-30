@@ -8,4 +8,5 @@ public class CourseEditViewDto
     public float Price { get; init; }
     public int EloRangeStart { get; init; }
     public int EloRangeEnd { get; init; }
+    public string? ThumbnailUrl { get; init; }
 }
