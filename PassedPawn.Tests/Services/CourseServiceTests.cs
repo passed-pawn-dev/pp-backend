@@ -38,16 +38,19 @@ public class CourseServiceTests
                 new()
                 {
                     Id = 1,
+                    Title = "Title 1",
                     LessonNumber = 1
                 },
                 new()
                 {
                     Id = 2,
+                    Title = "Title 2",
                     LessonNumber = 2
                 },
                 new()
                 {
                     Id = 3,
+                    Title = "Title 3",
                     LessonNumber = 3
                 }
             }

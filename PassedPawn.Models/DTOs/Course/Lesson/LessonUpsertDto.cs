@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Quiz;
@@ -8,6 +9,7 @@ namespace PassedPawn.Models.DTOs.Course.Lesson;
 public class LessonUpsertDto
 {
     public int LessonNumber { get; init; }
+    [Required] public string Title { get; init; } = "";
     public bool Preview { get; init; } = false;
     public IEnumerable<CourseExerciseUpsertDto> Exercises { get; init; } = [];
     public IEnumerable<CourseExampleUpsertDto> Examples { get; init; } = [];

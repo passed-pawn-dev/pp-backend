@@ -12,6 +12,7 @@ public class BoughtCourseDetailsLessonDto
 {
     public int Id { get; init; }
     public int LessonNumber { get; init; }
+    public required string Title { get; init; }
     public IEnumerable<BoughtCourseDetailsLessonElementSlimDto> Quizzes { get; init; } = [];
     public IEnumerable<BoughtCourseDetailsLessonElementSlimDto> Exercises { get; init; } = [];
     public IEnumerable<BoughtCourseDetailsLessonElementSlimDto> Examples { get; init; } = [];
