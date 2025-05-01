@@ -50,4 +50,13 @@ public class CourseQuizService(IUnitOfWork unitOfWork, IMapper mapper) : CourseE
 
         return ServiceResult<CourseQuizDto>.Success(mapper.Map<CourseQuizDto>(quiz));
     }
+
+    public async Task DeleteQuiz(Lesson lesson, CourseQuiz courseQuiz)
+    {
+        unitOfWork.Quizzes.Delete(courseQuiz);
+        MoveOrderOnDelete(lesson, courseQuiz.Order);
+        
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
+    }
 }
