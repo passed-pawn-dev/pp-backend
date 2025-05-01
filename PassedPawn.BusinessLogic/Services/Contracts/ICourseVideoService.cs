@@ -1,4 +1,5 @@
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course.Video;
 
@@ -10,4 +11,6 @@ public interface ICourseVideoService
 
     public Task<ServiceResult<CourseVideoDto>> ValidateAndUpdateVideo(Lesson lesson, int exampleId,
         CourseVideoUpdateDto updateDto);
+    
+    public Task DeleteVideo(Lesson lesson, CourseVideo courseVideo);
 }
