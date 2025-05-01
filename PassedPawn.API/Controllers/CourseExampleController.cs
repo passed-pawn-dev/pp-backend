@@ -55,7 +55,7 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
 
     [HttpDelete("{id:int}")]
     [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(CourseExampleDto))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Deletes an example"

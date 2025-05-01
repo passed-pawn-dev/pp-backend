@@ -52,4 +52,13 @@ public class CourseExerciseService(IUnitOfWork unitOfWork, IMapper mapper) : Cou
 
         return ServiceResult<CourseExerciseDto>.Success(mapper.Map<CourseExerciseDto>(exercise));
     }
+
+    public async Task DeleteExercise(Lesson lesson, CourseExercise courseExercise)
+    {
+        unitOfWork.Puzzles.Delete(courseExercise);
+        MoveOrderOnDelete(lesson, courseExercise.Order);
+        
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
+    }
 }

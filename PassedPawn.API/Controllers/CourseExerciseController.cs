@@ -53,6 +53,30 @@ public class CourseExerciseController(IUnitOfWork unitOfWork, IPuzzleService puz
         var courseExerciseDto = serviceResult.Data;
         return Ok(courseExerciseDto);
     }
+    
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Deletes an exercise"
+    )]
+    public async Task<IActionResult> DeleteExercise(int id)
+    {
+        var lesson = await unitOfWork.Lessons.GetByExerciseId(id);
+
+        if (lesson is null)
+            return NotFound();
+        
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var courseExercise = lesson.Exercises.First(exercise => exercise.Id == id);
+        await exerciseService.DeleteExercise(lesson, courseExercise);
+        return NoContent();
+    }
 
     [Authorize(Policy = "require student role")]
     [HttpPost("{puzzleId:int}")]
