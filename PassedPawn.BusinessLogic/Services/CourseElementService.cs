@@ -46,6 +46,11 @@ public abstract class CourseElementService
             IncrementOrders(lesson, newOrder, oldOrder);
     }
 
+    protected static void MoveOrderOnDelete(Lesson lesson, int oldOrder)
+    {
+        DecrementOrders(lesson, oldOrder, lesson.Elements.Count());
+    }
+
     private static void DecrementOrders(Lesson lesson, int start, int end)
     {
         foreach (var element in lesson.Elements)

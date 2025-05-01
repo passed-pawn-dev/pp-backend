@@ -51,4 +51,13 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
 
         return ServiceResult<CourseExampleDto>.Success(mapper.Map<CourseExampleDto>(example));
     }
+
+    public async Task DeleteExample(Lesson lesson, CourseExample courseExample)
+    {
+        unitOfWork.Examples.Delete(courseExample);
+        MoveOrderOnDelete(lesson, courseExample.Order);
+        
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
+    }
 }

@@ -52,4 +52,28 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
         var courseExampleDto = serviceResult.Data;
         return Ok(courseExampleDto);
     }
+
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(CourseExampleDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Deletes an example"
+    )]
+    public async Task<IActionResult> DeleteExample(int id)
+    {
+        var lesson = await unitOfWork.Lessons.GetByExampleId(id);
+
+        if (lesson is null)
+            return NotFound();
+        
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var courseExample = lesson.Examples.First(example => example.Id == id);
+        await exampleService.DeleteExample(lesson, courseExample);
+        return NoContent();
+    }
 }
