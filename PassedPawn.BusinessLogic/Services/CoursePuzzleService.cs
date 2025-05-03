@@ -45,7 +45,7 @@ public class CoursePuzzleService(IUnitOfWork unitOfWork, IMapper mapper,
                 $"New puzzle has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
-        var puzzle = lesson.Puzzles.Single(exercise => exercise.Id == exampleId);
+        var puzzle = lesson.Puzzles.Single(puzzle => puzzle.Id == exampleId);
         MoveOrderOnUpdate(lesson, puzzle.Order, upsertDto.Order.Value);
         mapper.Map(upsertDto, puzzle);
         unitOfWork.Puzzles.Update(puzzle);

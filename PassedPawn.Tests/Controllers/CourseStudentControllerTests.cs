@@ -115,7 +115,7 @@ public class CourseStudentControllerTests
                         new()
                         {
                             Id = 102,
-                            Title = "Pawn Structure Exercise",
+                            Title = "Pawn Structure Puzzle",
                             Order = 2,
                             Completed = false
                         }

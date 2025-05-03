@@ -84,8 +84,7 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url))
             .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
 
-        CreateMap<Lesson, CoachCourseDetailsLessonDto>()
-            .ForMember(dest => dest.Puzzles, opt => opt.MapFrom(src => src.Puzzles));
+        CreateMap<Lesson, CoachCourseDetailsLessonDto>();
 
         CreateMap<CourseQuiz, CoachCourseDetailsLessonElementDto>();
         CreateMap<CourseExample, CoachCourseDetailsLessonElementDto>();
