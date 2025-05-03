@@ -1,4 +1,5 @@
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course.Exercise;
 
@@ -10,4 +11,6 @@ public interface ICourseExerciseService
 
     public Task<ServiceResult<CourseExerciseDto>> ValidateAndUpdateExercise(Lesson lesson, int exampleId,
         CourseExerciseUpsertDto upsertDto);
+
+    public Task DeleteExercise(Lesson lesson, CourseExercise courseExercise);
 }

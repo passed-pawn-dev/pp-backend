@@ -53,4 +53,28 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         var courseVideoDto = serviceResult.Data;
         return Ok(courseVideoDto);
     }
+    
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Deletes a video"
+    )]
+    public async Task<IActionResult> DeleteVideo(int id)
+    {
+        var lesson = await unitOfWork.Lessons.GetByVideoId(id);
+
+        if (lesson is null)
+            return NotFound();
+        
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var courseVideo = lesson.Videos.First(video => video.Id == id);
+        await videoService.DeleteVideo(lesson, courseVideo);
+        return NoContent();
+    }
 }

@@ -44,7 +44,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         }
         catch
         {
-            await cloudinaryService.DeleteVideoAsync(uploadResult.PublicId);
+            _ = cloudinaryService.DeleteVideoAsync(uploadResult.PublicId); // Fire and forget
             throw;
         }
     }
@@ -83,13 +83,13 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
                 if (!await unitOfWork.SaveChangesAsync())
                     throw new Exception("Failed to save database");
                 
-                await cloudinaryService.DeleteVideoAsync(oldVideoPublicId);
+                _ = cloudinaryService.DeleteVideoAsync(oldVideoPublicId); // Fire and forget
             }
             catch
             {
                 video.VideoUrl = oldVideoUrl;
                 video.VideoPublicId = oldVideoPublicId;
-                await cloudinaryService.DeleteVideoAsync(uploadResult.PublicId);
+                _ = cloudinaryService.DeleteVideoAsync(uploadResult.PublicId); // Fire and forget
                 throw;
             }
         }
@@ -104,5 +104,17 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         }
 
         return ServiceResult<CourseVideoDto>.Success(mapper.Map<CourseVideoDto>(video));
+    }
+
+    public async Task DeleteVideo(Lesson lesson, CourseVideo courseVideo)
+    {
+        var publicId = courseVideo.VideoPublicId;
+        unitOfWork.Videos.Delete(courseVideo);
+        MoveOrderOnDelete(lesson, courseVideo.Order);
+        
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
+        
+        _ = cloudinaryService.DeleteVideoAsync(publicId); // Fire and forget
     }
 }
