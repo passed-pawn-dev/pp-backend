@@ -14,12 +14,13 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
     public async Task<ServiceResult<CourseVideoDto>> ValidateAndAddVideo(Lesson lesson,
         CourseVideoAddDto addDto)
     {
+        var highestOrderNumber = GetHighestOrderNumber(lesson) + 1;
+        addDto.Order ??= highestOrderNumber;
         var video = mapper.Map<CourseVideo>(addDto);
-        var highestOrderNumber = GetHighestOrderNumber(lesson);
 
-        if (video.Order > highestOrderNumber + 1 || video.Order < 1)
+        if (video.Order > highestOrderNumber || video.Order < 1)
             return ServiceResult<CourseVideoDto>.Failure([
-                $"New example has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New example has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         var uploadResult = await cloudinaryService.UploadVideoAsync(addDto.Video);
@@ -52,6 +53,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         CourseVideoUpdateDto updateDto)
     {
         var highestOrderNumber = GetHighestOrderNumber(lesson);
+        updateDto.Order ??= highestOrderNumber;
 
         if (updateDto.Order > highestOrderNumber || updateDto.Order < 1)
             return ServiceResult<CourseVideoDto>.Failure([
@@ -74,7 +76,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
             {
                 video.VideoUrl = uploadResult.Url.AbsoluteUri;
                 video.VideoPublicId = uploadResult.PublicId;
-                MoveOrderOnUpdate(lesson, video.Order, updateDto.Order);
+                MoveOrderOnUpdate(lesson, video.Order, updateDto.Order.Value);
                 mapper.Map(updateDto, video);
                 unitOfWork.Videos.Update(video);
 
@@ -93,7 +95,7 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         }
         else
         {
-            MoveOrderOnUpdate(lesson, video.Order, updateDto.Order);
+            MoveOrderOnUpdate(lesson, video.Order, updateDto.Order.Value);
             mapper.Map(updateDto, video);
             unitOfWork.Videos.Update(video);
 

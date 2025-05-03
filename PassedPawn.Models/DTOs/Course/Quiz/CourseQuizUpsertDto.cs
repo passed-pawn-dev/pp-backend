@@ -13,7 +13,7 @@ public class CourseQuizUpsertDto
     [FenValidation]
     public string? Fen { get; init; }
     public string? Explanation  { get; init; }
-    public int Order { get; init; }
+    public int? Order { get; set; }
     [Required] 
     public string Title { get; set; } = string.Empty;
 }

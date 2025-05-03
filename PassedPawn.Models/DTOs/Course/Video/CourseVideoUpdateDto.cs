@@ -6,6 +6,6 @@ public class CourseVideoUpdateDto
 {
     public required string Title { get; init; }
     public string? Description { get; init; }
-    public int Order { get; init; }
+    public int? Order { get; set; }
     public IFormFile? Video { get; init; }
 }
