@@ -12,11 +12,6 @@ public class User : IEntity
 
     public string? PhoneNumber { get; set; }
 
-    public int? PhotoId { get; set; }
-
-    // relacja
-    public Photo? Photo { get; set; }
-
     public DateOnly DateOfBirth { get; set; }
 
     public int Elo { get; set; }
