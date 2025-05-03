@@ -7,8 +7,8 @@ using PassedPawn.Models.DTOs.Course.Example;
 using PassedPawn.Models.DTOs.Course.Example.Move;
 using PassedPawn.Models.DTOs.Course.Example.Move.Arrow;
 using PassedPawn.Models.DTOs.Course.Example.Move.Highlight;
-using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Puzzle;
 using PassedPawn.Models.DTOs.Course.Quiz;
 using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.DTOs.Course.Video;
@@ -57,7 +57,7 @@ public class AutoMapperProfiles : Profile
         
         CreateMap<Course, NonBoughtCourseDetailsDto>()
             .ForMember(dest => dest.PuzzleCount,
-                opt => opt.MapFrom(src => src.Lessons.Sum(lesson => lesson.Exercises.Count)))
+                opt => opt.MapFrom(src => src.Lessons.Sum(lesson => lesson.Puzzles.Count)))
             .ForMember(dest => dest.ReviewCount,
                 opt => opt.MapFrom(src => src.Lessons.Sum(lesson => lesson.Videos.Count)))
             .ForMember(dest => dest.QuizCount,
@@ -74,7 +74,7 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.LessonCount, opt => opt.MapFrom(src => src.Lessons.Count))
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url))
             .ForMember(dest => dest.ElementCount, opt => opt.MapFrom(src =>
-                src.Lessons.Sum(lesson => lesson.Examples.Count + lesson.Exercises.Count + lesson.Videos.Count + lesson.Quizzes.Count)));
+                src.Lessons.Sum(lesson => lesson.Examples.Count + lesson.Puzzles.Count + lesson.Videos.Count + lesson.Quizzes.Count)));
 
         CreateMap<Course, CourseEditViewDto>()
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
@@ -85,11 +85,11 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
 
         CreateMap<Lesson, CoachCourseDetailsLessonDto>()
-            .ForMember(dest => dest.Puzzles, opt => opt.MapFrom(src => src.Exercises));
+            .ForMember(dest => dest.Puzzles, opt => opt.MapFrom(src => src.Puzzles));
 
         CreateMap<CourseQuiz, CoachCourseDetailsLessonElementDto>();
         CreateMap<CourseExample, CoachCourseDetailsLessonElementDto>();
-        CreateMap<CourseExercise, CoachCourseDetailsLessonElementDto>();
+        CreateMap<CoursePuzzle, CoachCourseDetailsLessonElementDto>();
         CreateMap<CourseVideo, CoachCourseDetailsLessonElementDto>();
         
         CreateMap<Lesson, BoughtCourseDetailsLessonDto>();
@@ -97,7 +97,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseQuiz, BoughtCourseDetailsLessonElementSlimDto>();
         CreateMap<CourseExample, BoughtCourseDetailsLessonElementSlimDto>();
         CreateMap<CourseVideo, BoughtCourseDetailsLessonElementSlimDto>();
-        CreateMap<CourseExercise, BoughtCourseDetailsLessonElementSlimDto>();
+        CreateMap<CoursePuzzle, BoughtCourseDetailsLessonElementSlimDto>();
 
         CreateMap<Coach, NonBoughtCourseDetailsCoachDto>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => FullName(src)))
@@ -111,8 +111,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseVideoUpdateDto, CourseVideo>();
         CreateMap<CourseVideo, CourseVideoDto>();
 
-        CreateMap<CourseExerciseUpsertDto, CourseExercise>();
-        CreateMap<CourseExercise, CourseExerciseDto>();
+        CreateMap<CoursePuzzleUpsertDto, CoursePuzzle>();
+        CreateMap<CoursePuzzle, CoursePuzzlesDto>();
 
         CreateMap<CourseExampleUpsertDto, CourseExample>();
         CreateMap<CourseExample, CourseExampleDto>();
@@ -120,8 +120,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseReviewUpsertDto, CourseReview>();
         CreateMap<CourseReview, CourseReviewDto>();
 
-        CreateMap<CourseExercise, CourseExerciseDto>();
-        CreateMap<CourseExerciseUpsertDto, CourseExercise>();
+        CreateMap<CoursePuzzle, CoursePuzzlesDto>();
+        CreateMap<CoursePuzzleUpsertDto, CoursePuzzle>();
 
         CreateMap<CourseExampleMove, CourseExampleMoveDto>();
         CreateMap<CourseExampleMoveUpsertDto, CourseExampleMove>();

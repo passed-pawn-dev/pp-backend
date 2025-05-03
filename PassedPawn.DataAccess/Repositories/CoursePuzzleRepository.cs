@@ -6,10 +6,10 @@ using PassedPawn.DataAccess.Repositories.Contracts;
 
 namespace PassedPawn.DataAccess.Repositories;
 
-public class CourseExerciseRepository(ApplicationDbContext dbContext, IMapper mapper)
-    : RepositoryBase<CourseExercise>(dbContext, mapper), ICourseExerciseRepository
+public class CoursePuzzleRepository(ApplicationDbContext dbContext, IMapper mapper)
+    : RepositoryBase<CoursePuzzle>(dbContext, mapper), ICoursePuzzleRepository
 {
-    public async Task<CourseExercise?> GetPuzzleById(int id)
+    public async Task<CoursePuzzle?> GetPuzzleById(int id)
     {
         return await DbSet
             .Where(puzzle => puzzle.Id == id)

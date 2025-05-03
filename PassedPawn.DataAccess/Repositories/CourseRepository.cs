@@ -13,7 +13,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     {
         return await DbSet
             .Include(course => course.Lessons)
-            .ThenInclude(lesson => lesson.Exercises)
+            .ThenInclude(lesson => lesson.Puzzles)
             .SingleOrDefaultAsync(course => course.Lessons.Any(lesson => lesson.Id == id));
     }
 
@@ -21,7 +21,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     {
         return await DbSet
             .Include(course => course.Lessons)
-            .ThenInclude(lesson => lesson.Exercises)
+            .ThenInclude(lesson => lesson.Puzzles)
             .SingleOrDefaultAsync(course => course.Id == id);
     }
 

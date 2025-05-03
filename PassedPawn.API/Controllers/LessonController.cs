@@ -4,8 +4,8 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
-using PassedPawn.Models.DTOs.Course.Exercise;
 using PassedPawn.Models.DTOs.Course.Lesson;
+using PassedPawn.Models.DTOs.Course.Puzzle;
 using PassedPawn.Models.DTOs.Course.Quiz;
 using PassedPawn.Models.DTOs.Course.Video;
 using Swashbuckle.AspNetCore.Annotations;
@@ -121,17 +121,17 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
     }
     
     [Authorize(Policy = "require coach role")]
-    [HttpPost("{lessonId:int}/exercise")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [HttpPost("{lessonId:int}/puzzle")]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CoursePuzzlesDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [SwaggerOperation(
-        Summary = "Adds a new exercise to a lesson",
-        Description = "New exercise's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+        Summary = "Adds a new puzzle to a lesson",
+        Description = "New puzzle's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> AddExercise(int lessonId, CourseExerciseUpsertDto upsertDto,
-        ICourseExerciseService exerciseService)
+    public async Task<IActionResult> AddPuzzle(int lessonId, CoursePuzzleUpsertDto upsertDto,
+        ICoursePuzzleService puzzleService)
     {
         var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
 
@@ -141,19 +141,19 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (lesson.Course?.CoachId != await claimsPrincipalService.GetCoachId(User))
             return Forbid();
 
-        var serviceResult = await exerciseService.ValidateAndAddExercise(lesson, upsertDto);
+        var serviceResult = await puzzleService.ValidateAndAddPuzzle(lesson, upsertDto);
 
         if (!serviceResult.IsSuccess)
             return BadRequest(serviceResult.Errors);
 
-        var courseExerciseDto = serviceResult.Data;
-        return CreatedAtAction("Get", "CourseExercise", new { id = courseExerciseDto.Id }, 
-            courseExerciseDto);
+        var coursePuzzleDto = serviceResult.Data;
+        return CreatedAtAction("Get", "CoursePuzzle", new { id = coursePuzzleDto.Id }, 
+            coursePuzzleDto);
     }
     
     [Authorize(Policy = "require coach role")]
     [HttpPost("{lessonId:int}/video")]
-    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CourseExerciseDto))]
+    [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CoursePuzzlesDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
