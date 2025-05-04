@@ -23,6 +23,9 @@ public class CourseStudentControllerTests
         claimPrincipalServiceMock.Setup(claimsPrincipalService =>
                 claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
             .ReturnsAsync(UserId);
+        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
+                claimsPrincipalService.GetStudentIdOptional(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(UserId);
         _courseStudentController = new CourseStudentController(_unitOfWorkMock.Object,
             claimPrincipalServiceMock.Object);
     }
@@ -171,7 +174,7 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync<CourseDto>())
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync(UserId))
             .ReturnsAsync(courseDtos);
 
         // Act
