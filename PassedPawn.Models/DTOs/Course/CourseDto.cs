@@ -11,4 +11,5 @@ public class CourseDto
     public required string CoachName { get; init; }
     public double AverageScore { get; init; }
     public string? PictureUrl { get; init; }
+    public bool IsBought { get; init; }
 }
