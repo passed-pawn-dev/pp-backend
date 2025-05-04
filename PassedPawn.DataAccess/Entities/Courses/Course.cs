@@ -17,6 +17,7 @@ public class Course : IEntity
     
     public int CoachId { get; set; }
     public Coach? Coach { get; set; }
+    public DateTime ReleaseDate { get; set; }
 
     public ICollection<Student> Students { get; init; } = [];
     public ICollection<Lesson> Lessons { get; init; } = [];
