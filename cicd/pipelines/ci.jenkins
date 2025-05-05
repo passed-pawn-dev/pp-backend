@@ -58,7 +58,7 @@ pipeline {
     post {
         success {
             script {
-                build job: "build-app-chart-pipeline", 
+                build job: "build-push-app-chart-pipeline", 
                     wait: false, 
                     parameters: [string(name: 'BACKEND_IMAGE', value: "${IMAGE_NAME}:${IMAGE_TAG}")]
             }
