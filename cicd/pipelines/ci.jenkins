@@ -8,6 +8,7 @@ pipeline {
     environment {
         IMAGE_NAME = "pp-api"
         IMAGE_REPO = "pp-backend"
+        IMAGE_REGISTRY = "ghcr.io/passed-pawn-dev"
     }
 
     stages {
@@ -50,7 +51,7 @@ pipeline {
         stage('Build and Push with Kaniko') {
             steps {
                 container('kaniko') {
-                    sh '/kaniko/executor --cleanup --dockerfile=Dockerfile --context=git://github.com/passed-pawn-dev/$IMAGE_REPO.git#refs/heads/main --destination=ghcr.io/passed-pawn-dev/$IMAGE_REPO/$IMAGE_NAME:$IMAGE_TAG --destination=ghcr.io/passed-pawn-dev/$IMAGE_REPO/$IMAGE_NAME:latest'
+                    sh '/kaniko/executor --cleanup --dockerfile=Dockerfile --context=git://github.com/passed-pawn-dev/$IMAGE_REPO.git#refs/heads/main --destination=$IMAGE_REGISTRY/$IMAGE_REPO/$IMAGE_NAME:$IMAGE_TAG --destination=$IMAGE_REGISTRY/$IMAGE_REPO/$IMAGE_NAME:latest'
                 }
             }
         }
@@ -60,7 +61,7 @@ pipeline {
             script {
                 build job: "build-push-app-chart-pipeline", 
                     wait: false, 
-                    parameters: [string(name: 'BACKEND_IMAGE', value: "ghcr.io/passed-pawn-dev/${IMAGE_REPO}/${IMAGE_NAME}"), string(name: 'BACKEND_IMAGE_TAG', value: "${IMAGE_TAG}")]
+                    parameters: [string(name: 'BACKEND_IMAGE', value: "${IMAGE_REGISTRY}/${IMAGE_REPO}/${IMAGE_NAME}"), string(name: 'BACKEND_IMAGE_TAG', value: "${IMAGE_TAG}")]
             }
         }
     }
