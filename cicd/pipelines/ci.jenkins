@@ -14,12 +14,12 @@ pipeline {
         stage('Prepare Version') {
             steps {
                 script {
-                    def date = new Date().format('yyyy-MM-dd-HH-mm-ss', TimeZone.getTimeZone('GMT+2'))
+                    def date = new Date().format("yyyy-MM-dd'T'HH-mm-ss", TimeZone.getTimeZone('GMT+2'))
                     
                     // Get short commit hash (first 7 characters)
                     def commitHash = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
                     
-                    env.IMAGE_TAG = "${date}-${commitHash}"
+                    env.IMAGE_TAG = "${date}C${commitHash}"
                 }
             }
         }
@@ -60,7 +60,7 @@ pipeline {
             script {
                 build job: "build-push-app-chart-pipeline", 
                     wait: false, 
-                    parameters: [string(name: 'BACKEND_IMAGE', value: "${IMAGE_NAME}:${IMAGE_TAG}")]
+                    parameters: [string(name: 'BACKEND_IMAGE', value: "${IMAGE_NAME}"), string(name: 'BACKEND_IMAGE_TAG', value: "${IMAGE_TAG}")]
             }
         }
     }
