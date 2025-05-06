@@ -6,6 +6,7 @@ public class NonBoughtCourseDetailsDto
     public required string Title { get; init; }
     public required string Description { get; init; }
     public DateOnly ReleaseDate { get; init; }
+    public int EnrolledStudentsCount { get; init; }
     public required NonBoughtCourseDetailsCoachDto Coach { get; init; }
     public int PuzzleCount { get; init; }
     public int VideoCount { get; init; }

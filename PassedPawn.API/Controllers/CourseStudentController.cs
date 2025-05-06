@@ -21,7 +21,8 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     // TODO: Add filters and pagination
     public async Task<IActionResult> GetAllCourses()
     {
-        return Ok(await unitOfWork.Courses.GetAllAsync<CourseDto>());
+        var userId = await claimsPrincipalService.GetStudentIdOptional(User);
+        return Ok(await unitOfWork.Courses.GetAllAsync(userId));
     }
 
     [HttpGet("bought")]

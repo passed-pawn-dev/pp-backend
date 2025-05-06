@@ -25,6 +25,10 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(modelBuilder);
 
+        modelBuilder.Entity<Course>()
+            .Property(course => course.ReleaseDate)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
         modelBuilder.Entity<Nationality>().HasData(
             new Nationality { Id = 1, FullName = "United States", ShortName = "USA" },
             new Nationality { Id = 2, FullName = "Canada", ShortName = "CAN" },
