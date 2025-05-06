@@ -12,12 +12,12 @@ public class Lesson : IEntity
     public Course? Course { get; set; }
     public bool Preview { get; set; }
 
-    public ICollection<CourseExercise> Exercises { get; init; } = [];
+    public ICollection<CoursePuzzle> Puzzles { get; init; } = [];
     public ICollection<CourseExample> Examples { get; init; } = [];
     public ICollection<CourseVideo> Videos { get; init; } = [];
     public ICollection<CourseQuiz> Quizzes { get; init; } = [];
     public int Id { get; set; }
 
     [NotMapped]
-    public IEnumerable<CourseElement> Elements => [..Exercises, ..Examples, ..Videos, ..Quizzes];
+    public IEnumerable<CourseElement> Elements => [..Puzzles, ..Examples, ..Videos, ..Quizzes];
 }

@@ -1,5 +1,5 @@
 using PassedPawn.Models.DTOs.Course.Example;
-using PassedPawn.Models.DTOs.Course.Exercise;
+using PassedPawn.Models.DTOs.Course.Puzzle;
 using PassedPawn.Models.DTOs.Course.Quiz;
 using PassedPawn.Models.DTOs.Course.Video;
 
@@ -11,7 +11,7 @@ public class LessonDto
     public required string Title { get; init; }
     public bool Preview { get; init; }
     public int LessonNumber { get; init; }
-    public IEnumerable<CourseExerciseDto> Exercises { get; init; } = [];
+    public IEnumerable<CoursePuzzlesDto> Puzzles { get; init; } = [];
     public IEnumerable<CourseExampleDto> Examples { get; init; } = [];
     public IEnumerable<CourseVideoDto> Videos { get; init; } = [];
     public IEnumerable<CourseQuizDto> Quizzes { get; init; } = [];

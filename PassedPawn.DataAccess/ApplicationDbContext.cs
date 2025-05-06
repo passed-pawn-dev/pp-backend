@@ -13,7 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<Nationality> Nationalities { get; init; }
     public required DbSet<Course> Courses { get; init; }
     public required DbSet<Lesson> Lessons { get; init; }
-    public required DbSet<CourseExercise> CourseExercises { get; init; }
+    public required DbSet<CoursePuzzle> CoursePuzzles { get; init; }
     public required DbSet<CourseExample> CourseExamples { get; init; }
     public required DbSet<CourseReview> CourseReviews { get; init; }
     public required DbSet<CourseQuiz> CourseQuizes { get; init; }

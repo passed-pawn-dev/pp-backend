@@ -1,6 +1,6 @@
-namespace PassedPawn.Models.DTOs.Course.Exercise;
+namespace PassedPawn.Models.DTOs.Course.Puzzle;
 
-public class CourseExerciseDto
+public class CoursePuzzlesDto
 {
     public int Id { get; init; }
     public required string Title { get; init; }

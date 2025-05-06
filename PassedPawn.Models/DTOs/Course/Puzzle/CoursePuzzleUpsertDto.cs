@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using PassedPawn.Models.Validators;
 
-namespace PassedPawn.Models.DTOs.Course.Exercise;
+namespace PassedPawn.Models.DTOs.Course.Puzzle;
 
-public class CourseExerciseUpsertDto
+public class CoursePuzzleUpsertDto
 {
     [Required] public string Title { get; init; } = string.Empty;
     [Required] public string Description { get; init; } = string.Empty;

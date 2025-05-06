@@ -113,12 +113,12 @@ public class CourseStudentControllerTests
                             Completed = true
                         }
                     },
-                    Exercises = new List<BoughtCourseDetailsLessonElementSlimDto>
+                    Puzzles = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
                         new()
                         {
                             Id = 102,
-                            Title = "Pawn Structure Exercise",
+                            Title = "Pawn Structure Puzzle",
                             Order = 2,
                             Completed = false
                         }
@@ -150,7 +150,7 @@ public class CourseStudentControllerTests
                     LessonNumber = 2,
                     Title = "Title 2",
                     Quizzes = [],
-                    Exercises = [],
+                    Puzzles = [],
                     Examples = [],
                     Videos = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
