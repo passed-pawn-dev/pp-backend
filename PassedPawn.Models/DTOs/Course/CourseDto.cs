@@ -1,3 +1,5 @@
+using PassedPawn.Models.Enums;
+
 namespace PassedPawn.Models.DTOs.Course;
 
 public class CourseDto
@@ -5,6 +7,7 @@ public class CourseDto
     public int Id { get; init; }
     public required string Title { get; init; }
     public required string Description { get; init; }
+    public CourseStatus Status { get; init; }
     public float Price { get; init; }
     public int? EloRageStart { get; init; }
     public int? EloRangeEnd { get; init; }
