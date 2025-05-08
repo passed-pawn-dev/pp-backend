@@ -110,6 +110,18 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         await unitOfWork.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpGet("{courseId:int}/lessons")]
+    [Authorize(Policy = "require student role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(IEnumerable<BoughtCourseDetailsLessonDto>))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Gets course's lessons' previews")]
+    public async Task<IActionResult> GetCourseLessons(int courseId, ILessonRepository lessonRepository)
+    {
+        var userId = await claimsPrincipalService.GetStudentId(User);
+        var lessons = await lessonRepository.GetUserLessons(userId, courseId);
+        return lessons.Any() ? Ok(lessons) : NotFound();
+    }
     
     [HttpPost("{courseId:int}/review")]
     [Authorize(Policy = "require student role")]
