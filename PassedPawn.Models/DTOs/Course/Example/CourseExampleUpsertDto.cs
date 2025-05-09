@@ -8,5 +8,5 @@ public class CourseExampleUpsertDto
     public string? InitialDescription { get; init; }
     public int? Order { get; set; }
 
-    public ICollection<CourseExampleMoveUpsertDto> Moves { get; init; } = [];
+    public ICollection<CourseExampleMoveUpsertDto> Steps { get; init; } = [];
 }
