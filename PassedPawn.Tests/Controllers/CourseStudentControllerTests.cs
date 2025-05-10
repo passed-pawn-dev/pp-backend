@@ -7,6 +7,7 @@ using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
+using PassedPawn.Models.Params;
 
 namespace PassedPawn.Tests.Controllers;
 
@@ -174,11 +175,12 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, null, false))
+        var queryParams = new GetAllCoursesQueryParams();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, queryParams))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllCourses(null);
+        var result = await _courseStudentController.GetAllCourses(queryParams);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);

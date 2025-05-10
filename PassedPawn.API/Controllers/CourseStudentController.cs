@@ -4,6 +4,7 @@ using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
+using PassedPawn.Models.Params;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -18,15 +19,14 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     [SwaggerOperation(
         Summary = "Returns all courses' previews, to be displayed in a list"
     )]
-    // TODO: Add filters and pagination
-    public async Task<IActionResult> GetAllCourses([FromQuery] string? name, [FromQuery] bool onlyBought = false)
+    public async Task<IActionResult> GetAllCourses([FromQuery] GetAllCoursesQueryParams queryParams)
     {
         var userId = await claimsPrincipalService.GetStudentIdOptional(User);
 
-        if (userId is null && onlyBought)
+        if (userId is null && queryParams.OnlyBought)
             return Unauthorized();
             
-        return Ok(await unitOfWork.Courses.GetAllWhereAsync(userId, name, onlyBought));
+        return Ok(await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams));
     }
 
     [HttpGet("bought")]

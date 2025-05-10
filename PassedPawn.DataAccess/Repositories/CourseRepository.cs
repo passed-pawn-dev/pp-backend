@@ -3,13 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
+using PassedPawn.Models.Params;
 
 namespace PassedPawn.DataAccess.Repositories;
 
 public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     RepositoryBase<Course>(dbContext, mapper), ICourseRepository
 {
-    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId, string? name, bool onlyBought)
+    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId, GetAllCoursesQueryParams queryParams)
     {
         var query = DbSet
             .Include(c => c.Coach)
@@ -18,13 +19,22 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .Include(c => c.Students)
             .AsQueryable();
 
-        if (name is not null)
-            query = query.Where(course => course.Title.ToLower().Contains(name.ToLower()));
+        if (queryParams.EloRangeStart is not null)
+            query = query.Where(course => course.EloRangeEnd == null || course.EloRangeEnd >= queryParams.EloRangeStart);
 
-        if (onlyBought && userId is not null)
-            query = query.Where(course => course.Students.Any(student => student.Id == userId.Value));
+        if (queryParams.EloRangeEnd is not null)
+            query = query.Where(course => course.EloRangeStart == null || course.EloRangeStart <= queryParams.EloRangeEnd);
 
-        return await query.Select(course => new CourseDto
+        if (queryParams.Name is not null)
+            query = query.Where(course => course.Title.ToLower().Contains(queryParams.Name.ToLower()));
+
+        if (queryParams.MinPrice is not null)
+            query = query.Where(course => course.Price >= queryParams.MinPrice);
+
+        if (queryParams.MaxPrice is not null)
+            query = query.Where(course => course.Price <= queryParams.MaxPrice);
+
+        var selectQuery = query.Select(course => new CourseDto
         {
             Id = course.Id,
             Title = course.Title,
@@ -35,8 +45,28 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
             AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,
             PictureUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
-            IsBought = (onlyBought && userId != null) || (userId != null && course.Students.Any(student => student.Id == userId.Value))
-        }).ToListAsync();
+            IsBought = userId != null && course.Students.Any(student => student.Id == userId.Value),
+            EnrolledStudentsCount = course.Students.Count
+        });
+        
+        if (queryParams.OnlyBought)
+            selectQuery = selectQuery.Where(course => course.IsBought);
+
+        selectQuery = queryParams.SortBy switch
+        {
+            GetAllCoursesSortOrder.Price => queryParams.SortDesc
+                ? selectQuery.OrderByDescending(c => c.Price)
+                : selectQuery.OrderBy(c => c.Price),
+            GetAllCoursesSortOrder.AverageScore => queryParams.SortDesc
+                ? selectQuery.OrderByDescending(c => c.AverageScore)
+                : selectQuery.OrderBy(c => c.AverageScore),
+            GetAllCoursesSortOrder.Popularity => queryParams.SortDesc
+                ? selectQuery.OrderByDescending(c => c.EnrolledStudentsCount)
+                : selectQuery.OrderBy(c => c.EnrolledStudentsCount),
+            _ => selectQuery
+        };
+
+        return await selectQuery.ToListAsync();
     }
 
     public async Task<Course?> GetByLessonId(int id)
