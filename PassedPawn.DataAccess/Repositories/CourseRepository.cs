@@ -102,8 +102,8 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             EnrolledStudentsCount = course.Students.Count
         });
         
-        if (queryParams.OnlyBought)
-            selectQuery = selectQuery.Where(course => course.IsBought);
+        if (queryParams.OnlyNonBought)
+            selectQuery = selectQuery.Where(course => !course.IsBought);
 
         selectQuery = queryParams.SortBy switch
         {

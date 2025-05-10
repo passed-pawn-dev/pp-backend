@@ -7,7 +7,7 @@ public class GetAllCoursesQueryParams
     public string? Name { get; init; }
     public int? MinPrice { get; init; }
     public int? MaxPrice { get; init; }
-    public bool OnlyBought { get; init; } = false;
+    public bool OnlyNonBought { get; init; } = false;
     public GetAllCoursesSortOrder SortBy { get; init; } = GetAllCoursesSortOrder.Popularity;
     public bool SortDesc { get; init; }
     public int PageNumber { get; init; } = 1;
