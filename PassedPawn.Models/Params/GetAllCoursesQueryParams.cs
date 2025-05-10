@@ -13,15 +13,12 @@ public class GetAllCoursesQueryParams
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 3;
     public string? CoachName { get; init; }
-    public GetAllCoursesCourseSize? CourseSize { get; init; }
+    public bool CourseSizeBig { get; init; } = true;
+    public bool CourseSizeMedium { get; init; } = true;
+    public bool CourseSizeSmall { get; init; } = true;
 }
 
 public enum GetAllCoursesSortOrder
 {
     Price, AverageScore, Popularity
-}
-
-public enum GetAllCoursesCourseSize
-{
-    Small, Big
 }

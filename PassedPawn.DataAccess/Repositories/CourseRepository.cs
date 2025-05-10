@@ -39,7 +39,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
         if (queryParams.CoachName is not null)
             query = query.Where(course => course.Coach!.LastName.ToLower().Contains(queryParams.CoachName.ToLower()));
 
-        if (queryParams.CourseSize is not null)
+        if (!queryParams.CourseSizeBig || !queryParams.CourseSizeMedium || !queryParams.CourseSizeSmall)
         {
             query = query
                 .Include(course => course.Lessons)
@@ -50,25 +50,41 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
                 .ThenInclude(lesson => lesson.Videos)
                 .Include(course => course.Lessons)
                 .ThenInclude(lesson => lesson.Quizzes);
+        }
 
-            query = queryParams.CourseSize switch
-            {
-                GetAllCoursesCourseSize.Big => query.Where(course =>
-                    course.Lessons.Sum(lesson =>
-                        lesson.Puzzles.Count +
-                        lesson.Examples.Count +
-                        lesson.Videos.Count +
-                        lesson.Quizzes.Count) >= 50),
+        if (!queryParams.CourseSizeBig)
+        {
+            query = query.Where(course =>
+                course.Lessons.Sum(lesson =>
+                    lesson.Puzzles.Count +
+                    lesson.Examples.Count +
+                    lesson.Videos.Count +
+                    lesson.Quizzes.Count) < 50);
+        }
 
-                GetAllCoursesCourseSize.Small => query.Where(course =>
-                    course.Lessons.Sum(lesson =>
-                        lesson.Puzzles.Count +
-                        lesson.Examples.Count +
-                        lesson.Videos.Count +
-                        lesson.Quizzes.Count) < 50),
+        if (!queryParams.CourseSizeMedium)
+        {
+            query = query.Where(course =>
+                course.Lessons.Sum(lesson =>
+                    lesson.Puzzles.Count +
+                    lesson.Examples.Count +
+                    lesson.Videos.Count +
+                    lesson.Quizzes.Count) < 20 ||
+                course.Lessons.Sum(lesson =>
+                    lesson.Puzzles.Count +
+                    lesson.Examples.Count +
+                    lesson.Videos.Count +
+                    lesson.Quizzes.Count) >= 50);
+        }
 
-                _ => query
-            };
+        if (!queryParams.CourseSizeSmall)
+        {
+            query = query.Where(course =>
+                course.Lessons.Sum(lesson =>
+                    lesson.Puzzles.Count +
+                    lesson.Examples.Count +
+                    lesson.Videos.Count +
+                    lesson.Quizzes.Count) >= 20);
         }
 
         var selectQuery = query.Select(course => new CourseDto
