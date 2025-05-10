@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
@@ -180,12 +181,16 @@ public class CourseStudentControllerTests
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, queryParams))
             .ReturnsAsync(courseDtos);
 
+        var httpServiceMock = new Mock<IHttpService>();
+        httpServiceMock.Setup(httpService =>
+            httpService.AddPaginationHeader(It.IsAny<HttpResponse>(), It.IsAny<PaginationHeader>()));
+
         // Act
-        var result = await _courseStudentController.GetAllCourses(queryParams);
+        var result = await _courseStudentController.GetAllCourses(queryParams, httpServiceMock.Object);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(courseDtos, okObjectResult.Value);
+        Assert.Equal(courseDtos.Items, okObjectResult.Value);
     }
 
     [Fact]

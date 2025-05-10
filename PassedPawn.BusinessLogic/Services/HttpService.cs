@@ -1,16 +1,18 @@
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
+using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.Models;
 
-namespace PassedPawn.API.Extensions;
+namespace PassedPawn.BusinessLogic.Services;
 
-public static class HttpExtensions
+public class HttpService : IHttpService
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase
     };
     
-    public static void AddPaginationHeader(this HttpResponse response, PaginationHeader header)
+    public void AddPaginationHeader(HttpResponse response, PaginationHeader header)
     {
         response.Headers.Append("Pagination", JsonSerializer.Serialize(header, JsonSerializerOptions));
         response.Headers.Append("Access-Control-Expose-Headers", "Pagination");

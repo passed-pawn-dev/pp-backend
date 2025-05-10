@@ -21,7 +21,8 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     [SwaggerOperation(
         Summary = "Returns all courses' previews, to be displayed in a list"
     )]
-    public async Task<IActionResult> GetAllCourses([FromQuery] GetAllCoursesQueryParams queryParams)
+    public async Task<IActionResult> GetAllCourses([FromQuery] GetAllCoursesQueryParams queryParams,
+        IHttpService httpService)
     {
         var userId = await claimsPrincipalService.GetStudentIdOptional(User);
 
@@ -29,7 +30,7 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
             return Unauthorized();
 
         var pagedList = await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams);
-        Response.AddPaginationHeader(PaginationHeader.FromPagedList(pagedList));
+        httpService.AddPaginationHeader(Response, PaginationHeader.FromPagedList(pagedList));
         return Ok(pagedList.Items);
     }
 
