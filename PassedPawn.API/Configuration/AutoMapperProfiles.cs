@@ -114,8 +114,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<CoursePuzzleUpsertDto, CoursePuzzle>();
         CreateMap<CoursePuzzle, CoursePuzzlesDto>();
 
-        CreateMap<CourseExampleUpsertDto, CourseExample>();
-        CreateMap<CourseExample, CourseExampleDto>();
+        CreateMap<CourseExampleUpsertDto, CourseExample>()
+            .ForMember(dest => dest.Moves, opt => opt.MapFrom(src => src.Steps));
+        CreateMap<CourseExample, CourseExampleDto>()
+            .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Moves));
 
         CreateMap<CourseReviewUpsertDto, CourseReview>();
         CreateMap<CourseReview, CourseReviewDto>();

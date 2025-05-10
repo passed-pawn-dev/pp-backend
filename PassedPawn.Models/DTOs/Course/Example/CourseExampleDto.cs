@@ -7,8 +7,7 @@ public class CourseExampleDto
     public int Id { get; init; }
     public required string Title { get; init; }
     public string? InitialDescription { get; init; }
-    public required string InitialFen { get; init; }
     public int Order { get; init; }
 
-    public ICollection<CourseExampleMoveDto> Moves { get; init; } = [];
+    public ICollection<CourseExampleMoveDto> Steps { get; init; } = [];
 }
