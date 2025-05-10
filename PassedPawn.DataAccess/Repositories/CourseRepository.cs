@@ -39,6 +39,38 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
         if (queryParams.CoachName is not null)
             query = query.Where(course => course.Coach!.LastName.ToLower().Contains(queryParams.CoachName.ToLower()));
 
+        if (queryParams.CourseSize is not null)
+        {
+            query = query
+                .Include(course => course.Lessons)
+                .ThenInclude(lesson => lesson.Puzzles)
+                .Include(course => course.Lessons)
+                .ThenInclude(lesson => lesson.Examples)
+                .Include(course => course.Lessons)
+                .ThenInclude(lesson => lesson.Videos)
+                .Include(course => course.Lessons)
+                .ThenInclude(lesson => lesson.Quizzes);
+
+            query = queryParams.CourseSize switch
+            {
+                GetAllCoursesCourseSize.Big => query.Where(course =>
+                    course.Lessons.Sum(lesson =>
+                        lesson.Puzzles.Count +
+                        lesson.Examples.Count +
+                        lesson.Videos.Count +
+                        lesson.Quizzes.Count) >= 50),
+
+                GetAllCoursesCourseSize.Small => query.Where(course =>
+                    course.Lessons.Sum(lesson =>
+                        lesson.Puzzles.Count +
+                        lesson.Examples.Count +
+                        lesson.Videos.Count +
+                        lesson.Quizzes.Count) < 50),
+
+                _ => query
+            };
+        }
+
         var selectQuery = query.Select(course => new CourseDto
         {
             Id = course.Id,
