@@ -1,4 +1,5 @@
 using PassedPawn.DataAccess.Entities.Courses.Elements;
+using PassedPawn.Models.Enums;
 
 namespace PassedPawn.DataAccess.Entities.Courses;
 
@@ -6,7 +7,7 @@ public class Course : IEntity
 {
     public required string Title { get; set; }
     public required string Description { get; set; }
-
+    public CourseStatus Status { get; set; } = CourseStatus.InDraft;
     public float Price { get; set; }
     
     public int? EloRangeStart { get; set; }
