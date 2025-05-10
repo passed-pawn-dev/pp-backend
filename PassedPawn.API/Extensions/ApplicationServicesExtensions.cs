@@ -29,6 +29,7 @@ public static class ApplicationServicesExtensions
         services.AddScoped<IKeycloakService, KeycloakService>();
         services.AddScoped<IClaimsPrincipalService, ClaimsPrincipalService>();
         services.AddScoped<ICourseQuizService, CourseQuizService>();
+        services.AddScoped<IHttpService, HttpService>();
         
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddDbContext<ApplicationDbContext>(options =>

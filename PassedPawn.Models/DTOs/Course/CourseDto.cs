@@ -15,4 +15,5 @@ public class CourseDto
     public double AverageScore { get; init; }
     public string? PictureUrl { get; init; }
     public bool IsBought { get; init; }
+    public int EnrolledStudentsCount { get; init; }
 }

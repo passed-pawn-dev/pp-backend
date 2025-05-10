@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
+using PassedPawn.Models.Params;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -18,11 +21,17 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     [SwaggerOperation(
         Summary = "Returns all courses' previews, to be displayed in a list"
     )]
-    // TODO: Add filters and pagination
-    public async Task<IActionResult> GetAllCourses()
+    public async Task<IActionResult> GetAllCourses([FromQuery] GetAllCoursesQueryParams queryParams,
+        IHttpService httpService)
     {
         var userId = await claimsPrincipalService.GetStudentIdOptional(User);
-        return Ok(await unitOfWork.Courses.GetAllAsync(userId));
+
+        if (userId is null && queryParams.OnlyBought)
+            return Unauthorized();
+
+        var pagedList = await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams);
+        httpService.AddPaginationHeader(Response, PaginationHeader.FromPagedList(pagedList));
+        return Ok(pagedList.Items);
     }
 
     [HttpGet("bought")]
@@ -32,10 +41,10 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     [SwaggerOperation(
         Summary = "Returns all courses owned by a student"
     )]
-    public async Task<IActionResult> GetAllBoughtCourses()
+    public async Task<IActionResult> GetAllBoughtCourses([FromQuery] string? name)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
-        return Ok(await unitOfWork.Students.GetStudentCourses(userId));
+        return Ok(await unitOfWork.Students.GetStudentCoursesWhere(userId, name));
     }
     
     [HttpGet("{id:int}")]

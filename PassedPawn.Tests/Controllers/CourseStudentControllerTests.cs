@@ -1,12 +1,15 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
+using PassedPawn.Models.Params;
 
 namespace PassedPawn.Tests.Controllers;
 
@@ -173,16 +176,21 @@ public class CourseStudentControllerTests
     public async Task GetAllCourses_ShouldReturnCourses()
     {
         // Arrange
-        var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync(UserId))
+        var courseDtos = new PagedList<CourseDto>(new List<CourseDto> { SampleCourseDto() }, 1, 1, 1);
+        var queryParams = new GetAllCoursesQueryParams();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, queryParams))
             .ReturnsAsync(courseDtos);
 
+        var httpServiceMock = new Mock<IHttpService>();
+        httpServiceMock.Setup(httpService =>
+            httpService.AddPaginationHeader(It.IsAny<HttpResponse>(), It.IsAny<PaginationHeader>()));
+
         // Act
-        var result = await _courseStudentController.GetAllCourses();
+        var result = await _courseStudentController.GetAllCourses(queryParams, httpServiceMock.Object);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(courseDtos, okObjectResult.Value);
+        Assert.Equal(courseDtos.Items, okObjectResult.Value);
     }
 
     [Fact]
@@ -190,11 +198,11 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<BoughtCourseDto> { SampleBoughtCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourses(UserId))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCoursesWhere(UserId, null))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllBoughtCourses();
+        var result = await _courseStudentController.GetAllBoughtCourses(null);
         
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
