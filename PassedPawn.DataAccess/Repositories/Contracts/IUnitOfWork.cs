@@ -13,9 +13,9 @@ public interface IUnitOfWork
     ILessonRepository Lessons { get; }
     IRepositoryBase<CourseReview> CourseReviews { get; }
     ICoursePuzzleRepository Puzzles { get; }
-    IRepositoryBase<CourseExample> Examples { get; }
-    IRepositoryBase<CourseQuiz> Quizzes { get; }
-    IRepositoryBase<CourseVideo> Videos { get; }
+    ICourseExampleRepository Examples { get; }
+    ICourseQuizRepository Quizzes { get; }
+    ICourseVideoRepository Videos { get; }
 
     Task<bool> SaveChangesAsync();
 }
