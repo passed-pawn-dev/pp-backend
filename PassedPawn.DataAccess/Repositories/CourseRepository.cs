@@ -93,7 +93,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             Title = course.Title,
             Description = course.Description,
             Price = course.Price,
-            EloRageStart = course.EloRangeStart,
+            EloRangeStart = course.EloRangeStart,
             EloRangeEnd = course.EloRangeEnd,
             CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
             AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,

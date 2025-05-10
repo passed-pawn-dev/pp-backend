@@ -36,6 +36,10 @@ public class AutoMapperProfiles : Profile
         
         CreateMap<CoachUpsertDto, Coach>();
         CreateMap<Coach, CoachDto>();
+        CreateMap<Coach, CoachProfileDto>()
+            .ForMember(dest => dest.FullName, opt => opt.MapFrom(src => FullName(src)))
+            .ForMember(dest => dest.Nationality, opt => opt.MapFrom(src => src.Nationality == null ? null : src.Nationality.FullName))
+            .ForMember(dest => dest.PhotoUrl, opt => opt.MapFrom(src => src.Photo == null ? null : src.Photo.Url));
 
         CreateMap<CoachUpsertDto, UserRegistrationDto>()
             .ForMember(dest => dest.Credentials,

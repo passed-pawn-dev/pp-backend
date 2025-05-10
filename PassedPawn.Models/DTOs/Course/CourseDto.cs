@@ -9,7 +9,7 @@ public class CourseDto
     public required string Description { get; init; }
     public CourseStatus Status { get; init; }
     public float Price { get; init; }
-    public int? EloRageStart { get; init; }
+    public int? EloRangeStart { get; init; }
     public int? EloRangeEnd { get; init; }
     public required string CoachName { get; init; }
     public double AverageScore { get; init; }

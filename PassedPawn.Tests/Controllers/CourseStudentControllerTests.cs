@@ -42,7 +42,7 @@ public class CourseStudentControllerTests
             Id = 1,
             Title = "Mastering Endgames",
             Description = "An advanced course focused on chess endgame strategies.",
-            EloRageStart = 1800,
+            EloRangeStart = 1800,
             EloRangeEnd = 2200,
             CoachName = "GM John Doe",
             AverageScore = 4.7
