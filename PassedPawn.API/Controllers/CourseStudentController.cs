@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.Params;
@@ -25,8 +27,10 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
 
         if (userId is null && queryParams.OnlyBought)
             return Unauthorized();
-            
-        return Ok(await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams));
+
+        var pagedList = await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams);
+        Response.AddPaginationHeader(PaginationHeader.FromPagedList(pagedList));
+        return Ok(pagedList.Items);
     }
 
     [HttpGet("bought")]

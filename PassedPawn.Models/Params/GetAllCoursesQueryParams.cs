@@ -10,6 +10,9 @@ public class GetAllCoursesQueryParams
     public bool OnlyBought { get; init; } = false;
     public GetAllCoursesSortOrder SortBy { get; init; } = GetAllCoursesSortOrder.Popularity;
     public bool SortDesc { get; init; } = false;
+
+    public int PageNumber { get; init; } = 1;
+    public int PageSize { get; init; } = 3;
 }
 
 public enum GetAllCoursesSortOrder

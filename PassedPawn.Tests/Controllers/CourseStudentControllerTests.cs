@@ -5,6 +5,7 @@ using PassedPawn.API.Controllers;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.Params;
@@ -174,7 +175,7 @@ public class CourseStudentControllerTests
     public async Task GetAllCourses_ShouldReturnCourses()
     {
         // Arrange
-        var courseDtos = new List<CourseDto> { SampleCourseDto() };
+        var courseDtos = new PagedList<CourseDto>(new List<CourseDto> { SampleCourseDto() }, 1, 1, 1);
         var queryParams = new GetAllCoursesQueryParams();
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, queryParams))
             .ReturnsAsync(courseDtos);

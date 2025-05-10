@@ -1,7 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
+using PassedPawn.DataAccess.Extensions;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.Params;
 
@@ -10,7 +12,7 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     RepositoryBase<Course>(dbContext, mapper), ICourseRepository
 {
-    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId, GetAllCoursesQueryParams queryParams)
+    public async Task<PagedList<CourseDto>> GetAllWhereAsync(int? userId, GetAllCoursesQueryParams queryParams)
     {
         var query = DbSet
             .Include(c => c.Coach)
@@ -66,7 +68,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             _ => selectQuery
         };
 
-        return await selectQuery.ToListAsync();
+        return await selectQuery.ToPagedListAsync(queryParams.PageNumber, queryParams.PageSize);
     }
 
     public async Task<Course?> GetByLessonId(int id)
