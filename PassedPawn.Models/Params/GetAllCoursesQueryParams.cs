@@ -9,13 +9,19 @@ public class GetAllCoursesQueryParams
     public int? MaxPrice { get; init; }
     public bool OnlyBought { get; init; } = false;
     public GetAllCoursesSortOrder SortBy { get; init; } = GetAllCoursesSortOrder.Popularity;
-    public bool SortDesc { get; init; } = false;
-
+    public bool SortDesc { get; init; }
     public int PageNumber { get; init; } = 1;
     public int PageSize { get; init; } = 3;
+    public string? CoachName { get; init; }
+    public GetAllCoursesCourseSize? CourseSize { get; init; }
 }
 
 public enum GetAllCoursesSortOrder
 {
     Price, AverageScore, Popularity
+}
+
+public enum GetAllCoursesCourseSize
+{
+    Small, Big
 }

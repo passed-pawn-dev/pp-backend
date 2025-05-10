@@ -36,6 +36,9 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
         if (queryParams.MaxPrice is not null)
             query = query.Where(course => course.Price <= queryParams.MaxPrice);
 
+        if (queryParams.CoachName is not null)
+            query = query.Where(course => course.Coach!.LastName.ToLower().Contains(queryParams.CoachName.ToLower()));
+
         var selectQuery = query.Select(course => new CourseDto
         {
             Id = course.Id,
