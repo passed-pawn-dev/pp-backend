@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
@@ -10,8 +9,7 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     RepositoryBase<Course>(dbContext, mapper), ICourseRepository
 {
-    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId,
-        Expression<Func<Course, bool>>? predicate = null)
+    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId, string? name, bool onlyBought)
     {
         var query = DbSet
             .Include(c => c.Coach)
@@ -20,9 +18,12 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .Include(c => c.Students)
             .AsQueryable();
 
-        if (predicate is not null)
-            query = query.Where(predicate);
-            
+        if (name is not null)
+            query = query.Where(course => course.Title.ToLower().Contains(name.ToLower()));
+
+        if (onlyBought && userId is not null)
+            query = query.Where(course => course.Students.Any(student => student.Id == userId.Value));
+
         return await query.Select(course => new CourseDto
         {
             Id = course.Id,
@@ -34,9 +35,8 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
             AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,
             PictureUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
-            IsBought = userId != null && course.Students.Any(student => student.Id == userId.Value)
-        })
-        .ToListAsync();
+            IsBought = (onlyBought && userId != null) || (userId != null && course.Students.Any(student => student.Id == userId.Value))
+        }).ToListAsync();
     }
 
     public async Task<Course?> GetByLessonId(int id)

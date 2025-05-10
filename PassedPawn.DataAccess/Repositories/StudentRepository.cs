@@ -27,16 +27,15 @@ public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .SingleOrDefaultAsync();
     }
 
-    public async Task<IEnumerable<BoughtCourseDto>> GetStudentCoursesWhere(int userId,
-        Expression<Func<Course, bool>>? predicate = null)
+    public async Task<IEnumerable<BoughtCourseDto>> GetStudentCoursesWhere(int userId, string? name)
     {
         var query = DbContext
             .Set<Course>()
             .Include(course => course.Students)
             .Where(course => course.Students.Any(student => student.Id == userId));
 
-        if (predicate is not null)
-            query = query.Where(predicate);
+        if (name is not null)
+            query = query.Where(course => course.Title.ToLower().Contains(name.ToLower()));
         
         return await query
             .ProjectTo<BoughtCourseDto>(MapperConfiguration)

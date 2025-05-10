@@ -174,7 +174,7 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, null))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, null, false))
             .ReturnsAsync(courseDtos);
 
         // Act

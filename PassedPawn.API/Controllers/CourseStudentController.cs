@@ -1,8 +1,6 @@
-using System.Linq.Expressions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.BusinessLogic.Services.Contracts;
-using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
@@ -21,10 +19,14 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         Summary = "Returns all courses' previews, to be displayed in a list"
     )]
     // TODO: Add filters and pagination
-    public async Task<IActionResult> GetAllCourses([FromQuery] string? name)
+    public async Task<IActionResult> GetAllCourses([FromQuery] string? name, [FromQuery] bool onlyBought = false)
     {
         var userId = await claimsPrincipalService.GetStudentIdOptional(User);
-        return Ok(await unitOfWork.Courses.GetAllWhereAsync(userId, NamePredicate(name)));
+
+        if (userId is null && onlyBought)
+            return Unauthorized();
+            
+        return Ok(await unitOfWork.Courses.GetAllWhereAsync(userId, name, onlyBought));
     }
 
     [HttpGet("bought")]
@@ -37,7 +39,7 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     public async Task<IActionResult> GetAllBoughtCourses([FromQuery] string? name)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
-        return Ok(await unitOfWork.Students.GetStudentCoursesWhere(userId, NamePredicate(name)));
+        return Ok(await unitOfWork.Students.GetStudentCoursesWhere(userId, name));
     }
     
     [HttpGet("{id:int}")]
@@ -145,11 +147,4 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         return CreatedAtAction("GetReview", "CourseReview", new { id = courseReviewDto.Id },
             courseReviewDto);
     }
-    
-    private static Expression<Func<Course, bool>>? NamePredicate(string? name)
-        => name switch
-        {
-            null => null,
-            _ => course => course.Title.ToLower().Contains(name.ToLower())
-        };
 }
