@@ -80,7 +80,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         if (course.CoachId != userId)
             return Forbid();
 
-        var lesson = course.Lessons.First(lesson => lesson.Id == id);
+        var lesson = course.Lessons.Single(lesson => lesson.Id == id);
         unitOfWork.Lessons.Delete(lesson);
 
         if (!await unitOfWork.SaveChangesAsync())

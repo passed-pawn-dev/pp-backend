@@ -72,7 +72,7 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
         if (lesson.Course?.CoachId != coachId)
             return Forbid();
 
-        var courseExample = lesson.Examples.First(example => example.Id == id);
+        var courseExample = lesson.Examples.Single(example => example.Id == id);
         await exampleService.DeleteExample(lesson, courseExample);
         return NoContent();
     }

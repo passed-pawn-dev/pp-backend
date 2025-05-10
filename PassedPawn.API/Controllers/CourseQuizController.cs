@@ -75,7 +75,7 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
         if (lesson.Course?.CoachId != coachId)
             return Forbid();
 
-        var courseQuiz = lesson.Quizzes.First(quiz => quiz.Id == id);
+        var courseQuiz = lesson.Quizzes.Single(quiz => quiz.Id == id);
         await quizService.DeleteQuiz(lesson, courseQuiz);
         return NoContent();
     }
