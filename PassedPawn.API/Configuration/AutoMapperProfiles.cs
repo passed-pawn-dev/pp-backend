@@ -66,7 +66,8 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(src => src.Lessons.Sum(lesson => lesson.Examples.Count)))
             .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.Reviews.Count))
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
-            .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
+            .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count))
+            .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReleaseDate)));
 
         CreateMap<Course, BoughtCourseDetailsDto>();
 
