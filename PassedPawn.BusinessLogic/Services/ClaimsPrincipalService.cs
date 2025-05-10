@@ -16,7 +16,11 @@ public class ClaimsPrincipalService(IUnitOfWork unitOfWork) : IClaimsPrincipalSe
 
     public async Task<int?> GetStudentIdOptional(ClaimsPrincipal principal)
     {
-        var email = GetUserEmail(principal);
+        var email = GetUserEmailOptional(principal);
+
+        if (email is null)
+            return null;
+        
         return await unitOfWork.Students.GetIdByEmail(email)
                ?? null;
     }

@@ -174,11 +174,11 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync(UserId))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, null))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllCourses();
+        var result = await _courseStudentController.GetAllCourses(null);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
@@ -190,11 +190,11 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<BoughtCourseDto> { SampleBoughtCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourses(UserId))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCoursesWhere(UserId, null))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllBoughtCourses();
+        var result = await _courseStudentController.GetAllBoughtCourses(null);
         
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);

@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
@@ -9,27 +10,33 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     RepositoryBase<Course>(dbContext, mapper), ICourseRepository
 {
-    public async Task<IEnumerable<CourseDto>> GetAllAsync(int? userId)
+    public async Task<IEnumerable<CourseDto>> GetAllWhereAsync(int? userId,
+        Expression<Func<Course, bool>>? predicate = null)
     {
-        return await DbSet
+        var query = DbSet
             .Include(c => c.Coach)
             .Include(c => c.Reviews)
             .Include(c => c.Thumbnail)
             .Include(c => c.Students)
-            .Select(course => new CourseDto
-            {
-                Id = course.Id,
-                Title = course.Title,
-                Description = course.Description,
-                Price = course.Price,
-                EloRageStart = course.EloRangeStart,
-                EloRangeEnd = course.EloRangeEnd,
-                CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
-                AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,
-                PictureUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
-                IsBought = userId != null && course.Students.Any(student => student.Id == userId.Value)
-            })
-            .ToListAsync();
+            .AsQueryable();
+
+        if (predicate is not null)
+            query = query.Where(predicate);
+            
+        return await query.Select(course => new CourseDto
+        {
+            Id = course.Id,
+            Title = course.Title,
+            Description = course.Description,
+            Price = course.Price,
+            EloRageStart = course.EloRangeStart,
+            EloRangeEnd = course.EloRangeEnd,
+            CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
+            AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,
+            PictureUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
+            IsBought = userId != null && course.Students.Any(student => student.Id == userId.Value)
+        })
+        .ToListAsync();
     }
 
     public async Task<Course?> GetByLessonId(int id)
