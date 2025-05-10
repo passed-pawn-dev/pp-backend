@@ -73,7 +73,7 @@ public class CoursePuzzleController(IUnitOfWork unitOfWork, IClaimsPrincipalServ
         if (lesson.Course?.CoachId != coachId)
             return Forbid();
 
-        var coursePuzzle = lesson.Puzzles.First(puzzle => puzzle.Id == id);
+        var coursePuzzle = lesson.Puzzles.Single(puzzle => puzzle.Id == id);
         await puzzleService.DeletePuzzle(lesson, coursePuzzle);
         return NoContent();
     }

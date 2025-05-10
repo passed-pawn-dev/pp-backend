@@ -73,7 +73,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         if (lesson.Course?.CoachId != coachId)
             return Forbid();
 
-        var courseVideo = lesson.Videos.First(video => video.Id == id);
+        var courseVideo = lesson.Videos.Single(video => video.Id == id);
         await videoService.DeleteVideo(lesson, courseVideo);
         return NoContent();
     }
