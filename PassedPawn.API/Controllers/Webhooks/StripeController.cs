@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
+using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.DataAccess.Repositories.Contracts;
 using Stripe;
 
 namespace PassedPawn.API.Controllers.Webhooks;
 
-public class StripeController(IConfiguration configuration) : ApiControllerBase
+public class StripeController(IConfiguration configuration, IUnitOfWork unitOfWork) : ApiControllerBase
 {
     private readonly string _endpointSecret = configuration["Stripe:PaymentSuccessfulEndpointSecret"]!;
 
@@ -17,10 +19,28 @@ public class StripeController(IConfiguration configuration) : ApiControllerBase
             var stripeEvent = EventUtility.ConstructEvent(json,
                 Request.Headers["Stripe-Signature"], _endpointSecret);
 
-            Console.WriteLine(stripeEvent.Type);
-            Console.WriteLine(stripeEvent.Data);
+            if (stripeEvent.Data.Object is not PaymentIntent paymentIntent)
+                return BadRequest();
             
-            return Ok();
+            var metadata = paymentIntent.Metadata;
+            var userId = metadata["userId"];
+            var courseId = metadata["courseId"];
+
+            if (userId is null || courseId is null)
+                return BadRequest();
+
+            var student = await unitOfWork.Students.GetByIdAsync(int.Parse(userId));
+            var course = await unitOfWork.Courses.GetWithStudentsById(int.Parse(courseId));
+
+            if (student is null || course is null)
+                throw new Exception(); // TODO: Refund user
+
+            if (course.Students.Contains(student))
+                return Conflict("Course already on the list"); // TODO: Refund user
+        
+            course.Students.Add(student);
+            await unitOfWork.SaveChangesAsync();
+            return NoContent();
         }
         catch (StripeException e)
         {
