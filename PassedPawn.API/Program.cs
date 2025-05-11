@@ -8,6 +8,9 @@ using PassedPawn.Models.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddJsonFile("/app/config/appsettings.json", optional: false, reloadOnChange: true);
+builder.Configuration.AddJsonFile($"/app/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
