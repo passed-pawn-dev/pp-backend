@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
+using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
 using PassedPawn.Models.Params;
@@ -68,6 +69,29 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         var userId = await claimsPrincipalService.GetStudentId(User);
         var course = await unitOfWork.Students.GetStudentCourse(userId, id);
         return course is null ? NotFound() : Ok(course);
+    }
+    
+    [HttpPost("{id:int}/buy")]
+    [Authorize(Policy = "require student role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type=typeof(ClientIntent))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [SwaggerOperation(
+        Summary = "Attempts to but a course"
+    )]
+    public async Task<IActionResult> BuyCourse(int id, IStripeService stripeService)
+    {
+        var student = await claimsPrincipalService.GetStudent(User);
+        var course = await unitOfWork.Courses.GetWithStudentsById(id);
+
+        if (course is null)
+            return NotFound();
+
+        if (course.Students.Contains(student))
+            return Conflict("Course is already bought");
+
+        var clientSecret = await stripeService.CreateCourseIntentSecret(student.Id, course.Price, course.Id);
+        return Ok(new ClientIntent(clientSecret));
     }
     
     [HttpPost("{id:int}/course-list")]
