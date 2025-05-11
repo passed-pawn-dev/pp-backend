@@ -19,14 +19,14 @@ services:
     container_name: pp-api
     build:
       context: .
-      dockerfile: Dockerfile.local
-    image: pp-api-local
+      dockerfile: Dockerfile
+    image: pp-api
     ports: 
       - 8080:8080
     networks:
       - api-network
     volumes:
-      - ./PassedPawn.API/appsettings.Development.json:/app/config/appsettings.Development.json
+      - ./PassedPawn.API/appsettings.Development.json:/app/config/appsettings.json
     depends_on: 
       postgres:
         condition: service_healthy
