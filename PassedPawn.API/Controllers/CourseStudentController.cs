@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PassedPawn.API.Extensions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models;
@@ -25,9 +24,6 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
         IHttpService httpService)
     {
         var userId = await claimsPrincipalService.GetStudentIdOptional(User);
-
-        if (userId is null && queryParams.OnlyBought)
-            return Unauthorized();
 
         var pagedList = await unitOfWork.Courses.GetAllWhereAsync(userId, queryParams);
         httpService.AddPaginationHeader(Response, PaginationHeader.FromPagedList(pagedList));
