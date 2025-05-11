@@ -99,11 +99,18 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseVideo, CoachCourseDetailsLessonElementDto>();
         
         CreateMap<Lesson, BoughtCourseDetailsLessonDto>();
+        
+        CreateMap<Lesson, NonBoughtCourseDetailsLessonDto>();
 
         CreateMap<CourseQuiz, BoughtCourseDetailsLessonElementSlimDto>();
         CreateMap<CourseExample, BoughtCourseDetailsLessonElementSlimDto>();
         CreateMap<CourseVideo, BoughtCourseDetailsLessonElementSlimDto>();
         CreateMap<CoursePuzzle, BoughtCourseDetailsLessonElementSlimDto>();
+        
+        CreateMap<CourseQuiz, NonBoughtCourseDetailsLessonElementSlimDto>();
+        CreateMap<CourseExample, NonBoughtCourseDetailsLessonElementSlimDto>();
+        CreateMap<CourseVideo, NonBoughtCourseDetailsLessonElementSlimDto>();
+        CreateMap<CoursePuzzle, NonBoughtCourseDetailsLessonElementSlimDto>();
 
         CreateMap<Coach, NonBoughtCourseDetailsCoachDto>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => FullName(src)))

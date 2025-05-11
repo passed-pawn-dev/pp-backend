@@ -6,7 +6,8 @@ using Stripe;
 
 namespace PassedPawn.API.Controllers.Webhooks;
 
-public class StripeController(IConfiguration configuration, IUnitOfWork unitOfWork) : ApiControllerBase
+public class StripeController(IConfiguration configuration, IUnitOfWork unitOfWork,
+    ISseUserConnectionManager sseUserConnectionManager) : ApiControllerBase
 {
     private readonly string _endpointSecret = configuration["Stripe:PaymentSuccessfulEndpointSecret"]!;
 
@@ -33,13 +34,20 @@ public class StripeController(IConfiguration configuration, IUnitOfWork unitOfWo
             var course = await unitOfWork.Courses.GetWithStudentsById(int.Parse(courseId));
 
             if (student is null || course is null)
+            {
+                await sseUserConnectionManager.SendEventAsync(int.Parse(userId), $"Failed to buy ${courseId}");
                 throw new Exception(); // TODO: Refund user
+            }
 
             if (course.Students.Contains(student))
+            {
+                await sseUserConnectionManager.SendEventAsync(int.Parse(userId), $"Failed to buy ${courseId}");
                 return Conflict("Course already on the list"); // TODO: Refund user
+            }
         
             course.Students.Add(student);
             await unitOfWork.SaveChangesAsync();
+            await sseUserConnectionManager.SendEventAsync(int.Parse(userId), $"Bought ${courseId}");
             return NoContent();
         }
         catch (StripeException e)
