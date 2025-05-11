@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PassedPawn.Models.DTOs.Course.Exercise;
+namespace PassedPawn.Models.DTOs.Course.Puzzle;
 
 public class SolutionDto
 {

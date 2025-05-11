@@ -1,12 +1,15 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using PassedPawn.API.Controllers;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Review;
+using PassedPawn.Models.Params;
 
 namespace PassedPawn.Tests.Controllers;
 
@@ -23,6 +26,9 @@ public class CourseStudentControllerTests
         claimPrincipalServiceMock.Setup(claimsPrincipalService =>
                 claimsPrincipalService.GetStudentId(It.IsAny<ClaimsPrincipal>()))
             .ReturnsAsync(UserId);
+        claimPrincipalServiceMock.Setup(claimsPrincipalService =>
+                claimsPrincipalService.GetStudentIdOptional(It.IsAny<ClaimsPrincipal>()))
+            .ReturnsAsync(UserId);
         _courseStudentController = new CourseStudentController(_unitOfWorkMock.Object,
             claimPrincipalServiceMock.Object);
     }
@@ -36,7 +42,7 @@ public class CourseStudentControllerTests
             Id = 1,
             Title = "Mastering Endgames",
             Description = "An advanced course focused on chess endgame strategies.",
-            EloRageStart = 1800,
+            EloRangeStart = 1800,
             EloRangeEnd = 2200,
             CoachName = "GM John Doe",
             AverageScore = 4.7
@@ -99,6 +105,7 @@ public class CourseStudentControllerTests
                 {
                     Id = 1,
                     LessonNumber = 1,
+                    Title = "Title 1",
                     Quizzes = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
                         new()
@@ -109,12 +116,12 @@ public class CourseStudentControllerTests
                             Completed = true
                         }
                     },
-                    Exercises = new List<BoughtCourseDetailsLessonElementSlimDto>
+                    Puzzles = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
                         new()
                         {
                             Id = 102,
-                            Title = "Pawn Structure Exercise",
+                            Title = "Pawn Structure Puzzle",
                             Order = 2,
                             Completed = false
                         }
@@ -144,8 +151,9 @@ public class CourseStudentControllerTests
                 {
                     Id = 2,
                     LessonNumber = 2,
+                    Title = "Title 2",
                     Quizzes = [],
-                    Exercises = [],
+                    Puzzles = [],
                     Examples = [],
                     Videos = new List<BoughtCourseDetailsLessonElementSlimDto>
                     {
@@ -168,16 +176,21 @@ public class CourseStudentControllerTests
     public async Task GetAllCourses_ShouldReturnCourses()
     {
         // Arrange
-        var courseDtos = new List<CourseDto> { SampleCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllAsync<CourseDto>())
+        var courseDtos = new PagedList<CourseDto>(new List<CourseDto> { SampleCourseDto() }, 1, 1, 1);
+        var queryParams = new GetAllCoursesQueryParams();
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetAllWhereAsync(UserId, queryParams))
             .ReturnsAsync(courseDtos);
 
+        var httpServiceMock = new Mock<IHttpService>();
+        httpServiceMock.Setup(httpService =>
+            httpService.AddPaginationHeader(It.IsAny<HttpResponse>(), It.IsAny<PaginationHeader>()));
+
         // Act
-        var result = await _courseStudentController.GetAllCourses();
+        var result = await _courseStudentController.GetAllCourses(queryParams, httpServiceMock.Object);
 
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(courseDtos, okObjectResult.Value);
+        Assert.Equal(courseDtos.Items, okObjectResult.Value);
     }
 
     [Fact]
@@ -185,11 +198,11 @@ public class CourseStudentControllerTests
     {
         // Arrange
         var courseDtos = new List<BoughtCourseDto> { SampleBoughtCourseDto() };
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCourses(UserId))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Students.GetStudentCoursesWhere(UserId, null))
             .ReturnsAsync(courseDtos);
 
         // Act
-        var result = await _courseStudentController.GetAllBoughtCourses();
+        var result = await _courseStudentController.GetAllBoughtCourses(null);
         
         // Assert
         var okObjectResult = Assert.IsType<OkObjectResult>(result);

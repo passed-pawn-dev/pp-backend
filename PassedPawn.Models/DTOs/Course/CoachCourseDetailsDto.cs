@@ -1,3 +1,5 @@
+using PassedPawn.Models.Enums;
+
 namespace PassedPawn.Models.DTOs.Course;
 
 public class CoachCourseDetailsDto
@@ -5,6 +7,7 @@ public class CoachCourseDetailsDto
     public int Id { get; init; }
     public required string Title { get; init; }
     public required string Description { get; init; }
+    public CourseStatus Status { get; init; }
     public double AverageScore { get; init; }
     public float Price { get; init; }
     public int EnrolledStudentsCount { get; init; }

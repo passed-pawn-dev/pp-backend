@@ -5,6 +5,7 @@ using PassedPawn.BusinessLogic.Exceptions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.User.Coach;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -12,6 +13,16 @@ namespace PassedPawn.API.Controllers;
 
 public class CoachController(IUserService userService, IUnitOfWork unitOfWork) : ApiControllerBase
 {
+    [HttpGet("{id:int}/profile")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoachProfileDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Returns coach's profile")]
+    public async Task<IActionResult> GetProfile(int id)
+    {
+        var coach = await unitOfWork.Coaches.GetByIdAsync<CoachProfileDto>(id);
+        return coach is null ? NotFound() : Ok(coach);
+    }
+    
     [HttpPost("register")]
     [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CoachDto))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

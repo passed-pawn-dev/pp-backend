@@ -4,8 +4,9 @@ public class CourseExampleMove : IEntity
 {
     public int Id { get; set; }
     
-    public required string AlgebraicNotation { get; set; }
+    public required string Fen { get; set; }
     public string? Description { get; set; }
+    public int Order { get; set; }
     public ICollection<CourseExampleMoveArrow> Arrows { get; init; } = [];
     public ICollection<CourseExampleMoveHighlight> Highlights { get; init; } = [];
     

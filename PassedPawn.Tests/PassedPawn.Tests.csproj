@@ -23,7 +23,6 @@
 
     <ItemGroup>
         <ProjectReference Include="..\PassedPawn.API\PassedPawn.API.csproj"/>
-        <ProjectReference Include="..\PassedPawn.ChessLogic\PassedPawn.ChessLogic.csproj" />
         <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj"/>
         <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj"/>
     </ItemGroup>

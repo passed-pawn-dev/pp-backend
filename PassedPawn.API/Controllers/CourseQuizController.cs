@@ -8,7 +8,8 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
 
-public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService, ICourseQuizService quizService) : ApiControllerBase
+public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService,
+    ICourseQuizService quizService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseQuizDto))]
@@ -21,13 +22,6 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
     {
         var quiz = await unitOfWork.Quizzes.GetByIdAsync<CourseQuizDto>(id);
         return quiz is null ? NotFound() : Ok(quiz);
-    }
-    
-    [Authorize(Policy = "require student role")]
-    [HttpPost("{id:int}")]
-    public async Task<IActionResult> PostSolution()
-    {
-        return Ok();
     }
     
     [Authorize(Policy = "require coach role")]
@@ -60,5 +54,29 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
         var courseQuizDto = serviceResult.Data;
         return Ok(courseQuizDto);
 
+    }
+    
+    [HttpDelete("{id:int}")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(
+        Summary = "Deletes a quiz"
+    )]
+    public async Task<IActionResult> DeleteQuiz(int id)
+    {
+        var lesson = await unitOfWork.Lessons.GetByQuizId(id);
+
+        if (lesson is null)
+            return NotFound();
+        
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+
+        if (lesson.Course?.CoachId != coachId)
+            return Forbid();
+
+        var courseQuiz = lesson.Quizzes.Single(quiz => quiz.Id == id);
+        await quizService.DeleteQuiz(lesson, courseQuiz);
+        return NoContent();
     }
 }

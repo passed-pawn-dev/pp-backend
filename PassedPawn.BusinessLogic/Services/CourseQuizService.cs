@@ -12,12 +12,13 @@ public class CourseQuizService(IUnitOfWork unitOfWork, IMapper mapper) : CourseE
 {
     public async Task<ServiceResult<CourseQuizDto>> ValidateAndAddQuiz(Lesson lesson, CourseQuizUpsertDto upsertDto)
     {
+        var highestOrderNumber = GetHighestOrderNumber(lesson) + 1;
+        upsertDto.Order ??= highestOrderNumber;
         var quiz = mapper.Map<CourseQuiz>(upsertDto);
-        var highestOrderNumber = GetHighestOrderNumber(lesson);
 
-        if (quiz.Order > highestOrderNumber + 1 || quiz.Order < 1)
+        if (quiz.Order > highestOrderNumber || quiz.Order < 1)
             return ServiceResult<CourseQuizDto>.Failure([
-                $"New quiz has wrong order. Maximum of {highestOrderNumber + 1} expected"
+                $"New quiz has wrong order. Maximum of {highestOrderNumber} expected"
             ]);
 
         MoveOrderOnAdd(lesson, quiz.Order);
@@ -34,6 +35,7 @@ public class CourseQuizService(IUnitOfWork unitOfWork, IMapper mapper) : CourseE
         CourseQuizUpsertDto upsertDto)
     {
         var highestOrderNumber = GetHighestOrderNumber(lesson);
+        upsertDto.Order ??= highestOrderNumber;
 
         if (upsertDto.Order > highestOrderNumber || upsertDto.Order < 1)
             return ServiceResult<CourseQuizDto>.Failure([
@@ -41,7 +43,7 @@ public class CourseQuizService(IUnitOfWork unitOfWork, IMapper mapper) : CourseE
             ]);
 
         var quiz = lesson.Quizzes.Single(quiz => quiz.Id == exampleId);
-        MoveOrderOnUpdate(lesson, quiz.Order, upsertDto.Order);
+        MoveOrderOnUpdate(lesson, quiz.Order, upsertDto.Order.Value);
         mapper.Map(upsertDto, quiz);
         unitOfWork.Quizzes.Update(quiz);
 
@@ -49,5 +51,14 @@ public class CourseQuizService(IUnitOfWork unitOfWork, IMapper mapper) : CourseE
             throw new Exception("Failed to save database");
 
         return ServiceResult<CourseQuizDto>.Success(mapper.Map<CourseQuizDto>(quiz));
+    }
+
+    public async Task DeleteQuiz(Lesson lesson, CourseQuiz courseQuiz)
+    {
+        unitOfWork.Quizzes.Delete(courseQuiz);
+        MoveOrderOnDelete(lesson, courseQuiz.Order);
+        
+        if (!await unitOfWork.SaveChangesAsync())
+            throw new Exception("Failed to save database");
     }
 }

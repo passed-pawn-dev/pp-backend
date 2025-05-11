@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.API.Extensions;
 using PassedPawn.API.Handlers;
@@ -10,7 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddJsonFile("/app/config/appsettings.json", optional: false, reloadOnChange: true);
 builder.Configuration.AddJsonFile($"/app/config/appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Enums will return string value, not an int
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Services.AddProblemDetails();

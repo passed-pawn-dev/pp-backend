@@ -12,7 +12,7 @@ public interface IUnitOfWork
     ICourseRepository Courses { get; }
     ILessonRepository Lessons { get; }
     IRepositoryBase<CourseReview> CourseReviews { get; }
-    ICourseExerciseRepository Puzzles { get; }
+    ICoursePuzzleRepository Puzzles { get; }
     IRepositoryBase<CourseExample> Examples { get; }
     IRepositoryBase<CourseQuiz> Quizzes { get; }
     IRepositoryBase<CourseVideo> Videos { get; }

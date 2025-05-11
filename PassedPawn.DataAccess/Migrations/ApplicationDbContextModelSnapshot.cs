@@ -22,7 +22,7 @@ namespace PassedPawn.DataAccess.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("CourseExerciseStudent", b =>
+            modelBuilder.Entity("CoursePuzzleStudent", b =>
                 {
                     b.Property<int>("PuzzlesId")
                         .HasColumnType("integer");
@@ -34,7 +34,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasIndex("StudentsId");
 
-                    b.ToTable("CourseExerciseStudent");
+                    b.ToTable("CoursePuzzleStudent");
                 });
 
             modelBuilder.Entity("CourseStudent", b =>
@@ -158,6 +158,14 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<float>("Price")
                         .HasColumnType("real");
 
+                    b.Property<DateTime>("ReleaseDate")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("ThumbnailId")
                         .HasColumnType("integer");
 
@@ -188,10 +196,6 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<string>("InitialDescription")
                         .HasColumnType("text");
 
-                    b.Property<string>("InitialFen")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<int>("LessonId")
                         .HasColumnType("integer");
 
@@ -219,14 +223,17 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AlgebraicNotation")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Description")
                         .HasColumnType("text");
 
                     b.Property<int>("ExampleId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Fen")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("Order")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -244,9 +251,8 @@ namespace PassedPawn.DataAccess.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Destination")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Destination")
+                        .HasColumnType("integer");
 
                     b.Property<int>("ExampleMoveId")
                         .HasColumnType("integer");
@@ -254,9 +260,8 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<int>("Severity")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Source")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Source")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -276,9 +281,8 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<int>("ExampleMoveId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("Position")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Position")
+                        .HasColumnType("integer");
 
                     b.Property<int>("Severity")
                         .HasColumnType("integer");
@@ -290,7 +294,7 @@ namespace PassedPawn.DataAccess.Migrations
                     b.ToTable("CourseExampleMoveHighlight");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CoursePuzzle", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -324,7 +328,7 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.HasIndex("LessonId");
 
-                    b.ToTable("CourseExercises");
+                    b.ToTable("CoursePuzzles");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseQuiz", b =>
@@ -445,6 +449,10 @@ namespace PassedPawn.DataAccess.Migrations
 
                     b.Property<bool>("Preview")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 
@@ -689,21 +697,16 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
-                    b.Property<int?>("PhotoId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NationalityId");
 
-                    b.HasIndex("PhotoId");
-
                     b.ToTable("Students");
                 });
 
-            modelBuilder.Entity("CourseExerciseStudent", b =>
+            modelBuilder.Entity("CoursePuzzleStudent", b =>
                 {
-                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", null)
+                    b.HasOne("PassedPawn.DataAccess.Entities.Courses.Elements.CoursePuzzle", null)
                         .WithMany()
                         .HasForeignKey("PuzzlesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -830,10 +833,10 @@ namespace PassedPawn.DataAccess.Migrations
                     b.Navigation("ExampleMove");
                 });
 
-            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CourseExercise", b =>
+            modelBuilder.Entity("PassedPawn.DataAccess.Entities.Courses.Elements.CoursePuzzle", b =>
                 {
                     b.HasOne("PassedPawn.DataAccess.Entities.Courses.Lesson", "Lesson")
-                        .WithMany("Exercises")
+                        .WithMany("Puzzles")
                         .HasForeignKey("LessonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -900,13 +903,7 @@ namespace PassedPawn.DataAccess.Migrations
                         .WithMany()
                         .HasForeignKey("NationalityId");
 
-                    b.HasOne("PassedPawn.DataAccess.Entities.Photo", "Photo")
-                        .WithMany()
-                        .HasForeignKey("PhotoId");
-
                     b.Navigation("Nationality");
-
-                    b.Navigation("Photo");
                 });
 
             modelBuilder.Entity("PassedPawn.DataAccess.Entities.Coach", b =>
@@ -944,7 +941,7 @@ namespace PassedPawn.DataAccess.Migrations
                 {
                     b.Navigation("Examples");
 
-                    b.Navigation("Exercises");
+                    b.Navigation("Puzzles");
 
                     b.Navigation("Quizzes");
 
