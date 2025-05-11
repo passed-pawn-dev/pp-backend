@@ -19,6 +19,7 @@ public static class ApplicationServicesExtensions
     {
         services.AddAutoMapper(typeof(AutoMapperProfiles));
 
+        services.AddSingleton<ISseUserConnectionManager, SseUserConnectionManager>();
         services.AddSingleton<ICloudinaryService, CloudinaryService>();
         services.AddSingleton<IStripeService, StripeService>();
 
