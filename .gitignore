@@ -487,3 +487,7 @@ $RECYCLE.BIN/
 keycloak
 keycloak-copy
 .env
+
+# appsettings
+
+appsettings*
