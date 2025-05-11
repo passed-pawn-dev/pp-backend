@@ -20,6 +20,7 @@ public static class ApplicationServicesExtensions
         services.AddAutoMapper(typeof(AutoMapperProfiles));
 
         services.AddSingleton<ICloudinaryService, CloudinaryService>();
+        services.AddSingleton<IStripeService, StripeService>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICourseService, CourseService>();
