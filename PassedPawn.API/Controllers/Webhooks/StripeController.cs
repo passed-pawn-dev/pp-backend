@@ -47,7 +47,7 @@ public class StripeController(IConfiguration configuration, IUnitOfWork unitOfWo
         
             course.Students.Add(student);
             await unitOfWork.SaveChangesAsync();
-            await sseUserConnectionManager.SendEventAsync(int.Parse(userId), $"Bought ${courseId}");
+            _ = sseUserConnectionManager.SendEventAsync(int.Parse(userId), $"Bought ${courseId}");
             return NoContent();
         }
         catch (StripeException e)
