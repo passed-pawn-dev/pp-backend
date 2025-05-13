@@ -1,7 +1,5 @@
 using AutoMapper;
 using PassedPawn.DataAccess.Entities;
-using PassedPawn.DataAccess.Entities.Courses;
-using PassedPawn.DataAccess.Entities.Courses.Elements;
 using PassedPawn.DataAccess.Repositories.Contracts;
 
 namespace PassedPawn.DataAccess.Repositories;
@@ -16,9 +14,9 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public ILessonRepository Lessons { get; } = new LessonRepository(dbContext, mapper);
     public IRepositoryBase<CourseReview> CourseReviews { get; } = new RepositoryBase<CourseReview>(dbContext, mapper);
     public ICoursePuzzleRepository Puzzles { get; } = new CoursePuzzleRepository(dbContext, mapper);
-    public IRepositoryBase<CourseExample> Examples { get; } = new RepositoryBase<CourseExample>(dbContext, mapper);
-    public IRepositoryBase<CourseQuiz> Quizzes { get; } = new RepositoryBase<CourseQuiz>(dbContext, mapper);
-    public IRepositoryBase<CourseVideo> Videos { get; } = new RepositoryBase<CourseVideo>(dbContext, mapper);
+    public ICourseExampleRepository Examples { get; } = new CourseExampleRepository(dbContext, mapper);
+    public ICourseQuizRepository Quizzes { get; } = new CourseQuizRepository(dbContext, mapper);
+    public ICourseVideoRepository Videos { get; } = new CourseVideoRepository(dbContext, mapper);
 
 
     public async Task<bool> SaveChangesAsync()

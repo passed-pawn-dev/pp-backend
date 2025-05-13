@@ -12,6 +12,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     ICourseVideoService videoService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -19,7 +20,8 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var video = await unitOfWork.Videos.GetByIdAsync<CourseVideoDto>(id);
+        var userId = await claimsPrincipalService.GetStudentId(User);
+        var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
         return video is null ? NotFound() : Ok(video);
     }
     

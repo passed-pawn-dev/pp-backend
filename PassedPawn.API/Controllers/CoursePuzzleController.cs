@@ -13,6 +13,7 @@ public class CoursePuzzleController(IUnitOfWork unitOfWork, IClaimsPrincipalServ
 {
     
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoursePuzzlesDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -20,7 +21,8 @@ public class CoursePuzzleController(IUnitOfWork unitOfWork, IClaimsPrincipalServ
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var puzzle = await unitOfWork.Puzzles.GetByIdAsync<CoursePuzzlesDto>(id);
+        var userId = await claimsPrincipalService.GetStudentId(User);
+        var puzzle = await unitOfWork.Puzzles.GetOwnedOrInPreviewAsync(id, userId);
         return puzzle is null ? NotFound() : Ok(puzzle);
     }
     

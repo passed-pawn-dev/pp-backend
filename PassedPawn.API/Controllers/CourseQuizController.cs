@@ -12,6 +12,7 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
     ICourseQuizService quizService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
+    [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseQuizDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -20,7 +21,8 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var quiz = await unitOfWork.Quizzes.GetByIdAsync<CourseQuizDto>(id);
+        var userId = await claimsPrincipalService.GetStudentId(User);
+        var quiz = await unitOfWork.Quizzes.GetOwnedOrInPreviewAsync(id, userId);
         return quiz is null ? NotFound() : Ok(quiz);
     }
     
