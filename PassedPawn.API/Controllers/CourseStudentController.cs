@@ -52,7 +52,11 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     )]
     public async Task<IActionResult> GetCourseDetails(int id)
     {
-        var course = await unitOfWork.Courses.GetByIdAsync<NonBoughtCourseDetailsDto>(id);
+        var userId = await claimsPrincipalService.GetStudentIdOptional(User);
+        var course = userId is null ?
+            await unitOfWork.Courses.GetByIdAsync<NonBoughtCourseDetailsDto>(id) :
+            await unitOfWork.Courses.GetByIdAsync(userId.Value, id);
+        
         return course is null ? NotFound() : Ok(course);
     }
 

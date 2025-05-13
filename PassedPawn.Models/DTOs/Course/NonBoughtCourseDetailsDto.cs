@@ -20,6 +20,7 @@ public class NonBoughtCourseDetailsDto
     public double AverageScore { get; init; }
     public float Price { get; init; }
     public string? PictureUrl { get; init; }
+    public bool IsBought { get; set; }
     public IEnumerable<NonBoughtCourseDetailsLessonDto> Lessons { get; init; } = [];
 }
 

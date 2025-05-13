@@ -11,7 +11,7 @@ public class RepositoryBase<T>(
     ApplicationDbContext dbContext,
     IMapper mapper) : IRepositoryBase<T> where T : class, IEntity
 {
-    protected readonly DbContext DbContext = dbContext;
+    protected readonly ApplicationDbContext DbContext = dbContext;
     protected readonly DbSet<T> DbSet = dbContext.Set<T>();
     protected readonly IConfigurationProvider MapperConfiguration = mapper.ConfigurationProvider;
 
@@ -47,7 +47,7 @@ public class RepositoryBase<T>(
         return await DbSet.FindAsync(id);
     }
 
-    public async Task<TDto?> GetByIdAsync<TDto>(int id)
+    public virtual async Task<TDto?> GetByIdAsync<TDto>(int id)
     {
         return await DbSet
             .Where(x => x.Id == id)
