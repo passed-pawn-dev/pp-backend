@@ -29,20 +29,13 @@ public class VideoFileAttribute : ValidationAttribute
     protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
     {
         if (value is not IFormFile file)
-        {
             return new ValidationResult("No file was provided.");
-        }
 
         if (!_permittedMimeTypes.Contains(file.ContentType.ToLowerInvariant()))
-        {
             return new ValidationResult($"Unsupported video format: {file.ContentType}");
-        }
 
-        if (file.Length > _maxFileSizeBytes)
-        {
-            return new ValidationResult($"File size exceeds the limit of {_maxFileSizeBytes / (1024 * 1024)}MB.");
-        }
-
-        return ValidationResult.Success;
+        return file.Length > _maxFileSizeBytes ?
+            new ValidationResult($"File size exceeds the limit of {_maxFileSizeBytes / (1024 * 1024)}MB.") :
+            ValidationResult.Success;
     }
 }
