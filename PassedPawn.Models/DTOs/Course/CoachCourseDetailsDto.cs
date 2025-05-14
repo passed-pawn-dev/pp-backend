@@ -19,6 +19,7 @@ public class CoachCourseDetailsLessonDto
 {
     public int Id { get; init; }
     public required string Title { get; init; }
+    public bool Preview { get; init; }
     public IEnumerable<CoachCourseDetailsLessonElementDto> Quizzes { get; init; } = [];
     public IEnumerable<CoachCourseDetailsLessonElementDto> Puzzles { get; init; } = [];
     public IEnumerable<CoachCourseDetailsLessonElementDto> Videos { get; init; } = [];
