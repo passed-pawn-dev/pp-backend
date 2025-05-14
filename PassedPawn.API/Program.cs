@@ -5,7 +5,6 @@ using PassedPawn.API.Extensions;
 using PassedPawn.API.Handlers;
 using PassedPawn.DataAccess;
 using PassedPawn.Models.Configuration;
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("/app/config/appsettings.json", optional: false, reloadOnChange: true);
@@ -37,6 +36,16 @@ builder.Services.AddOptions<KeycloakConfig>()
     .BindConfiguration("Keycloak")
     .ValidateDataAnnotations().ValidateOnStart();
 
+
+builder.Services.AddHealthChecks()
+    .AddDbContextCheck<ApplicationDbContext>(
+        name: "db-query-check",
+        customTestQuery: async (dbContext, cancellationToken) => 
+        {
+            await dbContext.Database.ExecuteSqlRawAsync("SELECT 1", cancellationToken);
+            return true;
+        });
+        
 var app = builder.Build();
 
 app.UseSwagger();
@@ -54,7 +63,6 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
+app.MapHealthChecks("/api/Health");
 
-
-app.Run();
 app.Run();
