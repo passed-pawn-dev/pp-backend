@@ -13,24 +13,23 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="AutoMapper" Version="13.0.1"/>
         <PackageReference Include="CloudinaryDotNet" Version="1.27.5" />
         <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.11"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="8" />
-        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0" />
-        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.1.0" />
+        <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.0.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.1.0"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj" />
-        <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj" />
-        <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj" />
+        <ProjectReference Include="..\PassedPawn.BusinessLogic\PassedPawn.BusinessLogic.csproj"/>
+        <ProjectReference Include="..\PassedPawn.DataAccess\PassedPawn.DataAccess.csproj"/>
+        <ProjectReference Include="..\PassedPawn.Models\PassedPawn.Models.csproj"/>
     </ItemGroup>
 
 </Project>
