@@ -25,6 +25,7 @@ public class NonBoughtCourseDetailsDto
 
 public class NonBoughtCourseDetailsCoachDto
 {
+    public int Id { get; init; }
     public required string Name { get; init; }
     public required string ChessTitle { get; init; }
     public int CreatedCoursesCount { get; init; }
