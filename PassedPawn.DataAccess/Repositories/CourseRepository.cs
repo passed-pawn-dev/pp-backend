@@ -1,4 +1,5 @@
 using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Extensions;
@@ -12,6 +13,24 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
     RepositoryBase<Course>(dbContext, mapper), ICourseRepository
 {
+    public async Task<NonBoughtCourseDetailsDto?> GetByIdAsync(int userId, int id)
+    {
+        var course = await DbSet
+            .Where(course => course.Id == id)
+            .ProjectTo<NonBoughtCourseDetailsDto>(MapperConfiguration)
+            .SingleOrDefaultAsync();
+
+        if (course is null)
+            return null;
+
+        course.IsBought = await DbContext.Students
+            .Where(student => student.Id == id)
+            .Include(student => student.Courses)
+            .AnyAsync(student => student.Courses.Any(c => c.Id == id));
+
+        return course;
+    }
+    
     public async Task<PagedList<CourseDto>> GetAllWhereAsync(int? userId, GetAllCoursesQueryParams queryParams)
     {
         var query = DbSet
