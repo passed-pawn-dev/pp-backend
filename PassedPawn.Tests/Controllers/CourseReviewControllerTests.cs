@@ -25,7 +25,7 @@ public class CourseReviewControllerTests
     {
         // Arrange
         const int id = 1;
-        var courseReviewDto = new CourseReviewDto();
+        var courseReviewDto = new CourseReviewDto { Author = "John Doe" };
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews.GetByIdAsync<CourseReviewDto>(id))
             .ReturnsAsync(courseReviewDto);
 

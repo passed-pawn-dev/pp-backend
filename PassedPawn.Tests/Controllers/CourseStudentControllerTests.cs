@@ -45,7 +45,7 @@ public class CourseStudentControllerTests
             EloRangeStart = 1800,
             EloRangeEnd = 2200,
             CoachName = "GM John Doe",
-            AverageScore = 4.7
+            AverageScore = 4.7m
         };
     }
 
@@ -87,7 +87,7 @@ public class CourseStudentControllerTests
             EloRangeEnd = 2100,
             TotalVideoCount = 25,
             ReviewCount = 73,
-            AverageScore = 4.5,
+            AverageScore = 4.5m,
             Price = 29.99f
         };
     }
@@ -282,7 +282,7 @@ public class CourseStudentControllerTests
         // Arrange
         const int id = 1;
         var course = new Course { Title = "Test", Description = "Test" };
-        var courseReviewDto = new CourseReviewDto();
+        var courseReviewDto = new CourseReviewDto { Author = "John Doe" };
         var reviewUpsertDto = new CourseReviewUpsertDto();
 
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(id))

@@ -132,8 +132,12 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseExample, CourseExampleDto>()
             .ForMember(dest => dest.Steps, opt => opt.MapFrom(src => src.Moves));
 
-        CreateMap<CourseReviewUpsertDto, CourseReview>();
-        CreateMap<CourseReview, CourseReviewDto>();
+        CreateMap<CourseReviewUpsertDto, CourseReview>()
+            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => (int)((src.Value - 1.0m) * 2 + 1)));
+        
+        CreateMap<CourseReview, CourseReviewDto>()
+            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => 0.5m * (src.Value - 1) + 1.0m))
+            .ForMember(dest => dest.Author, opt => opt.MapFrom(src => FullName(src.Student!)));
 
         CreateMap<CoursePuzzle, CoursePuzzlesDto>();
         CreateMap<CoursePuzzleUpsertDto, CoursePuzzle>();
@@ -156,8 +160,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<AnswerUpsertDto, QuizAnswer>();
     }
 
-    private static double AverageScore(ICollection<CourseReview> reviews) =>
-        reviews.Count > 0 ? reviews.Average(review => review.Value) : 0;
+    private static decimal AverageScore(ICollection<CourseReview> reviews) =>
+        reviews.Count > 0 ? reviews.Select(review => 0.5m * (review.Value - 1) + 1.0m).Average() : 0;
 
-    private static string FullName(User coach) => $"{coach.FirstName} {coach.LastName}";
+    private static string FullName(User user) => $"{user.FirstName} {user.LastName}";
 }

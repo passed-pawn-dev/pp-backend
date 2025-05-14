@@ -5,7 +5,7 @@ namespace PassedPawn.DataAccess.Entities;
 
 public class CourseReview : IEntity
 {
-    [Range(1, 5)] public int Value { get; set; }
+    [Range(1, 9)] public int Value { get; set; }
     public string? Content { get; set; }
 
     public int CourseId { get; init; }

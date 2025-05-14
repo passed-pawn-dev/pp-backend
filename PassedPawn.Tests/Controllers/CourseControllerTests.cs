@@ -40,7 +40,7 @@ public class CourseControllerTests
         const int id = 1;
         var courseReviewDtoList = new List<CourseReviewDto>
         {
-            new()
+            new() { Author = "John Doe" }
         };
 
         _unitOfWorkMock.Setup(unitOfWork => unitOfWork.CourseReviews
