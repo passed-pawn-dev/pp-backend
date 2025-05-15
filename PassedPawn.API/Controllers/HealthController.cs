@@ -8,14 +8,14 @@ namespace PassedPawn.API.Controllers;
 
 public class HealthController(ApplicationDbContext dbContext): ApiControllerBase
 {
-    [HttpGet]
+    [HttpGet("Readiness")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
     [SwaggerOperation(
-        Summary = "Health check.",
-        Description = "Verify api connectivity."
+        Summary = "Readiness check.",
+        Description = "Verify if api accepts traffic and can query the database"
     )]
-    public async Task<IActionResult> CheckHealth() 
+    public async Task<IActionResult> CheckReadiness() 
     {
         try
         {
@@ -35,5 +35,20 @@ public class HealthController(ApplicationDbContext dbContext): ApiControllerBase
                 Details = "Database query failed"
             });
         }
+    }
+
+    [HttpGet("Liveness")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [SwaggerOperation(
+        Summary = "Liveness check.",
+        Description = "Verify if api accepts traffic"
+    )]
+    public async Task<IActionResult> CheckLiveness() 
+    {       
+        return Ok(new 
+        {
+            Status = "Healthy",
+            Details = "Api operational"
+        });
     }
 }
