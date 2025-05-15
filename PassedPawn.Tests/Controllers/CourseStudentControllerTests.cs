@@ -215,7 +215,7 @@ public class CourseStudentControllerTests
         // Arrange
         const int id = 1;
         var courseDto = SampleNonBoughtCourseDetailsDto();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<NonBoughtCourseDetailsDto>(id))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(UserId, id))
             .ReturnsAsync(courseDto);
         
         // Act
