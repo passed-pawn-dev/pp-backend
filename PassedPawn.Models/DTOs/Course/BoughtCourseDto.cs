@@ -12,5 +12,5 @@ public class BoughtCourseDto
     public int? EloRangeStart { get; init; }
     public int? EloRangeEnd { get; init; }
     public required string CoachName { get; init; }
-    public string? PictureUrl { get; init; }
+    public string? ThumbnailUrl { get; init; }
 }
