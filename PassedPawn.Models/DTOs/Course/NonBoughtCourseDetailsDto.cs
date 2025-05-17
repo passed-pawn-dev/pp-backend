@@ -19,12 +19,14 @@ public class NonBoughtCourseDetailsDto
     public int ReviewCount { get; init; }
     public decimal AverageScore { get; init; }
     public float Price { get; init; }
-    public string? PictureUrl { get; init; }
+    public string? ThumbnailUrl { get; init; }
+    public bool IsBought { get; set; }
     public IEnumerable<NonBoughtCourseDetailsLessonDto> Lessons { get; init; } = [];
 }
 
 public class NonBoughtCourseDetailsCoachDto
 {
+    public int Id { get; init; }
     public required string Name { get; init; }
     public required string ChessTitle { get; init; }
     public int CreatedCoursesCount { get; init; }

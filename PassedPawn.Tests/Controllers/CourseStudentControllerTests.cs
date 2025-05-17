@@ -59,7 +59,7 @@ public class CourseStudentControllerTests
             EloRangeStart = 1400,
             EloRangeEnd = 1800,
             CoachName = "IM Jane Smith",
-            PictureUrl = "https://example.com/images/opening-repertoire.jpg"
+            ThumbnailUrl = "https://example.com/images/opening-repertoire.jpg"
         };
     }
 
@@ -215,7 +215,7 @@ public class CourseStudentControllerTests
         // Arrange
         const int id = 1;
         var courseDto = SampleNonBoughtCourseDetailsDto();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync<NonBoughtCourseDetailsDto>(id))
+        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Courses.GetByIdAsync(UserId, id))
             .ReturnsAsync(courseDto);
         
         // Act

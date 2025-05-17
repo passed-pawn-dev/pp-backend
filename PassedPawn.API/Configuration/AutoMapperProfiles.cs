@@ -55,10 +55,12 @@ public class AutoMapperProfiles : Profile
         CreateMap<Course, CourseDto>()
             .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => FullName(src.Coach!)))
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
-            .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count));
+            .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count))
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
 
         CreateMap<Course, BoughtCourseDto>()
-            .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => FullName(src.Coach!)));
+            .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => FullName(src.Coach!)))
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
         
         CreateMap<Course, NonBoughtCourseDetailsDto>()
             .ForMember(dest => dest.PuzzleCount,
@@ -72,9 +74,11 @@ public class AutoMapperProfiles : Profile
             .ForMember(dest => dest.ReviewCount, opt => opt.MapFrom(src => src.Reviews.Count))
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
             .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count))
-            .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReleaseDate)));
+            .ForMember(dest => dest.ReleaseDate, opt => opt.MapFrom(src => DateOnly.FromDateTime(src.ReleaseDate)))
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
 
-        CreateMap<Course, BoughtCourseDetailsDto>();
+        CreateMap<Course, BoughtCourseDetailsDto>()
+            .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
 
         CreateMap<Course, CoachCourseDto>()
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
