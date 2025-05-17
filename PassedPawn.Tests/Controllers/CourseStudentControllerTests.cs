@@ -59,7 +59,7 @@ public class CourseStudentControllerTests
             EloRangeStart = 1400,
             EloRangeEnd = 1800,
             CoachName = "IM Jane Smith",
-            PictureUrl = "https://example.com/images/opening-repertoire.jpg"
+            ThumbnailUrl = "https://example.com/images/opening-repertoire.jpg"
         };
     }
 

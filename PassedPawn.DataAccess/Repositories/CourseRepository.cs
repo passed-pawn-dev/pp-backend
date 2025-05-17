@@ -116,7 +116,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             EloRangeEnd = course.EloRangeEnd,
             CoachName = $"{course.Coach!.FirstName} {course.Coach.LastName}",
             AverageScore = course.Reviews.Count > 0 ? course.Reviews.Average(review => review.Value) : 0,
-            PictureUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
+            ThumbnailUrl = course.Thumbnail == null ? null : course.Thumbnail.Url,
             IsBought = userId != null && course.Students.Any(student => student.Id == userId.Value),
             EnrolledStudentsCount = course.Students.Count
         });
