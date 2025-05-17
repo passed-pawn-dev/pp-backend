@@ -24,7 +24,7 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             return null;
 
         course.IsBought = await DbContext.Students
-            .Where(student => student.Id == id)
+            .Where(student => student.Id == userId)
             .Include(student => student.Courses)
             .AnyAsync(student => student.Courses.Any(c => c.Id == id));
 
