@@ -19,7 +19,7 @@ public class HealthController(ApplicationDbContext dbContext): ApiControllerBase
     {
         try
         {
-            var result = await dbContext.Database.ExecuteSqlRawAsync("SELECT 1");
+            await dbContext.Database.ExecuteSqlRawAsync("SELECT 1");
             
             return Ok(new 
             {
@@ -43,7 +43,7 @@ public class HealthController(ApplicationDbContext dbContext): ApiControllerBase
         Summary = "Liveness check.",
         Description = "Verify if api accepts traffic"
     )]
-    public async Task<IActionResult> CheckLiveness() 
+    public IActionResult CheckLiveness() 
     {       
         return Ok(new 
         {
