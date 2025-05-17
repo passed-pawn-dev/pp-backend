@@ -17,7 +17,7 @@ public class NonBoughtCourseDetailsDto
     public int? EloRangeEnd { get; init; }
     public int TotalVideoCount { get; init; }
     public int ReviewCount { get; init; }
-    public double AverageScore { get; init; }
+    public decimal AverageScore { get; init; }
     public float Price { get; init; }
     public string? ThumbnailUrl { get; init; }
     public bool IsBought { get; set; }

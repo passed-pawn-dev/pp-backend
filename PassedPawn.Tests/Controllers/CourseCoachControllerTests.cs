@@ -69,7 +69,7 @@ public class CourseCoachControllerTests
             EloRangeStart = 1800,
             EloRangeEnd = 2200,
             CoachName = "GM John Doe",
-            AverageScore = 4.7
+            AverageScore = 4.7m
         };
     }
 
