@@ -2,7 +2,8 @@ namespace PassedPawn.Models.Enums;
 
 public enum Severity
 {
-    Warn,
+    Warning,
     Danger,
-    Info
+    Info,
+    Correct
 }
