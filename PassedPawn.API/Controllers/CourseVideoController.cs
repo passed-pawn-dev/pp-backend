@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Course.Video;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -78,5 +79,13 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         var courseVideo = lesson.Videos.Single(video => video.Id == id);
         await videoService.DeleteVideo(lesson, courseVideo);
         return NoContent();
+    }
+
+    [HttpGet("signature")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
+    public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
+    {
+        return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video"));
     }
 }

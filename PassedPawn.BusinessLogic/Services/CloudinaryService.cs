@@ -3,6 +3,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.Models.DTOs;
 
 namespace PassedPawn.BusinessLogic.Services;
 
@@ -61,5 +62,27 @@ public class CloudinaryService : ICloudinaryService
             ResourceType = ResourceType.Image
         };
         return await _cloudinary.DestroyAsync(deletionParams);
+    }
+
+    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType)
+    {
+        var timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
+
+        var parameters = new SortedDictionary<string, object>
+        {
+            { "timestamp", timestamp },
+            { "folder", folderName },
+            { "resource_type", fileType }
+        };
+
+        return new CloudinarySecureUrl
+        {
+            Signature = _cloudinary.Api.SignParameters(parameters),
+            Timestamp = timestamp.ToString(),
+            ApiKey = _cloudinary.Api.Account.ApiKey,
+            CloudName = _cloudinary.Api.Account.Cloud,
+            Folder = folderName,
+            FileType = fileType
+        };
     }
 }
