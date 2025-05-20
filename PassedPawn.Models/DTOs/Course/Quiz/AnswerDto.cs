@@ -2,7 +2,8 @@
 
 public class AnswerDto
 {
-    public int Id { get; set; }
-    public required string Text { get; set; }
-    public string? LastMove;
+    public int Id { get; init; }
+    public required string Text { get; init; }
+    public string? NewPosition { get; init; }
+    public string? LastMove { get; init; }
 }
