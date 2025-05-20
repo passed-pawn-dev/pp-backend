@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace PassedPawn.DataAccess.Entities.Courses.Elements;
+﻿namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
 public class QuizAnswer : IEntity
 {
@@ -9,6 +7,7 @@ public class QuizAnswer : IEntity
     public required string Text { get; set; }
     
     public string? LastMove { get; set; }
+    public string? NewPosition { get; set; }
     
     public int QuizId { get; init; }
     
