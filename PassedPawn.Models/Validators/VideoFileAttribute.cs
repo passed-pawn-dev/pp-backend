@@ -6,17 +6,11 @@ using Microsoft.AspNetCore.Http;
 public class VideoFileAttribute : ValidationAttribute
 {
     private readonly string[] _permittedMimeTypes =
-    {
+    [
         "video/mp4",
-        "video/x-msvideo",
-        "video/x-matroska",
-        "video/quicktime",
         "video/webm",
-        "video/x-flv",
-        "video/3gpp",
-        "video/3gpp2",
-        "application/octet-stream"
-    };
+        "video/ogg"
+    ];
 
     private readonly long _maxFileSizeBytes;
 
