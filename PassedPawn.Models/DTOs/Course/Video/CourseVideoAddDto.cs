@@ -7,6 +7,6 @@ public class CourseVideoAddDto
     public required string Title { get; init; }
     public string? Description { get; init; }
     public int? Order { get; set; }
-    [Required] public string VideoUrl { get; init; } = "";
+    [Required, Url] public string VideoUrl { get; init; } = "";
     [Required] public string VideoPublicId { get; init; } = "";
 }

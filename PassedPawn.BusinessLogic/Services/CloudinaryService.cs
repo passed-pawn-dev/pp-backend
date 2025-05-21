@@ -85,4 +85,10 @@ public class CloudinaryService : ICloudinaryService
             ResourceType = fileType
         };
     }
+
+    public bool IsUrlValid(string url)
+    {
+        var expectedPrefix = $"res.cloudinary.com/{_cloudinary.Api.Account.Cloud}/";
+        return url.Contains(expectedPrefix);
+    }
 }

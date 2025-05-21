@@ -14,6 +14,11 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
     public async Task<ServiceResult<CourseVideoDto>> ValidateAndAddVideo(Lesson lesson,
         CourseVideoAddDto addDto)
     {
+        if (!cloudinaryService.IsUrlValid(addDto.VideoUrl))
+            return ServiceResult<CourseVideoDto>.Failure([
+                "Invalid photo url."
+            ]);
+        
         var highestOrderNumber = GetHighestOrderNumber(lesson) + 1;
         addDto.Order ??= highestOrderNumber;
         var video = mapper.Map<CourseVideo>(addDto);
@@ -36,6 +41,11 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
     public async Task<ServiceResult<CourseVideoDto>> ValidateAndUpdateVideo(Lesson lesson, int exampleId,
         CourseVideoUpdateDto updateDto)
     {
+        if (updateDto.VideoUrl is not null && !cloudinaryService.IsUrlValid(updateDto.VideoUrl))
+            return ServiceResult<CourseVideoDto>.Failure([
+                "Invalid photo url."
+            ]);
+        
         var highestOrderNumber = GetHighestOrderNumber(lesson);
         updateDto.Order ??= highestOrderNumber;
 
