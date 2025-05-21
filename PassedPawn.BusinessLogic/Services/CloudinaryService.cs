@@ -82,7 +82,7 @@ public class CloudinaryService : ICloudinaryService
             ApiKey = _cloudinary.Api.Account.ApiKey,
             CloudName = _cloudinary.Api.Account.Cloud,
             Folder = folderName,
-            FileType = fileType
+            ResourceType = fileType
         };
     }
 }

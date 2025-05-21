@@ -7,5 +7,5 @@ public class CloudinarySecureUrl
     public required string ApiKey { get; init; }
     public required string CloudName { get; init; }
     public required string Folder { get; init; }
-    public required string FileType { get; init; }
+    public required string ResourceType { get; init; }
 }
