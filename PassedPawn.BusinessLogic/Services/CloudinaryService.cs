@@ -21,30 +21,6 @@ public class CloudinaryService : ICloudinaryService
 
         _cloudinary = new Cloudinary(cloudinaryAccount);
     }
-    
-    public async Task<UploadResult> UploadVideoAsync(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
-        var uploadParams = new VideoUploadParams
-        {
-            File = new FileDescription(file.FileName, stream),
-            Folder = "lesson_videos"
-        };
-
-        return await _cloudinary.UploadAsync(uploadParams);
-    }
-
-    public async Task<UploadResult> UploadPhotoAsync(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
-        var uploadParams = new ImageUploadParams
-        {
-            File = new FileDescription(file.FileName, stream),
-            Folder = "coach_pfp"
-        };
-
-        return await _cloudinary.UploadAsync(uploadParams);
-    }
 
     public async Task<DeletionResult> DeleteVideoAsync(string publicId)
     {
@@ -88,7 +64,7 @@ public class CloudinaryService : ICloudinaryService
 
     public bool IsUrlValid(string url)
     {
-        var expectedPrefix = $"res.cloudinary.com/{_cloudinary.Api.Account.Cloud}/";
-        return url.Contains(expectedPrefix);
+        var expectedPrefix = $"https://res.cloudinary.com/{_cloudinary.Api.Account.Cloud}/";
+        return url.StartsWith(expectedPrefix);
     }
 }
