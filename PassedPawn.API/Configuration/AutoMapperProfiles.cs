@@ -118,6 +118,7 @@ public class AutoMapperProfiles : Profile
 
         CreateMap<Coach, NonBoughtCourseDetailsCoachDto>()
             .ForMember(dest => dest.Name, opt => opt.MapFrom(src => FullName(src)))
+            .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.ShortDescription))
             .ForMember(dest => dest.CreatedCoursesCount, opt => opt.MapFrom(src => src.Courses.Count))
             .ForMember(dest => dest.PictureUrl, opt => opt.MapFrom(src => src.Photo == null ? null : src.Photo.Url));
         
