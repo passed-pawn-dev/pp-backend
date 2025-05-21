@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace PassedPawn.DataAccess.Entities.Courses.Elements;
+﻿namespace PassedPawn.DataAccess.Entities.Courses.Elements;
 
 public class CourseQuiz : CourseElement, IEntity
 {
