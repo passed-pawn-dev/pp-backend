@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using AutoMapper;
+﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 using PassedPawn.DataAccess.Entities;
@@ -44,13 +43,25 @@ public class StudentRepository(ApplicationDbContext dbContext, IMapper mapper) :
 
     public async Task<BoughtCourseDetailsDto?> GetStudentCourse(int userId, int courseId)
     {
-        return await DbContext
+        var dto = await DbContext
             .Set<Course>()
             .Where(course => course.Id == courseId)
             .Include(course => course.Students)
             .Where(course => course.Students.Any(student => student.Id == userId))
             .ProjectTo<BoughtCourseDetailsDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
+
+        if (dto is null)
+            return null;
+
+        var review = await DbContext
+            .Set<CourseReview>()
+            .Where(review => review.CourseId == courseId && review.StudentId == userId)
+            .ProjectTo<GivenReviewDto>(MapperConfiguration)
+            .SingleOrDefaultAsync();
+
+        dto.GivenReview = review;
+        return dto;
     }
 
     public async Task<bool> IsCourseBought(int userId, int courseId)

@@ -6,7 +6,15 @@ public class BoughtCourseDetailsDto
     public required string Title { get; init; }
     public required string Description { get; init; }
     public string? ThumbnailUrl { get; init; }
+    public GivenReviewDto? GivenReview { get; set; }
     public IEnumerable<BoughtCourseDetailsLessonDto> Lessons { get; init; } = [];
+}
+
+public class GivenReviewDto
+{
+    public int Id { get; init; }
+    public decimal Value { get; init; }
+    public string? Content { get; init; }
 }
 
 public class BoughtCourseDetailsLessonDto
