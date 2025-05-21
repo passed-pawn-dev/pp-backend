@@ -101,11 +101,12 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
     [HttpPost("{id:int}/course-list")]
     [Authorize(Policy = "require student role")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
-        Summary = "Adds a course to user's list"
+        Summary = "Adds a free course to user's list"
     )]
-    public async Task<IActionResult> AddToCourses(int id)
+    public async Task<IActionResult> AddFreeCourseToList(int id)
     {
         var student = await claimsPrincipalService.GetStudent(User);
         var course = await unitOfWork.Courses.GetWithStudentsById(id);
@@ -115,6 +116,9 @@ public class CourseStudentController(IUnitOfWork unitOfWork,
 
         if (course.Students.Contains(student))
             return Conflict("Course already on the list");
+
+        if (course.Price != 0)
+            return BadRequest("Course is not free");
         
         course.Students.Add(student);
         await unitOfWork.SaveChangesAsync();
