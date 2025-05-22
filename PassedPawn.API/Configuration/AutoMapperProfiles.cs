@@ -79,6 +79,9 @@ public class AutoMapperProfiles : Profile
         CreateMap<Course, BoughtCourseDetailsDto>()
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
 
+        CreateMap<CourseReview, GivenReviewDto>()
+            .ForMember(dest => dest.Value, opt => opt.MapFrom(src => 0.5m * (src.Value - 1) + 1.0m));
+
         CreateMap<Course, CoachCourseDto>()
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
             .ForMember(dest => dest.LessonCount, opt => opt.MapFrom(src => src.Lessons.Count))
