@@ -5,7 +5,9 @@ using PassedPawn.BusinessLogic.Exceptions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Course;
+using PassedPawn.Models.DTOs.Photo;
 using PassedPawn.Models.DTOs.User.Coach;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -57,9 +59,10 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
 
     [HttpPatch("pfp")]
     [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PhotoDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [SwaggerOperation(Summary = "Adds or updates pfp")]
-    public async Task<IActionResult> UploadPfp([FromForm] CoachPfpDto pfpDto,
+    public async Task<IActionResult> UploadPfp(CoachPfpDto pfpDto,
         IClaimsPrincipalService claimsPrincipalService, ICloudinaryService cloudinaryService)
     {
         var userId = await claimsPrincipalService.GetCoachId(User);
@@ -67,29 +70,35 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
 
         if (coach is null)
             throw new Exception("Coach is null");
-
-        var uploadResult = await cloudinaryService.UploadPhotoAsync(pfpDto.Pfp!);
-
-        if (uploadResult.Error is not null)
-            throw new CloudinaryException(uploadResult.Error.Message);
+        
+        if (!cloudinaryService.IsUrlValid(pfpDto.PhotoUrl))
+            return BadRequest("Invalid photo url");
 
         if (coach.Photo is null)
         {
             coach.Photo = new Photo
             {
-                Url = uploadResult.Url.AbsoluteUri,
-                PublicId = uploadResult.PublicId
+                Url = pfpDto.PhotoUrl,
+                PublicId = pfpDto.PhotoPublicId
             };
         }
         else
         {
             _ = cloudinaryService.DeletePhotoAsync(coach.Photo.PublicId); // Fire and forget
-            coach.Photo.Url = uploadResult.Url.AbsoluteUri;
-            coach.Photo.PublicId = uploadResult.PublicId;
+            coach.Photo.Url = pfpDto.PhotoUrl;
+            coach.Photo.PublicId = pfpDto.PhotoPublicId;
         }
 
         await unitOfWork.SaveChangesAsync();
-        return NoContent();
+        return Ok(new PhotoDto(pfpDto.PhotoUrl, pfpDto.PhotoPublicId));
+    }
+    
+    [HttpGet("pfp/signature")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
+    public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
+    {
+        return Ok(cloudinaryService.GetUploadSignature("coach_pfp", "image"));
     }
 
     [HttpDelete("pfp")]

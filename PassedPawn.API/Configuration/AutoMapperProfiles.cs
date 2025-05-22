@@ -46,7 +46,6 @@ public class AutoMapperProfiles : Profile
                 opt => opt.MapFrom(src => new List<CredentialDto> { new() { Value = src.Password } }));
 
         CreateMap<PhotoUpsertDto, Photo>();
-        CreateMap<Photo, PhotoDto>();
 
         CreateMap<NationalityUpsertDto, Nationality>();
         CreateMap<Nationality, NationalityDto>();

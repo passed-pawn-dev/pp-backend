@@ -3,6 +3,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using PassedPawn.BusinessLogic.Services.Contracts;
+using PassedPawn.Models.DTOs;
 
 namespace PassedPawn.BusinessLogic.Services;
 
@@ -19,30 +20,6 @@ public class CloudinaryService : ICloudinaryService
         );
 
         _cloudinary = new Cloudinary(cloudinaryAccount);
-    }
-    
-    public async Task<UploadResult> UploadVideoAsync(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
-        var uploadParams = new VideoUploadParams
-        {
-            File = new FileDescription(file.FileName, stream),
-            Folder = "lesson_videos"
-        };
-
-        return await _cloudinary.UploadAsync(uploadParams);
-    }
-
-    public async Task<UploadResult> UploadPhotoAsync(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
-        var uploadParams = new ImageUploadParams
-        {
-            File = new FileDescription(file.FileName, stream),
-            Folder = "coach_pfp"
-        };
-
-        return await _cloudinary.UploadAsync(uploadParams);
     }
 
     public async Task<DeletionResult> DeleteVideoAsync(string publicId)
@@ -61,5 +38,33 @@ public class CloudinaryService : ICloudinaryService
             ResourceType = ResourceType.Image
         };
         return await _cloudinary.DestroyAsync(deletionParams);
+    }
+
+    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType)
+    {
+        var timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
+
+        var parameters = new SortedDictionary<string, object>
+        {
+            { "timestamp", timestamp },
+            { "folder", folderName },
+            { "resource_type", fileType }
+        };
+
+        return new CloudinarySecureUrl
+        {
+            Signature = _cloudinary.Api.SignParameters(parameters),
+            Timestamp = timestamp.ToString(),
+            ApiKey = _cloudinary.Api.Account.ApiKey,
+            CloudName = _cloudinary.Api.Account.Cloud,
+            Folder = folderName,
+            ResourceType = fileType
+        };
+    }
+
+    public bool IsUrlValid(string url)
+    {
+        var expectedPrefix = $"https://res.cloudinary.com/{_cloudinary.Api.Account.Cloud}/";
+        return url.StartsWith(expectedPrefix);
     }
 }

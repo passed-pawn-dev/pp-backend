@@ -4,6 +4,7 @@ using PassedPawn.BusinessLogic.Exceptions;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities;
 using PassedPawn.DataAccess.Repositories.Contracts;
+using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Course;
 using PassedPawn.Models.DTOs.Course.Lesson;
 using Swashbuckle.AspNetCore.Annotations;
@@ -158,11 +159,12 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
     
     [HttpPatch("{courseId:int}/thumbnail")]
     [Authorize(Policy = "require coach role")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PhotoDto))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string))]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(Summary = "Adds or updates pfp")]
-    public async Task<IActionResult> UploadThumbnail(int courseId, [FromForm] CourseThumbnailDto thumbnailDto,
+    [SwaggerOperation(Summary = "Adds or updates thumbnail")]
+    public async Task<IActionResult> UploadThumbnail(int courseId, CourseThumbnailDto thumbnailDto,
         ICloudinaryService cloudinaryService)
     {
         var userId = await claimsPrincipalService.GetCoachId(User);
@@ -174,28 +176,34 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
         if (course.CoachId != userId)
             return Forbid();
 
-        var uploadResult = await cloudinaryService.UploadPhotoAsync(thumbnailDto.Thumbnail!);
-
-        if (uploadResult.Error is not null)
-            throw new CloudinaryException(uploadResult.Error.Message);
+        if (!cloudinaryService.IsUrlValid(thumbnailDto.PhotoUrl))
+            return BadRequest("Invalid photo url");
 
         if (course.Thumbnail is null)
         {
             course.Thumbnail = new Photo
             {
-                Url = uploadResult.Url.AbsoluteUri,
-                PublicId = uploadResult.PublicId
+                Url = thumbnailDto.PhotoUrl,
+                PublicId = thumbnailDto.PhotoPublicId
             };
         }
         else
         {
             _ = cloudinaryService.DeletePhotoAsync(course.Thumbnail.PublicId); // Fire and forget
-            course.Thumbnail.Url = uploadResult.Url.AbsoluteUri;
-            course.Thumbnail.PublicId = uploadResult.PublicId;
+            course.Thumbnail.Url = thumbnailDto.PhotoUrl;
+            course.Thumbnail.PublicId = thumbnailDto.PhotoPublicId;
         }
 
         await unitOfWork.SaveChangesAsync();
-        return NoContent();
+        return Ok(new PhotoDto(thumbnailDto.PhotoUrl, thumbnailDto.PhotoPublicId));
+    }
+    
+    [HttpGet("thumbnail/signature")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
+    public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
+    {
+        return Ok(cloudinaryService.GetUploadSignature("course_thumbnail", "image"));
     }
 
     [HttpDelete("{courseId:int}/thumbnail")]

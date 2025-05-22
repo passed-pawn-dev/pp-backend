@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using Microsoft.AspNetCore.Http;
-using PassedPawn.Models.Validators;
 
 namespace PassedPawn.Models.DTOs.User.Coach;
 
 public class CoachPfpDto
 {
-    [Required, ImageFile]
-    public IFormFile? Pfp { get; init; }
+    [Required, Url] public string PhotoUrl { get; init; } = "";
+    [Required] public string PhotoPublicId { get; init; } = "";
 }
