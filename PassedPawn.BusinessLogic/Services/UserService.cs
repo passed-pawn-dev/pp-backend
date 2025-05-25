@@ -41,6 +41,9 @@ public class UserService(
 
     public async Task<ServiceResult<CoachDto>> AddCoach(CoachUpsertDto coachUpsertDto)
     {
+        if (await unitOfWork.Coaches.EmailExists(coachUpsertDto.Email))
+            return ServiceResult<CoachDto>.Failure(["Email already taken"]);
+        
         var coach = mapper.Map<Coach>(coachUpsertDto);
 
         if (coachUpsertDto.NationalityId is not null &&
