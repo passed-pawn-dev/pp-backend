@@ -44,4 +44,10 @@ public class CoachRepository(ApplicationDbContext dbContext, IMapper mapper)
             .Include(coach => coach.Photo)
             .SingleOrDefaultAsync();
     }
+
+    public async Task<bool> EmailExists(string email)
+    {
+        return await DbSet
+            .AnyAsync(coach => coach.Email == email);
+    }
 }
