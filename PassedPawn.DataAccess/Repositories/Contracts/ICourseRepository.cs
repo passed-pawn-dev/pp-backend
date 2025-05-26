@@ -13,5 +13,6 @@ public interface ICourseRepository : IRepositoryBase<Course>
     Task<Course?> GetWithLessonsById(int id);
     Task<Course?> GetWithStudentsById(int id);
     Task<Course?> GetWithThumbnailById(int id);
-    
+    public Task<int?> GetLessonCount(int coachId, int courseId);
+
 }
