@@ -233,4 +233,17 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
         await unitOfWork.SaveChangesAsync();
         return NoContent();
     }
+
+    [HttpGet("{courseId:int}/lesson-count")]
+    [Authorize(Policy = "require coach role")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonCountDto))]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [SwaggerOperation(Summary = "Gets course's lesson count")]
+    public async Task<IActionResult> GetLessonCount(int courseId)
+    {
+        var coachId = await claimsPrincipalService.GetCoachId(User);
+        var lessonCount = await unitOfWork.Courses.GetLessonCount(coachId, courseId);
+        return lessonCount is null ? NotFound() : Ok(new LessonCountDto(lessonCount.Value));
+    }
+    
 }

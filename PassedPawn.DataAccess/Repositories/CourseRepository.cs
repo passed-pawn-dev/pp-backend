@@ -171,4 +171,13 @@ public class CourseRepository(ApplicationDbContext dbContext, IMapper mapper) :
             .Include(course => course.Thumbnail)
             .SingleOrDefaultAsync();
     }
+
+    public async Task<int?> GetLessonCount(int coachId, int courseId)
+    {
+        return await DbSet
+            .Where(course => course.Id == courseId && course.CoachId == coachId)
+            .Include(course => course.Lessons)
+            .Select(course => course.Lessons.Count)
+            .SingleOrDefaultAsync();
+    }
 }
