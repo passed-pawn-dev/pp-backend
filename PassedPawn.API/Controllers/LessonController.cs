@@ -15,22 +15,6 @@ namespace PassedPawn.API.Controllers;
 public class LessonController(IUnitOfWork unitOfWork, ICourseService courseService,
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
-    [HttpGet("{id:int}")]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [SwaggerOperation(
-        Summary = "Returns single lesson by id"
-    )]
-    public async Task<IActionResult> GetLesson(int id)
-    {
-        var lesson = await unitOfWork.Lessons.GetByIdAsync<LessonDto>(id);
-
-        if (lesson is null)
-            return NotFound();
-
-        return Ok(lesson);
-    }
-
     [HttpPut("{id:int}")]
     [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(LessonDto))]
