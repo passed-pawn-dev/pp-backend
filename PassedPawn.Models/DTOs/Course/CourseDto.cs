@@ -12,6 +12,7 @@ public class CourseDto
     public int? EloRangeStart { get; init; }
     public int? EloRangeEnd { get; init; }
     public required string CoachName { get; init; }
+    public string? CoachPfpUrl { get; init; }
     public decimal AverageScore { get; init; }
     public string? ThumbnailUrl { get; init; }
     public bool IsBought { get; init; }

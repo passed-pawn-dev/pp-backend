@@ -53,6 +53,7 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseUpsertDto, Course>();
         CreateMap<Course, CourseDto>()
             .ForMember(dest => dest.CoachName, opt => opt.MapFrom(src => FullName(src.Coach!)))
+            .ForMember(dest => dest.CoachPfpUrl, opt => opt.MapFrom(src => src.Coach!.Photo == null ? null : src.Coach.Photo.Url))
             .ForMember(dest => dest.AverageScore, opt => opt.MapFrom(src => AverageScore(src.Reviews)))
             .ForMember(dest => dest.EnrolledStudentsCount, opt => opt.MapFrom(src => src.Students.Count))
             .ForMember(dest => dest.ThumbnailUrl, opt => opt.MapFrom(src => src.Thumbnail == null ? null : src.Thumbnail.Url));
