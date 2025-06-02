@@ -161,7 +161,7 @@ public class LessonController(IUnitOfWork unitOfWork, ICourseService courseServi
         Summary = "Adds a new video to a lesson",
         Description = "New video's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
     )]
-    public async Task<IActionResult> AddVideo(int lessonId, [FromForm] CourseVideoAddDto addDto,
+    public async Task<IActionResult> AddVideo(int lessonId, CourseVideoAddDto addDto,
         ICourseVideoService videoService)
     {
         var lesson = await unitOfWork.Lessons.GetWithElementsAndCoachById(lessonId);
