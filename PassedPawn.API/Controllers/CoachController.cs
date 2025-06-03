@@ -98,7 +98,7 @@ public class CoachController(IUserService userService, IUnitOfWork unitOfWork) :
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
     public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
     {
-        return Ok(cloudinaryService.GetUploadSignature("coach_pfp", "image"));
+        return Ok(cloudinaryService.GetUploadSignature("coach_pfp", "image", "upload"));
     }
 
     [HttpDelete("pfp")]

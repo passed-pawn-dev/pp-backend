@@ -203,7 +203,7 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
     public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
     {
-        return Ok(cloudinaryService.GetUploadSignature("course_thumbnail", "image"));
+        return Ok(cloudinaryService.GetUploadSignature("course_thumbnail", "image", "upload"));
     }
 
     [HttpDelete("{courseId:int}/thumbnail")]

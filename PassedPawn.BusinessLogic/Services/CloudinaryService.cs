@@ -40,7 +40,7 @@ public class CloudinaryService : ICloudinaryService
         return await _cloudinary.DestroyAsync(deletionParams);
     }
 
-    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType)
+    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType, string accessType)
     {
         var timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
 
@@ -48,7 +48,8 @@ public class CloudinaryService : ICloudinaryService
         {
             { "timestamp", timestamp },
             { "folder", folderName },
-            { "resource_type", fileType }
+            { "resource_type", fileType },
+            { "type", accessType }
         };
 
         return new CloudinarySecureUrl
