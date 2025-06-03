@@ -86,6 +86,6 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
     public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
     {
-        return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video"));
+        return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video", "private"));
     }
 }
