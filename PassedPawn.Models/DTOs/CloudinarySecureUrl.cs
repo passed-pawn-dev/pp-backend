@@ -8,4 +8,7 @@ public class CloudinarySecureUrl
     public required string CloudName { get; init; }
     public required string Folder { get; init; }
     public required string ResourceType { get; init; }
+    public required string AccessType { get; init; }
+    public required object AccessControl { get; init; }
+    public required string Invalidate { get; init; }
 }
