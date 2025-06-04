@@ -1,3 +1,4 @@
+using System.Text.Json;
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
@@ -40,18 +41,25 @@ public class CloudinaryService : ICloudinaryService
         return await _cloudinary.DestroyAsync(deletionParams);
     }
 
-    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType, string accessType)
+    public CloudinarySecureUrl GetUploadSignature(string folderName, string fileType, string accessType, string invalidate = "false")
     {
         var timestamp = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
-
+        var now = DateTime.UtcNow;
+    
+        var accessControl = accessType == "private" 
+            ? JsonSerializer.Serialize(new[] { new { access_type = "anonymous", start = now.ToString("o"), end = now.ToString("o") } })
+            : JsonSerializer.Serialize(new[] { new { access_type = "anonymous" } });
+    
         var parameters = new SortedDictionary<string, object>
         {
             { "timestamp", timestamp },
             { "folder", folderName },
             { "resource_type", fileType },
-            { "type", accessType }
+            { "type", accessType },
+            { "access_control", accessControl },
+            { "invalidate", invalidate }
         };
-
+    
         return new CloudinarySecureUrl
         {
             Signature = _cloudinary.Api.SignParameters(parameters),
@@ -59,7 +67,10 @@ public class CloudinaryService : ICloudinaryService
             ApiKey = _cloudinary.Api.Account.ApiKey,
             CloudName = _cloudinary.Api.Account.Cloud,
             Folder = folderName,
-            ResourceType = fileType
+            ResourceType = fileType,
+            AccessType = accessType,
+            AccessControl = accessControl,
+            Invalidate = invalidate
         };
     }
 
