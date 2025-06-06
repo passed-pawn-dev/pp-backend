@@ -37,7 +37,6 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
         CourseVideoUpdateDto updateDto)
     {
         var highestOrderNumber = GetHighestOrderNumber(lesson);
-        updateDto.Order ??= highestOrderNumber;
 
         if (updateDto.Order > highestOrderNumber || updateDto.Order < 1)
             return ServiceResult<CourseVideoDto>.Failure([
@@ -46,14 +45,8 @@ public class CourseVideoService(IUnitOfWork unitOfWork, IMapper mapper,
 
         var video = lesson.Videos.Single(video => video.Id == exampleId);
         
-        MoveOrderOnUpdate(lesson, video.Order, updateDto.Order.Value);
-        var oldVideoPublicId = video.VideoPublicId;
+        MoveOrderOnUpdate(lesson, video.Order, updateDto.Order);
         mapper.Map(updateDto, video);
-        
-        if (updateDto.VideoPublicId is null)
-        {
-            video.VideoPublicId = oldVideoPublicId;
-        }
 
         unitOfWork.Videos.Update(video);
 

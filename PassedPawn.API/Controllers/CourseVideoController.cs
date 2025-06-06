@@ -13,7 +13,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     ICourseVideoService videoService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
