@@ -98,9 +98,10 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video", "private"));
     }
     
-    [HttpGet("{id}/download-signature")]
+    [HttpGet("{id}/download-url")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    public IActionResult GetDownloadSignature(string id, ICloudinaryService cloudinaryService)
+    public IActionResult GetDownloadUrl(string id, ICloudinaryService cloudinaryService)
     {
         return Ok(cloudinaryService.GetDownloadUrl(id, "video", "mp4", 120, true));
     }
