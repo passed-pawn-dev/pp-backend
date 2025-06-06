@@ -13,17 +13,26 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     ICourseVideoService videoService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
         Summary = "Returns single video by id"
     )]
-    public async Task<IActionResult> Get(int id)
+    public async Task<IActionResult> Get(int id, ICloudinaryService cloudinaryService)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
         var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
-        return video is null ? NotFound() : Ok(video);
+        
+        if (video == null)
+        {
+            return NotFound();
+        }
+        
+        var temporaryVideoUrl = cloudinaryService.GetDownloadUrl(video.VideoPublicId, "video", "mp4", 120, true);
+        video.TemporaryVideoDownloadUrl = temporaryVideoUrl;
+        
+        return Ok(video);
     }
     
     [HttpPut("{id:int}")]
@@ -81,7 +90,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         return NoContent();
     }
 
-    [HttpGet("signature")]
+    [HttpGet("upload-signature")]
     [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
     public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)

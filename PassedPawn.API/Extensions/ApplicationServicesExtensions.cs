@@ -101,6 +101,7 @@ public static class ApplicationServicesExtensions
             .AddAuthorization()
             .AddAuthorizationBuilder()
             .AddPolicy("require student role", policy => policy.RequireRole("student"))
-            .AddPolicy("require coach role", policy => policy.RequireRole("coach"));
+            .AddPolicy("require coach role", policy => policy.RequireRole("coach"))
+            .AddPolicy("require student or coach role", policy => policy.RequireRole("coach", "student"));
     }
 }
