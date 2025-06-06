@@ -5,5 +5,4 @@ public class CourseVideo : CourseElement, IEntity
     public string? Description { get; set; }
     
     public required string VideoPublicId { get; set; }
-    public required string VideoUrl { get; set; }
 }
