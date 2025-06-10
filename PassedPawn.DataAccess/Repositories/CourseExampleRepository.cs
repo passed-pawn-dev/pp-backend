@@ -17,7 +17,7 @@ public class CourseExampleRepository(ApplicationDbContext dbContext, IMapper map
             .ThenInclude(lesson => lesson!.Course)
             .ThenInclude(course => course!.Students)
             .Where(example => example.Id == exampleId &&
-                           (example.Lesson!.Preview || example.Lesson.Course!.Students.Any(student => student.Id == userId) || example.Lesson.Course!.Coach!.Id.Equals(userId)))
+                           (example.Lesson!.Preview || example.Lesson.Course!.Students.Any(student => student.Id == userId) || example.Lesson.Course!.Coach!.Id == userId))
             .ProjectTo<CourseExampleDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
     }
