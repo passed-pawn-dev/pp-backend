@@ -16,6 +16,8 @@ public interface IUnitOfWork
     ICourseExampleRepository Examples { get; }
     ICourseQuizRepository Quizzes { get; }
     ICourseVideoRepository Videos { get; }
+    ICourseExampleMoveRepository CourseExampleMoves { get; }
+
 
     Task<bool> SaveChangesAsync();
 }

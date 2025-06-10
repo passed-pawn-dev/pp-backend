@@ -1,4 +1,7 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Entities.Courses;
 using PassedPawn.DataAccess.Entities.Courses.Elements;
@@ -56,7 +59,11 @@ public class CourseExampleService(IUnitOfWork unitOfWork, IMapper mapper) : Cour
             ]);
         
         MoveOrderOnUpdate(lesson, example.Order, upsertDto.Order.Value);
+
         mapper.Map(upsertDto, example);
+
+        await unitOfWork.CourseExampleMoves.DeleteAllForExampleAsync(exampleId);
+        
         unitOfWork.Examples.Update(example);
 
         if (!await unitOfWork.SaveChangesAsync())

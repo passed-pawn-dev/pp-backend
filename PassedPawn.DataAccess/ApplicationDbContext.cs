@@ -18,6 +18,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public required DbSet<CourseReview> CourseReviews { get; init; }
     public required DbSet<CourseQuiz> CourseQuizes { get; init; }
     public required DbSet<CourseVideo> CourseVideos { get; init; }
+    public required DbSet<CourseExampleMove> CourseExampleMove { get; init; }
+
 
     //  dotnet ef database update --project ../PassedPawn.DataAccess/
 

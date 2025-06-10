@@ -17,6 +17,7 @@ public class UnitOfWork(ApplicationDbContext dbContext, IMapper mapper) : IUnitO
     public ICourseExampleRepository Examples { get; } = new CourseExampleRepository(dbContext, mapper);
     public ICourseQuizRepository Quizzes { get; } = new CourseQuizRepository(dbContext, mapper);
     public ICourseVideoRepository Videos { get; } = new CourseVideoRepository(dbContext, mapper);
+    public ICourseExampleMoveRepository CourseExampleMoves { get; } = new CourseExampleMoveRepository(dbContext, mapper);
 
 
     public async Task<bool> SaveChangesAsync()

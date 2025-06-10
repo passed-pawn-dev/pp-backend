@@ -12,7 +12,7 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
     IClaimsPrincipalService claimsPrincipalService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseExampleDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
