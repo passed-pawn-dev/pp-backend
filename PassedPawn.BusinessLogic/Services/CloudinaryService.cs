@@ -73,6 +73,12 @@ public class CloudinaryService : ICloudinaryService
             Invalidate = invalidate
         };
     }
+    
+    public string GetDownloadUrl(string assetPublicId, string fileType, string fileFormat, int validForSeconds = 120, bool downloadAsAttachment = false)
+    {
+        var expiryDatetime = DateTime.UtcNow.AddSeconds(validForSeconds).Ticks;
+        return _cloudinary.DownloadPrivate(publicId: assetPublicId, format: fileFormat, resourceType: fileType, expiresAt: expiryDatetime, attachment: downloadAsAttachment);
+    }
 
     public bool IsUrlValid(string url)
     {

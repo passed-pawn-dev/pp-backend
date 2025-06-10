@@ -10,10 +10,10 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace PassedPawn.API.Controllers;
 
 public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService,
-    ICourseVideoService videoService) : ApiControllerBase
+    ICourseVideoService videoService, ICloudinaryService cloudinaryService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseVideoDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -23,7 +23,13 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
         var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
-        return video is null ? NotFound() : Ok(video);
+        
+        if (video is null) return NotFound();
+        
+        var temporaryVideoUrl = cloudinaryService.GetDownloadUrl(video.VideoPublicId, "video", "mp4", 120, true);
+        video.TemporaryVideoDownloadUrl = temporaryVideoUrl;
+        
+        return Ok(video);
     }
     
     [HttpPut("{id:int}")]
@@ -81,10 +87,10 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         return NoContent();
     }
 
-    [HttpGet("signature")]
+    [HttpGet("upload-signature")]
     [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
-    public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
+    public IActionResult GetUploadSignature()
     {
         return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video", "private"));
     }

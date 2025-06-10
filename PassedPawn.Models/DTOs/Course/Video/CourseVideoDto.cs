@@ -6,5 +6,6 @@ public class CourseVideoDto
     public required string Title { get; init; }
     public string? Description { get; init; }
     public int Order { get; init; }
-    public required string VideoUrl { get; init; }
+    public required string VideoPublicId{ get; init; }
+    public string? TemporaryVideoDownloadUrl { get; set; }
 }
