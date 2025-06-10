@@ -17,7 +17,7 @@ public class CourseVideoRepository(ApplicationDbContext dbContext, IMapper mappe
             .ThenInclude(lesson => lesson!.Course)
             .ThenInclude(course => course!.Students)
             .Where(video => video.Id == videoId &&
-                           (video.Lesson!.Preview || video.Lesson.Course!.Students.Any(student => student.Id == userId)))
+                           (video.Lesson!.Preview || video.Lesson.Course!.Students.Any(student => student.Id == userId) || video.Lesson.Course!.Coach!.Id == userId))
             .ProjectTo<CourseVideoDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
     }
