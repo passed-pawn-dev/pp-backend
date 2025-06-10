@@ -24,10 +24,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
         var userId = await claimsPrincipalService.GetStudentId(User);
         var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
         
-        if (video == null)
-        {
-            return NotFound();
-        }
+        if (video is null) return NotFound();
         
         var temporaryVideoUrl = cloudinaryService.GetDownloadUrl(video.VideoPublicId, "video", "mp4", 120, true);
         video.TemporaryVideoDownloadUrl = temporaryVideoUrl;
