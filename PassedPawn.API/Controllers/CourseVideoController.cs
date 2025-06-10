@@ -10,7 +10,7 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace PassedPawn.API.Controllers;
 
 public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalService claimsPrincipalService,
-    ICourseVideoService videoService) : ApiControllerBase
+    ICourseVideoService videoService, ICloudinaryService cloudinaryService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
     [Authorize(Policy = "require student or coach role")]
@@ -19,7 +19,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     [SwaggerOperation(
         Summary = "Returns single video by id"
     )]
-    public async Task<IActionResult> Get(int id, ICloudinaryService cloudinaryService)
+    public async Task<IActionResult> Get(int id)
     {
         var userId = await claimsPrincipalService.GetStudentId(User);
         var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
@@ -90,7 +90,7 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     [HttpGet("upload-signature")]
     [Authorize(Policy = "require coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CloudinarySecureUrl))]
-    public IActionResult GetUploadSignature(ICloudinaryService cloudinaryService)
+    public IActionResult GetUploadSignature()
     {
         return Ok(cloudinaryService.GetUploadSignature("lesson_videos", "video", "private"));
     }
