@@ -15,6 +15,23 @@ services:
       start_period: 30s
       timeout: 10s
 
+
+  pgadmin:
+    container_name: pp-pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    depends_on:
+      postgres:
+        condition: service_healthy
+        restart: true
+    networks:
+      - api-network
+
   api:
     container_name: pp-api
     build:
