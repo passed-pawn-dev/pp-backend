@@ -4,6 +4,7 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Quiz;
+using PassedPawn.Models.Enums;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -12,17 +13,23 @@ public class CourseQuizController(IUnitOfWork unitOfWork, IClaimsPrincipalServic
     ICourseQuizService quizService) : ApiControllerBase
 {
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CourseQuizDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
-        Summary = "Get Course Quiz by id",
-        Description = "New quiz's order can be in the middle of the lesson, so other elements' orders might be modified to account for that."
+        Summary = "Get Course Quiz by id"
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        var quiz = await unitOfWork.Quizzes.GetOwnedOrInPreviewAsync(id, userId);
+        var userRole = claimsPrincipalService.IsLoggedInAsStudent(User) ? UserRole.Student : UserRole.Coach ;
+        var userId = userRole == UserRole.Student
+            ? await claimsPrincipalService.GetStudentId(User)
+            : await claimsPrincipalService.GetCoachId(User);
+        
+        var quiz = userRole == UserRole.Student 
+            ? await unitOfWork.Quizzes.GetOwnedOrInPreviewForStudentAsync(id, userId)
+            : await unitOfWork.Quizzes.GetOwnedOrInPreviewForCoachAsync(id, userId);
+        
         return quiz is null ? NotFound() : Ok(quiz);
     }
     
