@@ -10,4 +10,5 @@ public interface IClaimsPrincipalService
     Task<Student> GetStudent(ClaimsPrincipal principal);
     Task<int> GetCoachId(ClaimsPrincipal principal);
     bool IsLoggedInAsStudent(ClaimsPrincipal principal);
+    bool IsLoggedInAsCoach(ClaimsPrincipal principal);
 }

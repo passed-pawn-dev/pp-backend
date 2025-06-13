@@ -44,6 +44,11 @@ public class ClaimsPrincipalService(IUnitOfWork unitOfWork) : IClaimsPrincipalSe
         return principal.Identity is { IsAuthenticated: true } && principal.IsInRole("student");
     }
 
+    public bool IsLoggedInAsCoach(ClaimsPrincipal principal)
+    {
+        return principal.Identity is { IsAuthenticated: true } && principal.IsInRole("coach");
+    }
+
     private static string GetUserEmail(ClaimsPrincipal claimsPrincipal)
     {
         return claimsPrincipal.Claims

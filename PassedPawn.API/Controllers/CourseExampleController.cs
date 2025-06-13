@@ -4,6 +4,7 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Example;
+using PassedPawn.Models.Enums;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -20,9 +21,16 @@ public class CourseExampleController(IUnitOfWork unitOfWork, ICourseExampleServi
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        var puzzle = await unitOfWork.Examples.GetOwnedOrInPreviewAsync(id, userId);
-        return puzzle is null ? NotFound() : Ok(puzzle);
+        var userRole = claimsPrincipalService.IsLoggedInAsStudent(User) ? UserRole.Student : UserRole.Coach ;
+        var userId = userRole == UserRole.Student
+            ? await claimsPrincipalService.GetStudentId(User)
+            : await claimsPrincipalService.GetCoachId(User);
+  
+        var example = userRole == UserRole.Student 
+            ? await unitOfWork.Examples.GetOwnedOrInPreviewForStudentAsync(id, userId)
+            : await unitOfWork.Examples.GetOwnedOrInPreviewForCoachAsync(id, userId);
+        
+        return example is null ? NotFound() : Ok(example);
     }
     
     [HttpPut("{id:int}")]
