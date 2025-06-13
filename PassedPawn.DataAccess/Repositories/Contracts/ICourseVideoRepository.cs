@@ -5,5 +5,7 @@ namespace PassedPawn.DataAccess.Repositories.Contracts;
 
 public interface ICourseVideoRepository : IRepositoryBase<CourseVideo>
 {
-    Task<CourseVideoDto?> GetOwnedOrInPreviewAsync(int videoId, int userId);
+    // separate for access control purposes
+    Task<CourseVideoDto?> GetOwnedOrInPreviewForStudentAsync(int videoId, int userId);
+    Task<CourseVideoDto?> GetOwnedOrInPreviewForCoachAsync(int videoId, int userId);
 }

@@ -5,6 +5,7 @@ using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs;
 using PassedPawn.Models.DTOs.Course.Video;
+using PassedPawn.Models.Enums;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -21,8 +22,14 @@ public class CourseVideoController(IUnitOfWork unitOfWork, IClaimsPrincipalServi
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        var video = await unitOfWork.Videos.GetOwnedOrInPreviewAsync(id, userId);
+        var userRole = claimsPrincipalService.IsLoggedInAsStudent(User) ? UserRole.Student : UserRole.Coach;
+        var userId = userRole == UserRole.Student
+            ? await claimsPrincipalService.GetStudentId(User)
+            : await claimsPrincipalService.GetCoachId(User);
+  
+        var video = userRole == UserRole.Student 
+            ? await unitOfWork.Videos.GetOwnedOrInPreviewForStudentAsync(id, userId)
+            : await unitOfWork.Videos.GetOwnedOrInPreviewForCoachAsync(id, userId);
         
         if (video is null) return NotFound();
         
