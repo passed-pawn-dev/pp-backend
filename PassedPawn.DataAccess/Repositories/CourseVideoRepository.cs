@@ -12,7 +12,6 @@ public class CourseVideoRepository(ApplicationDbContext dbContext, IMapper mappe
 {
     public async Task<CourseVideoDto?> GetOwnedOrInPreviewForStudentAsync(int videoId, int userId)
     {
-        Console.WriteLine(userId);
         return await DbSet
             .Include(video => video.Lesson)
             .ThenInclude(lesson => lesson!.Course)
@@ -25,7 +24,6 @@ public class CourseVideoRepository(ApplicationDbContext dbContext, IMapper mappe
     
     public async Task<CourseVideoDto?> GetOwnedOrInPreviewForCoachAsync(int videoId, int userId)
     {
-        Console.WriteLine(userId);
         return await DbSet
             .Include(video => video.Lesson)
             .ThenInclude(lesson => lesson!.Course)
