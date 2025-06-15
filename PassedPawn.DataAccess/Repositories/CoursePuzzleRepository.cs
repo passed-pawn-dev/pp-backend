@@ -11,7 +11,7 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CoursePuzzleRepository(ApplicationDbContext dbContext, IMapper mapper)
     : RepositoryBase<CoursePuzzle>(dbContext, mapper), ICoursePuzzleRepository
 {
-    public async Task<CoursePuzzlesDto?> GetOwnedOrInPreviewAsync(int puzzleId, int userId)
+    public async Task<CoursePuzzlesDto?> GetOwnedOrInPreviewForStudentAsync(int puzzleId, int userId)
     {
         return await DbSet
             .Include(puzzle => puzzle.Lesson)
@@ -22,7 +22,18 @@ public class CoursePuzzleRepository(ApplicationDbContext dbContext, IMapper mapp
             .ProjectTo<CoursePuzzlesDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
     }
-
+    
+    public async Task<CoursePuzzlesDto?> GetOwnedOrInPreviewForCoachAsync(int puzzleId, int userId)
+    {
+        return await DbSet
+            .Include(puzzle => puzzle.Lesson)
+            .ThenInclude(lesson => lesson!.Course)
+            .Where(puzzle => puzzle.Id == puzzleId &&
+                             puzzle.Lesson!.Course!.Coach!.Id == userId)
+            .ProjectTo<CoursePuzzlesDto>(MapperConfiguration)
+            .SingleOrDefaultAsync();
+    }
+    
     public async Task<CoursePuzzle?> GetPuzzleById(int id)
     {
         return await DbSet
