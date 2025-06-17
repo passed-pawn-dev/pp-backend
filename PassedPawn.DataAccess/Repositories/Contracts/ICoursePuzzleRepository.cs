@@ -5,6 +5,7 @@ namespace PassedPawn.DataAccess.Repositories.Contracts;
 
 public interface ICoursePuzzleRepository : IRepositoryBase<CoursePuzzle>
 {
-    Task<CoursePuzzlesDto?> GetOwnedOrInPreviewAsync(int puzzleId, int userId);
+    Task<CoursePuzzlesDto?> GetOwnedOrInPreviewForStudentAsync(int puzzleId, int userId);
+    Task<CoursePuzzlesDto?> GetOwnedOrInPreviewForCoachAsync(int puzzleId, int userId);
     Task<CoursePuzzle?> GetPuzzleById(int id);
 }

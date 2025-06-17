@@ -4,6 +4,7 @@ using PassedPawn.API.Controllers.Base;
 using PassedPawn.BusinessLogic.Services.Contracts;
 using PassedPawn.DataAccess.Repositories.Contracts;
 using PassedPawn.Models.DTOs.Course.Puzzle;
+using PassedPawn.Models.Enums;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace PassedPawn.API.Controllers;
@@ -13,7 +14,7 @@ public class CoursePuzzleController(IUnitOfWork unitOfWork, IClaimsPrincipalServ
 {
     
     [HttpGet("{id:int}")]
-    [Authorize(Policy = "require student role")]
+    [Authorize(Policy = "require student or coach role")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(CoursePuzzlesDto))]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [SwaggerOperation(
@@ -21,8 +22,15 @@ public class CoursePuzzleController(IUnitOfWork unitOfWork, IClaimsPrincipalServ
     )]
     public async Task<IActionResult> Get(int id)
     {
-        var userId = await claimsPrincipalService.GetStudentId(User);
-        var puzzle = await unitOfWork.Puzzles.GetOwnedOrInPreviewAsync(id, userId);
+        var userRole = claimsPrincipalService.IsLoggedInAsStudent(User) ? UserRole.Student : UserRole.Coach ;
+        var userId = userRole == UserRole.Student
+            ? await claimsPrincipalService.GetStudentId(User)
+            : await claimsPrincipalService.GetCoachId(User);
+        
+        var puzzle = userRole == UserRole.Student 
+            ? await unitOfWork.Puzzles.GetOwnedOrInPreviewForStudentAsync(id, userId)
+            : await unitOfWork.Puzzles.GetOwnedOrInPreviewForCoachAsync(id, userId);
+        
         return puzzle is null ? NotFound() : Ok(puzzle);
     }
     

@@ -10,7 +10,7 @@ namespace PassedPawn.DataAccess.Repositories;
 public class CourseQuizRepository(ApplicationDbContext dbContext, IMapper mapper)
     : RepositoryBase<CourseQuiz>(dbContext, mapper), ICourseQuizRepository
 {
-    public async Task<CourseQuizDto?> GetOwnedOrInPreviewAsync(int quizId, int userId)
+    public async Task<CourseQuizDto?> GetOwnedOrInPreviewForStudentAsync(int quizId, int userId)
     {
         return await DbSet
             .Include(quiz => quiz.Lesson)
@@ -18,6 +18,17 @@ public class CourseQuizRepository(ApplicationDbContext dbContext, IMapper mapper
             .ThenInclude(course => course!.Students)
             .Where(quiz => quiz.Id == quizId &&
                              (quiz.Lesson!.Preview || quiz.Lesson.Course!.Students.Any(student => student.Id == userId)))
+            .ProjectTo<CourseQuizDto>(MapperConfiguration)
+            .SingleOrDefaultAsync();
+    }
+    
+    public async Task<CourseQuizDto?> GetOwnedOrInPreviewForCoachAsync(int quizId, int userId)
+    {
+        return await DbSet
+            .Include(quiz => quiz.Lesson)
+            .ThenInclude(lesson => lesson!.Course)
+            .Where(quiz => quiz.Id == quizId &&
+                           quiz.Lesson!.Course!.Coach!.Id == userId)
             .ProjectTo<CourseQuizDto>(MapperConfiguration)
             .SingleOrDefaultAsync();
     }
