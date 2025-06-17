@@ -63,38 +63,6 @@ public class LessonControllerTests
     }
 
     [Fact]
-    public async Task GetLesson_ShouldReturnOk_WhenCourseExists()
-    {
-        // Arrange
-        const int id = 1;
-        var lessonDto = SampleLessonDto();
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync<LessonDto>(id))
-            .ReturnsAsync(lessonDto);
-
-        // Act
-        var result = await _lessonController.GetLesson(id);
-
-        // Assert
-        var okObject = Assert.IsType<OkObjectResult>(result);
-        Assert.Equal(lessonDto, okObject.Value);
-    }
-
-    [Fact]
-    public async Task GetLesson_ShouldReturnNotFound_WhenCourseDoesNotExist()
-    {
-        // Arrange
-        const int id = 1;
-        _unitOfWorkMock.Setup(unitOfWork => unitOfWork.Lessons.GetByIdAsync<LessonDto>(id))
-            .ReturnsAsync((LessonDto?)null);
-
-        // Act
-        var result = await _lessonController.GetLesson(id);
-
-        // Assert
-        Assert.IsType<NotFoundResult>(result);
-    }
-
-    [Fact]
     public async Task UpdateLesson_ShouldReturnOk_WhenValidationPasses()
     {
         // Arrange

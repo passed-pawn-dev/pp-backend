@@ -154,7 +154,7 @@ public class CourseCoachController(IUnitOfWork unitOfWork, ICourseService course
 
         var lessonDto = serviceResult.Data;
 
-        return CreatedAtAction("GetLesson", "Lesson", new { id = lessonDto.Id }, lessonDto);
+        return Ok(lessonDto);
     }
     
     [HttpPatch("{courseId:int}/thumbnail")]
