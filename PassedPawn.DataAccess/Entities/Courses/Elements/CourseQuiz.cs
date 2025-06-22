@@ -6,7 +6,7 @@ public class CourseQuiz : CourseElement, IEntity
 
     public ICollection<QuizAnswer> Answers { get; set; } = [];
 
-    public int Number { get; set; }
+    public int Solution { get; set; }
     
     public string? Hint { get; set; }
     

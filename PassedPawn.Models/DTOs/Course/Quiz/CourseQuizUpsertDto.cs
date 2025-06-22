@@ -8,8 +8,8 @@ public class CourseQuizUpsertDto
     [Required]
     public string Question { get; init; } = string.Empty;
     public ICollection<AnswerUpsertDto> Answers { get; init; } = [];
-    public int Number { get; init; }
     public string? Hint { get; init; }
+    public int Solution { get; init; }
     [FenValidation]
     public string? Fen { get; init; }
     public string? Explanation  { get; init; }
