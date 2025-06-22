@@ -162,7 +162,8 @@ public class AutoMapperProfiles : Profile
         CreateMap<CourseQuiz, CourseQuizDto>()
             .ForMember(dest => dest.Solution, opt => opt.MapFrom(src => src.Number));
         
-        CreateMap<CourseQuizUpsertDto, CourseQuiz>();
+        CreateMap<CourseQuizUpsertDto, CourseQuiz>()
+            .ForMember(dest => dest.Number, opt => opt.MapFrom(src => src.Solution));;
         
         CreateMap<QuizAnswer, AnswerDto>();
         CreateMap<AnswerUpsertDto, QuizAnswer>();
